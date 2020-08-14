@@ -1,0 +1,11 @@
+<div>
+    <b>{{data.icon}}{{data.name}}</b>: {{data.title}}
+    <blockquote>{{data.description}}</blockquote>
+    <ul>
+        <li *ngFor="let group of data.tags">
+            <span *ngFor="let tag of group">
+            [{{tag}}]
+            </span>
+        </li>
+    </ul>
+</div>
