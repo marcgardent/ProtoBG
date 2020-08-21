@@ -1,0 +1,136 @@
+---
+    
+# PAO for card game
+
+## core concepts
+
+- name: 📐pao
+
+.tag:
+    title: title
+    description: |
+        test
+    tags: 📐pao 💠abstract
+
+
+⬜canvas:
+  title: area
+  tags: 📐pao 💠abstract
+  properties: 📏width 📏height 📏margins 📏corners
+
+📏width:
+    title: canvas' width
+    tags: 📐pao 📏measure 💠property
+
+📏height:
+    title: canvas' height
+    tags: 📐pao 📏measure 💠property
+ 
+📏margins:
+    title: canvas' margin
+    tags: 📐pao 📏measure 💠property
+    
+📏corners:
+    title: radius corner of canvas 
+    tags: 📐pao 📏measure 💠property
+
+📏measure:
+    title: distance unit
+    tags: 📐pao 📐unit 💠property 💠abstract
+
+📏min:
+    title: is min size of ⬜canvas
+    tags: 📐pao 📏measure 💠property
+
+📏max:
+    title: is max size of ⬜canvas
+    tags: 📐pao 📏measure 💠property
+
+.document:
+    title: filled by canvas
+    tags: 📐pao
+
+.orientation:
+    description: orientation of pages composed by an .document
+    tags: 📐pao
+
+🔄landscape:
+    description: use .max size for the .page's width and .min size for .page's height 
+    tags: 🔄orientation
+
+🔄portrait:
+    description: use .min size for the .page's width and .max size for .page's height
+    tags: 🔄orientation
+
+📄page:
+    tags: 📐pao 
+    properties: 📏min 📏max
+
+## definitions out of the box
+
+📄A4:
+    description: it is a 📄page in A4 Format.
+    tags: 📐pao 📄page
+    📏min: 210📏mm 
+    📏max: 297📏mm
+
+📏mm: millimeter
+    description: 📏measure in millimeter
+    tags: 📐pao 📏measure
+
+📏inch:
+    description: 📏measure in inch
+    tags: 📐pao  
+
+🃏magics:
+    title: Magic card format
+    tags: ⬜canvas
+    📏width: 68📏mm
+    📏height: 84📏mm
+    📏margins: 2📏mm
+    📏corners: 5📏mm
+
+## Generic card template
+
+⬛defaultCardLayout:
+    title: card layout
+    description: is generic card template
+    tags: 📐pao 💠abstract
+    properties: ⬛left ⬛right ⬛bottom 📑for ⬜format
+
+📑for:
+    tags: 📑request
+
+⬛slot:
+    tags: 💠abstract
+
+⬛left:
+    tags: ⬛slot 💠property
+
+⬛right:
+    tags: ⬛slot 💠property
+
+⬛bottom:
+    tags: ⬛slot 💠property
+
+⬜format:
+    tags: ⬜canvas 💠property
+
+## Instance
+
+🏭factory:
+    title: the factory
+    description: amazing factory's description
+    tags: 🏢building
+    📈produce: 1🧰goods
+    📉consume: 10🧱raw
+    ⚒️build: 10🧱raw
+    📐instances: 10
+
+⬛myCardLayout:
+    tags: ⬛defaultCardLayout
+    ⬛left: 📉consume
+    ⬛right: 📈produce
+    ⬛bottom: ⚒️build
+    📑from:
+        - { 📑is: 🏭factory, 📐instances: 10 }

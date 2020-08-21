@@ -1,0 +1,155 @@
+
+# PAO for card game
+
+## core concepts
+
+📐pao:
+  title: PAO namespace
+
+⬜canvas:
+  title: area
+  tags: 📐pao 💠abstract
+  properties: 📏width 📏height 📏margins 📏corners 📏paddings
+
+📏width:
+    title: canvas' width
+    tags: 📐pao 📏measure 💠property
+
+📏height:
+    title: canvas' height
+    tags: 📐pao 📏measure 💠property
+  
+📏margins:
+    title: canvas' margin
+    tags: 📐pao 📏measure 💠property
+
+📏paddings:
+    title: canvas' paddings
+    tags: 📐pao 📏measure 💠property
+
+📏corners:
+    title: radius corner of canvas 
+    tags: 📐pao 📏measure 💠property
+
+📏measure:
+    title: distance unit
+    tags: 📐pao 📐unit 💠property 💠abstract
+
+📏min:
+    title: is min size of ⬜canvas
+    tags: 📐pao 📏measure 💠property
+
+📏max:
+    title: is max size of ⬜canvas
+    tags: 📐pao 📏measure 💠property
+
+📄document:
+    title: filled by canvas
+    tags: 📐pao
+
+🔄orientation:
+    description: orientation of a 📄page 
+    tags: 📐pao
+
+🔄landscape:
+    description: use .max size for the 📄page's width and .min size for 📄page's height 
+    tags: 🔄orientation
+
+🔄portrait:
+    description: use .min size for the 📄page's width and .max size for 📄page's height
+    tags: 🔄orientation
+
+📄page:
+    tags: 📐pao 
+    properties: 📏min 📏max
+
+## definitions out of the box
+
+📄A4:
+    description: it is a 📄page in A4 Format.
+    tags: 📐pao 📄page
+    📏min: 210📏mm 
+    📏max: 297📏mm
+
+📏mm:
+    alias: millimeter
+    description: 📏measure in millimeter
+    tags: 📐pao 📏measure
+
+📏inch:
+    alias: inches
+    description: 📏measure in inch
+    tags: 📐pao  
+
+🃏card:
+    description: is standard canvas for playing card
+    tags: 💠abstract
+
+🃏magics:
+    title: Magic card format
+    tags: 🃏card
+    📏width: 63.5📏mm
+    📏height: 88.9📏mm
+
+🃏poker:
+    title: poker card format
+    tags: 🃏card
+    📏width: 63📏mm
+    📏height: 89📏mm
+
+🃏bridge:
+    title: bridge card format    
+    tags: 🃏card
+    📏width: 63📏mm
+    📏height: 89📏mm
+
+🃏tarot:
+    title: tarot card format
+    tags: 🃏card
+    📏width: 60📏mm
+    📏height: 113📏mm
+     
+## Generic card template
+
+⬛borders:
+    tags: 💠abstract
+    properties: 📏paddings 📏margins 📏corners
+  
+⬛defaultBorders:
+    tags: ⬛borders
+    📏paddings: 2📏mm
+    📏margins: 2📏mm
+    📏corners: 4📏mm
+
+⬛defaultCardLayout:
+    title: card layout
+    description: is generic card template
+    tags: 📐pao 💠abstract
+    properties: ⬛left ⬛right ⬛bottom 📑for ⬛borders 🃏card
+
+📄cardsheet:
+    tags: 📐pao 💠abstract 📄document
+    properties: 📑for 📄page 🔄orientation
+
+📄deck:
+    description: only one card by page
+    tags: 📄document
+    properties: 📑for
+
+📑for:
+    tags: 📑request
+
+⬛slot:
+    tags: 💠abstract
+
+⬛left:
+    tags: ⬛slot 💠property
+
+⬛right:
+    tags: ⬛slot 💠property
+
+⬛bottom:
+    tags: ⬛slot 💠property
+
+⬜format:
+    tags: ⬜canvas 💠property

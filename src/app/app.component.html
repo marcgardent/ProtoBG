@@ -1,6 +1,7 @@
 <h1>GameBench</h1>
 
-<button mat-raised-button color="primary" (click)="process()">process</button>
+<button mat-raised-button color="primary" (click)="processAsCode()">as code</button>
+<button mat-raised-button color="primary" (click)="processAsSvg()">as svg</button>
 <div class="layout">
   <div class="editor">
     <h2>text plain</h2>
@@ -8,7 +9,7 @@
       <textarea #editor matInput name="content" [(ngModel)]="content"></textarea>
     </form>
   </div>
-  <div>
+  <!-- <div>
     <h2>glossary parsed</h2>
     <ng-container *ngFor="let item of definitions">
       <app-definition *ngIf="item.type=='entry'" [data]="item"></app-definition>
@@ -16,9 +17,16 @@
         {{item.data}}
       </div> 
     </ng-container>
-  </div>
+  </div> -->
   <!-- <div class="doc">
     <h2>Markdown rendering</h2>
     <markdown [data]="content"></markdown>
   </div> -->
+  <div>
+    <h2>Typescript Export</h2>
+    <textarea matInput name="content" [(ngModel)]="code"></textarea>
+  </div>
+<div>
+  hello the world
+</div>
 </div>

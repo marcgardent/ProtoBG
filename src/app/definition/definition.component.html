@@ -4,7 +4,7 @@
     <ul>
         <li *ngFor="let group of data.tags">
             <span *ngFor="let tag of group">
-            [{{tag}}]
+            [{{tag.icon}}{{tag.name}}{{tag.operator}}{{tag.value}}]
             </span>
         </li>
     </ul>

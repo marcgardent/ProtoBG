@@ -1,12 +1,25 @@
 const OPEN_TAG = /^([^A-Za-z\+\-\*\:]+)(\w+):(.*)?$/
-const TAG = /^[^A-Za-z\+\-\*\:]+\w+([\+\-\*\:]\d+)?$/
-
-const TOKEN_BLOCK = /\`\`\`tokens [^\`]*\`\`\`/gs
+const TAG = /^([^A-Za-z\+\-\*\:]+)(\w+)(([\+\-\*\:])(\d+))?$/
 
 function isTags(line: string) {
     const words = line.split(/\s+/).filter(x => x != "");
     const ret = words.length > 0 && words.findIndex((v) => v != "" && !v.match(TAG)) == -1;
     return ret;
+}
+
+function readTag(text:string) {
+    const reg = text.match(TAG);
+    if(reg) {
+        return {
+            icon : reg[1],
+            name : reg[2],
+            operator : reg[4],
+            value : reg[5]
+        }
+    }
+    else {
+        return { icon : "#", name : "undefined", operator : undefined, value: undefined }
+    }
 }
 
 function readSubLine(indent: string, line: string) {
@@ -15,44 +28,6 @@ function readSubLine(indent: string, line: string) {
     }
     else {
         return undefined;
-    }
-}
-
-export class Token {
-    constructor(
-        public readonly icon: string,
-        public readonly name: string,
-        public readonly description: string,
-        public readonly tags: Array<Token> = []
-    ) { }
-}
-
-// export function tokensFromMarkdown(md:string) {
-//     const allInOne = getTokenBlock(md).join("\n");
-//     return readTokens(allInOne);
-//     return buildTags(readTokens(allInOne));
-// }
-
-function getTokenBlock(md: string) {
-    return [...md.matchAll(TOKEN_BLOCK)].map(x => x[1]);
-}
-
-function buildTags(entries: Map<string, any>) {
-    const ret = new Map<string, Token>();
-
-    for (let [k, v] of entries.entries()) {
-        ret.set(k, new Token(v.icon, v.name, v.description, []));
-    }
-
-    for (let [k, v] of ret.entries()) {
-        for (let tagKey of entries[k].tags) {
-            if (ret.has(tagKey)) {
-                v.tags.push(ret[tagKey]);
-            }
-            else {
-                console.warn("tag unknown", tagKey);
-            }
-        }
     }
 }
 
@@ -112,7 +87,7 @@ export function readGlossaryFromMarkdown(block: string) {
                 for (; i < lines.length; i++) {
                     const subLine = readSubLine(indentation, lines[i]);
                     if (subLine && isTags(subLine)) {
-                        item.tags.push(subLine.split(/\s+/));
+                        item.tags.push(subLine.split(/\s+/).map( x=> readTag(x)));
                         console.debug("line.tags", subLine);
                     }
                     else {

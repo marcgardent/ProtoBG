@@ -3,59 +3,91 @@
 
 ## core concepts
 
-@is: define a concept
 .pao: Printing tags
 
-.canvas: card define with .width .height .margin .measure
-    @is .pao
+
+.canvas: area
+    .pao
+    @have .width .height .margins .corners
 
 .width: canvas' width
-    @is .pao
+    .pao
+    @accept .measure
 
 .height: canvas' height
-    @is .pao
+    .pao
+    @accept .measure
 
-.margin: canvas' margin
-    @is .pao
+.margins: canvas' margin
+    .pao
+    @accept .measure
 
 .corners: radius corner of canvas 
-    @is .pao
+    .pao
+    @accept .measure
 
-.measure:
-    @is .pao
+.measure: distance unit
+    .pao
+    .number
+    .unit
+
+.min: is min size of .canvas
+    .pao
+    @accept .measure
+
+.max: is max size of .canvas
+    .pao
+    @accept .measure
 
 .document: filled by canvas
-    @is .pao
+    .pao
+
+.orientation: orientation of pages composed by an .document
+    .pao
+
+.landscape: use .max size for the .page's width and .min size for .page's height 
+    .orientation
+
+.portrait: use .min size for the .page's width and .max size for .page's height
+    .orientation
+
+.page:
+    .pao 
+    @have .min .max
 
 ## definitions out of the box
 
-.A4Portrait: is a .page in A4 Format, portrait oriented.
-    @is .pao .page .width:210 .height:297 .margin:10 .mm
+.A4:
+    it is a .page in A4 Format.
+    .pao
+    .page .min:210mm .max:297mm
 
-.A4Landscape: @is a .page in A4 Format, with Landscape oriented.
-    @is .pao .page .width:297 .height:210 .margin:10 .mm
+.mm: millimeter
+    size in .millimeter
+    .pao .measure
 
-.mm: size in .millimeter
-    @is .pao .measure
+.inch:
+    size in inch
+    .pao .measure
 
-.inch: size in inch
-    @is .pao .measure
+🃏magicsCard: Magic Card
+    .canvas .width:68.mm .height:84.mm
 
-.magicsCard:  
-    @is .canvas .width:68 .height:84 .mm
-
-.document: is collection of page filled by canvas
+.document:
+    is collection of page filled by canvas
 
 ## Instance
 
 .factory:
-    @produce .raw:10
-    @consume .goods:5
-    @build .raw:10
+    @is .building    
+    @produce = 10*[ 🧱raw ]
+    @consume [🧰goods]
+    @build 10🧱raw
+    10*instances
 
-.mySheet:
-    @is .document .A4Portrait
+.myCards:
+    @is 🃏cardSheet
+    @format 🃏magicsCard
+    @document .A4 .portrait margin:10
     @print .factory:5
-    @left @consume
-    @right @produce
-    @bottom @build
+    @template @left:@consume @right:@produce @bottom:@build

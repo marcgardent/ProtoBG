@@ -1,5 +1,23 @@
 import { Component } from '@angular/core';
-import { readGlossaryFromMarkdown } from './TokenBlock';
+import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
+import { exportAsTypescript } from './lib/tags/TypescriptExporter';
+import { fixTagsDeclaration } from './lib/tags/TagParser';
+import { Pao } from './lib/pao/pao.tags';
+import { GenericCardLayout } from './lib/pao/GenericCardLayout';
+import { Glossary } from './lib/tags/Glossary';
+import { TagExpression } from './lib/tags/TagExpression';
+import { jsPDF } from "jspdf";
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    let img = new Image();
+    img.addEventListener('load', e => resolve(img));
+    img.addEventListener('error', () => {
+      reject(new Error(`Failed to load image's URL: ${url}`));
+    });
+    img.src = url;
+  });
+}
 
 @Component({
   selector: 'app-root',
@@ -9,103 +27,97 @@ import { readGlossaryFromMarkdown } from './TokenBlock';
 export class AppComponent {
   public definitions = [];
 
-  public process() {
-    const ret = readGlossaryFromMarkdown(this.content);
-    this.definitions = ret;
-    console.debug(ret);
+  public processAsSvg() {
+    const data = readGlossaryFromYaml(this.content);
+    fixTagsDeclaration(data);
+
+    const glossary = new Glossary(Pao.metadata, data);
+    const template = new GenericCardLayout(glossary, new TagExpression(glossary));
+    const projects = glossary.search.atLeastOne(Pao.DEFAULTCARDLAYOUT).toList();
+    const promises = [];
+    const preloaded = [];
+    
+    for (let project of projects) {
+      const cards = template.toSvg(project);
+      for (let card of cards) {
+        const imgUrl = "data:image/svg+xml;utf-8," + card.content;
+        const p = loadImage(imgUrl).then((x: HTMLImageElement) => {
+          const canvas = document.createElement("canvas") as HTMLCanvasElement;
+          canvas.height = 700;
+          canvas.width = 500;
+          const context = canvas.getContext("2d");
+          context.fillStyle = "red";
+          context.fillRect(0, 0, 500, 700);
+          context.drawImage(x, 0, 0, 500, 700);
+          preloaded.push({ canvas: canvas, quantity: card.quantity });
+        });
+        promises.push(p);
+      }
+    }
+
+    Promise.all(promises).then(() => {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [50, 70] });
+      for (let item of preloaded) {
+        for (let i = 0; i < item.quantity; i++) {
+          doc.addImage(item.canvas, 0, 0, 50, 70);
+          if (i < item.quantity-1) { doc.addPage(); }
+        }
+      }
+      doc.save();
+    });
+
+    //context.drawImage(img,0,0,500,700);
+
+    // doc.addHTML(img, 0, 0, 50, 70, "alias");
+    // doc.text("hello", 10, 10);
+    // doc.addPage();
+
+    //doc.save();
   }
 
-public content: string = `
 
-# PAO for card game
+  public processAsCode() {
+    const data = readGlossaryFromYaml(this.content);
+    fixTagsDeclaration(data);
+    this.code = exportAsTypescript(data);
+  }
 
-## core concepts
+  public code: string = "{}"
+  public content: string = `
+# example for PAOCard
 
-@is: define a concept
-.pao: Printing tags
+## My domain
 
-.canvas: card define with .width .height .margin .measure
-    @is .pao
+🏭factory:
+    title: the factory
+    description: amazing factory's description
+    tags: 🏢building
+    📈produce: 1🧰goods
+    📉consume: 10🧱raw
+    ⚒️build: 10🧱raw
 
-.width: canvas' width
-    @is .pao
+## Export as cardsheet
 
-.height: canvas' height
-    @is .pao
+⬛myBorders:
+    tags: ⬛borders
+    📏paddings: 2📏mm
+    📏corners: 4📏mm
 
-.margin: canvas' margin
-    @is .pao
+⬛myCardLayout:
+    tags: ⬛defaultCardLayout
+    ⬛left: 📉consume
+    ⬛right: 📈produce
+    ⬛bottom: ⚒️build
+    ⬛borders: ⬛myBorders
+    🃏card: 🃏poker
+    📑for:
+        - { 📑is: 🏭factory, 📐instances: 10 }
 
-.corners: radius corner of canvas 
-    @is .pao
-
-.measure:
-    @is .pao
-
-.document: filled by canvas
-    @is .pao
-
-## definitions out of the box
-
-.A4Portrait:
-    tt is a .page in A4 Format, portrait oriented.
-    @is .pao .page .width:210 .height:297 .margin:10 .mm
-
-.A4Landscape:
-    it is a .page in A4 Format, with Landscape oriented.
-    @is .pao .page .width:297 .height:210 .margin:10 .mm
-
-.mm: millimeter
-    size in .millimeter
-    @is .pao .measure
-
-.inch:
-    size in inch
-    @is .pao .measure
-
-.magicsCard: Magic Card
-    @is .canvas .width:68 .height:84 .mm
-
-.document:
-    is collection of page filled by canvas
-
-## Instance
-
-.factory:
-    @produce .raw:10
-    @consume .goods:5
-    @build .raw:10
-
-.mySheet:
-    @is .document .A4Portrait
-    @print .factory:5
-    @left @consume
-    @right @produce
-    @bottom @build
+📄myCardsheet:
+  tags: 📄cardsheet
+  📑for: { 📑is: ⬛myCardLayout }
+  📄page: 📄A4
+  🔄orientation: 🔄portrait 
 `
 
-public contentTest: string = `
-# test
-
-.tagFull: title
-  description
-  .tagging
-
-.tagDesc: title
-  .tagging
-
-.tagDesc:
-  desc
-  
-.tagShortTagged:
-  .tagging
-
-.tagMin: title
-  .tagging
-
-.tagTitle: title
-
-.tagShortest:
-.tagMin2:
-`
 }
