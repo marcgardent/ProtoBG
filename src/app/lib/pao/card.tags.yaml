@@ -1,0 +1,113 @@
+
+# Playing card Glossary
+
+## abstract concepts
+
+🃏card:
+    description: is playing card
+    tags: ⬜canvas 💠abstract
+    properties: 📏width 📏height
+
+🖨️cardPrinting:
+    description: |
+        is printing of cards 
+        attach 🖨️copies into the request 📑foreach
+    tags: 💠abstract
+    properties: 🃏card 📑foreach
+
+## Cards
+
+🃏magics:
+    title: Magic card format
+    tags: 🃏card
+    📏width: 63.5📏mm
+    📏height: 88.9📏mm
+
+🃏poker:
+    title: poker card format
+    tags: 🃏card
+    📏width: 63📏mm
+    📏height: 89📏mm
+
+🃏bridge:
+    title: bridge card format    
+    tags: 🃏card
+    📏width: 63📏mm
+    📏height: 89📏mm
+
+🃏tarot:
+    title: tarot card format
+    tags: 🃏card
+    📏width: 60📏mm
+    📏height: 113📏mm
+     
+## Card printing
+
+🖨️grid:
+    tag: 🖨️cardPrinting
+  
+🖨️fullBleed:
+    title: full-bleed
+    description: print one card by page without margins
+    tag: 🖨️cardPrinting
+    properties: 📏margins
+
+🖨️review:
+    description: is 🖨️fullBleed but the 🖨️copies statements are ignored
+    tag: 🖨️cardPrinting
+
+## Templating
+
+📐template:
+    description: is reusable template
+    properties: 📐definition
+
+📐definition:
+    description: is definition of a template
+
+📐parameters:
+    title: parameters for 📐template
+    description: it is custom map to define parameters for a 📐template   
+  
+📐cardProject:
+    description: |
+      📑foreach 💠entry the process apply the 📐template  with 📐parameters.
+      therefore it generates collection of 🃏card.
+    properties: 📐template 📐parameters 🃏card 📑foreach
+  
+📐nunjucks:
+    description: it's nunjucks template, see https://mozilla.github.io/nunjucks/
+    tags: 📐template
+    properties: 📐definition
+  
+📐defaultCardTemplate:
+    tags: 📐nunjucks 
+    📐definition: |
+      {% set paddings = '📏paddings' | fromParameters | millimeter  %}
+      {% set corners = '📏corners' | fromParameters | millimeter %}
+      {% set width = '🃏card' | fromPrinting | fromGlossary | get('📏width') | millimeter  %}
+      {% set height = '🃏card' | fromPrinting | fromGlossary | get('📏height') | millimeter  %}
+      {% set contentCorners = corners /2  %}
+      {% set contentWidth = width - (paddings*2)  %}
+      {% set contentHeight = height - (paddings*2)  %}
+      {% set contentHalfWidth = contentWidth/2  %}
+      {% set contentHalfHeight = contentWidth/2  %}
+      
+      {% set lineHeight = 10  %}
+      {% set fontSize = lineHeight-3  %}
+      {% set title = 'name' | fromModel %}
+      {% set icon = 'icon' | fromModel  %}
+      
+      <svg xmlns="http://www.w3.org/2000/svg" 
+      width="{{ width }}"
+      height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
+        <rect x="0" y="0" width="{{width}}" height="{{height}}" rx="4" ry="4" fill="gray"/>
+        <g id="content" class="debug" transform="translate({{paddings}}, {{paddings}})">
+          <rect x="0" y="0"  width="{{contentWidth}}" height="{{contentHeight}}" rx="{{contentCorners}}" ry="{{contentCorners}}" fill="red"
+      stroke="green" stroke-width="0"/>
+          <rect id="title" class="debug" width="{{contentWidth}}" height="{{lineHeight}}" rx="{{contentCorners}}" ry="{{contentCorners}}" fill="green"/>
+          <text text-anchor="middle" x="{{contentHalfWidth}}" y="{{fontSize}}" font-size="{{fontSize}}">
+              {{icon}}{{title}}
+          </text>
+        </g>
+      </svg>

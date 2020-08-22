@@ -10,6 +10,7 @@ import { MyMaterialModule } from './material/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DefinitionComponent } from './definition/definition.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { DefinitionComponent } from './definition/definition.component';
     DefinitionComponent
   ],
   imports: [
+    PdfViewerModule,
     CommonModule,
     HttpClientModule,
     BrowserModule,

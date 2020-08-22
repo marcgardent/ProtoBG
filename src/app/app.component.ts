@@ -33,14 +33,15 @@ export class AppComponent {
 
     const glossary = new Glossary(Pao.metadata, data);
     const template = new GenericCardLayout(glossary, new TagExpression(glossary));
-    const projects = glossary.search.atLeastOne(Pao.DEFAULTCARDLAYOUT).toList();
+    const projects = glossary.search.atLeastOne("TODO PRINTING PROJECT").toList();
     const promises = [];
-    const preloaded = [];
-    
+    const images = [];
+
     for (let project of projects) {
       const cards = template.toSvg(project);
       for (let card of cards) {
-        const imgUrl = "data:image/svg+xml;utf-8," + card.content;
+        //const imgUrl = "data:image/svg+xml;utf-8," + card.content;
+        const imgUrl = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(card.content)));
         const p = loadImage(imgUrl).then((x: HTMLImageElement) => {
           const canvas = document.createElement("canvas") as HTMLCanvasElement;
           canvas.height = 700;
@@ -49,7 +50,7 @@ export class AppComponent {
           context.fillStyle = "red";
           context.fillRect(0, 0, 500, 700);
           context.drawImage(x, 0, 0, 500, 700);
-          preloaded.push({ canvas: canvas, quantity: card.quantity });
+          images.push({ canvas: canvas, quantity: card.quantity });
         });
         promises.push(p);
       }
@@ -57,24 +58,17 @@ export class AppComponent {
 
     Promise.all(promises).then(() => {
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [50, 70] });
-      for (let item of preloaded) {
+      for (let item of images) {
         for (let i = 0; i < item.quantity; i++) {
           doc.addImage(item.canvas, 0, 0, 50, 70);
-          if (i < item.quantity-1) { doc.addPage(); }
+          doc.addPage();
         }
       }
-      doc.save();
+      doc.deletePage(doc.getNumberOfPages());
+      //doc.save();
+      this.pdfSrc =doc.output('datauristring');
     });
-
-    //context.drawImage(img,0,0,500,700);
-
-    // doc.addHTML(img, 0, 0, 50, 70, "alias");
-    // doc.text("hello", 10, 10);
-    // doc.addPage();
-
-    //doc.save();
   }
-
 
   public processAsCode() {
     const data = readGlossaryFromYaml(this.content);
@@ -82,11 +76,16 @@ export class AppComponent {
     this.code = exportAsTypescript(data);
   }
 
-  public code: string = "{}"
+  public pdfSrc: string = "";
+  public code: string = "{}";
+
   public content: string = `
 # example for PAOCard
 
 ## My domain
+
+🧰goods:
+  tags: 🏢building
 
 🏭factory:
     title: the factory
@@ -94,30 +93,40 @@ export class AppComponent {
     tags: 🏢building
     📈produce: 1🧰goods
     📉consume: 10🧱raw
-    ⚒️build: 10🧱raw
+    ⚒️build: 100🧱raw
 
 ## Export as cardsheet
 
-⬛myBorders:
-    tags: ⬛borders
-    📏paddings: 2📏mm
-    📏corners: 4📏mm
+📐myCardLayout:
+    tags: 📐CardLayout
+    📑foreach:
+        - { 📑is: 🏭factory, 🖨️copies: 1}
+        - { 📑is: 🧰goods, 🖨️copies: 1}
+    📐template: 📐myDefaultNunjucks
+    📐parameters:
+      📏paddings: 2📏mm
+      📏corners: 4📏mm
+      ⬛left: 📉consume
+      ⬛right: 📈produce
+      ⬛bottom: ⚒️build
 
-⬛myCardLayout:
-    tags: ⬛defaultCardLayout
-    ⬛left: 📉consume
-    ⬛right: 📈produce
-    ⬛bottom: ⚒️build
-    ⬛borders: ⬛myBorders
-    🃏card: 🃏poker
-    📑for:
-        - { 📑is: 🏭factory, 📐instances: 10 }
-
-📄myCardsheet:
-  tags: 📄cardsheet
-  📑for: { 📑is: ⬛myCardLayout }
+🖨️myGrid:
+  tags: 🖨️grid
+  📑foreach: { 📑is: 📐myCardLayout }
   📄page: 📄A4
-  🔄orientation: 🔄portrait 
-`
+  🃏card: 🃏poker
+  📏margins: 10📏mm
+  🔄orientation: 🔄portrait
 
+🖨️myReview:
+  tags: 🖨️review
+  🃏card: 🃏poker
+  📑foreach: { 📑is: ⬛myCardLayout }
+
+🖨️myFullBleed:
+  tags: 🖨️fullBleed
+  🃏card: 🃏poker
+  📑foreach: { 📑is: ⬛myCardLayout }
+
+`
 }

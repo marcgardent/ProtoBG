@@ -1,4 +1,4 @@
-<h1>GameBench</h1>
+<h1>🏭GameBench</h1>
 
 <button mat-raised-button color="primary" (click)="processAsCode()">as code</button>
 <button mat-raised-button color="primary" (click)="processAsSvg()">as svg</button>
@@ -26,7 +26,8 @@
     <h2>Typescript Export</h2>
     <textarea matInput name="content" [(ngModel)]="code"></textarea>
   </div>
-<div>
-  hello the world
-</div>
+  <div>
+    <h2>PDF Export</h2>
+      <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
+  </div>
 </div>

@@ -1,55 +1,34 @@
 
-# PAO for card game
+# PAO Glossary
 
-## core concepts
+## PAO abstract concepts
 
-📐pao:
+🖨️pao:
   title: PAO namespace
 
 ⬜canvas:
-  title: area
-  tags: 📐pao 💠abstract
-  properties: 📏width 📏height 📏margins 📏corners 📏paddings
+    description: is an rectangle to display something
+    tag: 🖨️pao 💠abstract
 
-📏width:
-    title: canvas' width
-    tags: 📐pao 📏measure 💠property
-
-📏height:
-    title: canvas' height
-    tags: 📐pao 📏measure 💠property
-  
-📏margins:
-    title: canvas' margin
-    tags: 📐pao 📏measure 💠property
-
-📏paddings:
-    title: canvas' paddings
-    tags: 📐pao 📏measure 💠property
-
-📏corners:
-    title: radius corner of canvas 
-    tags: 📐pao 📏measure 💠property
-
-📏measure:
-    title: distance unit
-    tags: 📐pao 📐unit 💠property 💠abstract
-
-📏min:
-    title: is min size of ⬜canvas
-    tags: 📐pao 📏measure 💠property
-
-📏max:
-    title: is max size of ⬜canvas
-    tags: 📐pao 📏measure 💠property
+📄page:
+    alias: pages
+    tags: 🖨️pao ⬜canvas 💠abstract
+    properties: 📏min 📏max
 
 📄document:
-    title: filled by canvas
-    tags: 📐pao
+    description: is collection of 📄pages
+    tags: 🖨️pao
+
+📏unit:
+    tags: 🖨️pao 💠property 💠abstract 
+
+📏distance:
+    title: distance unit
+    tags: 🖨️pao 📏unit 💠property 💠abstract
 
 🔄orientation:
     description: orientation of a 📄page 
-    tags: 📐pao
+    tags: 🖨️pao
 
 🔄landscape:
     description: use .max size for the 📄page's width and .min size for 📄page's height 
@@ -59,97 +38,63 @@
     description: use .min size for the 📄page's width and .max size for 📄page's height
     tags: 🔄orientation
 
-📄page:
-    tags: 📐pao 
-    properties: 📏min 📏max
+🖨️copies:
+    description: quantity printed
+    tags: 🖨️pao
 
-## definitions out of the box
-
-📄A4:
-    description: it is a 📄page in A4 Format.
-    tags: 📐pao 📄page
-    📏min: 210📏mm 
-    📏max: 297📏mm
+## Units
 
 📏mm:
     alias: millimeter
-    description: 📏measure in millimeter
-    tags: 📐pao 📏measure
+    description: 📏distance in millimeter
+    tags: 🖨️pao 📏distance
 
 📏inch:
     alias: inches
-    description: 📏measure in inch
-    tags: 📐pao  
+    description: 📏distance in inch
+    tags: 🖨️pao  
 
-🃏card:
-    description: is standard canvas for playing card
-    tags: 💠abstract
+📏dpi:
+    tags: 🖨️pao 💠property 📏unit
 
-🃏magics:
-    title: Magic card format
-    tags: 🃏card
-    📏width: 63.5📏mm
-    📏height: 88.9📏mm
+## Canvas properties
+    
+📏width:
+    title: ⬜canvas' width
+    tags: 🖨️pao 📏distance 💠property
 
-🃏poker:
-    title: poker card format
-    tags: 🃏card
-    📏width: 63📏mm
-    📏height: 89📏mm
-
-🃏bridge:
-    title: bridge card format    
-    tags: 🃏card
-    📏width: 63📏mm
-    📏height: 89📏mm
-
-🃏tarot:
-    title: tarot card format
-    tags: 🃏card
-    📏width: 60📏mm
-    📏height: 113📏mm
-     
-## Generic card template
-
-⬛borders:
-    tags: 💠abstract
-    properties: 📏paddings 📏margins 📏corners
+📏height:
+    title: ⬜canvas' height
+    tags: 🖨️pao 📏distance 💠property
   
-⬛defaultBorders:
-    tags: ⬛borders
-    📏paddings: 2📏mm
-    📏margins: 2📏mm
-    📏corners: 4📏mm
+📏margins:
+    title: ⬜canvas' margin
+    tags: 🖨️pao 📏distance 💠property
 
-⬛defaultCardLayout:
-    title: card layout
-    description: is generic card template
-    tags: 📐pao 💠abstract
-    properties: ⬛left ⬛right ⬛bottom 📑for ⬛borders 🃏card
+📏bleed:
+    description: is printable 📏margins
 
-📄cardsheet:
-    tags: 📐pao 💠abstract 📄document
-    properties: 📑for 📄page 🔄orientation
+📏paddings:
+    title: ⬜canvas' paddings
+    tags: 🖨️pao 📏distance 💠property
 
-📄deck:
-    description: only one card by page
-    tags: 📄document
-    properties: 📑for
+📏corners:
+    title: radius corner of ⬜canvas 
+    tags: 🖨️pao 📏distance 💠property
 
-📑for:
-    tags: 📑request
+📏min:
+    title: is min side of ⬜canvas
+    tags: 🖨️pao 📏distance 💠property
 
-⬛slot:
-    tags: 💠abstract
+📏max:
+    title: is max side of ⬜canvas
+    tags: 🖨️pao 📏distance 💠property
 
-⬛left:
-    tags: ⬛slot 💠property
+    
+## Pages
 
-⬛right:
-    tags: ⬛slot 💠property
-
-⬛bottom:
-    tags: ⬛slot 💠property
-
-⬜format:
-    tags: ⬜canvas 💠property
+📄A4:
+    description: it is a 📄page in A4 Format.
+    tags: 🖨️pao 📄page
+    📏min: 210📏mm 
+    📏max: 297📏mm
