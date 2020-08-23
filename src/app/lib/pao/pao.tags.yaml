@@ -10,14 +10,12 @@
     description: is an rectangle to display something
     tag: 🖨️pao 💠abstract
 
-📄page:
-    alias: pages
+📄format:
     tags: 🖨️pao ⬜canvas 💠abstract
     properties: 📏min 📏max
 
-📄document:
-    description: is collection of 📄pages
-    tags: 🖨️pao
+📄page:
+    properties: 📄format 🔄orientation
 
 📏unit:
     tags: 🖨️pao 💠property 💠abstract 
@@ -27,15 +25,15 @@
     tags: 🖨️pao 📏unit 💠property 💠abstract
 
 🔄orientation:
-    description: orientation of a 📄page 
+    description: orientation of a 📄format 
     tags: 🖨️pao
 
 🔄landscape:
-    description: use .max size for the 📄page's width and .min size for 📄page's height 
+    description: use .max size for the 📄format's width and .min size for 📄format's height 
     tags: 🔄orientation
 
 🔄portrait:
-    description: use .min size for the 📄page's width and .max size for 📄page's height
+    description: use .min size for the 📄format's width and .max size for 📄format's height
     tags: 🔄orientation
 
 🖨️copies:
@@ -69,12 +67,17 @@
   
 📏margins:
     title: ⬜canvas' margin
+    description: |
+        printing margin 
+        for the consistance of definition it possible to set negative value :
+            * positive 📏margins: is inside the ⬜canvas
+            * negative 📏margins: is outside the ⬜canvas, in another words is the bleed.
     tags: 🖨️pao 📏distance 💠property
 
 📏bleed:
-    description: is printable 📏margins
+    description: is the printable part of 📏margins
 
-📏paddings:
+📏padding:
     title: ⬜canvas' paddings
     tags: 🖨️pao 📏distance 💠property
 
@@ -90,11 +93,79 @@
     title: is max side of ⬜canvas
     tags: 🖨️pao 📏distance 💠property
 
-    
+📏gunter:
+    description: |
+        space between two ⬜canvas
+    tags: 🖨️pao 📏distance 💠property
 ## Pages
 
 📄A4:
-    description: it is a 📄page in A4 Format.
-    tags: 🖨️pao 📄page
+    description: it is a 📄format in A4 Format.
+    tags: 🖨️pao 📄format
     📏min: 210📏mm 
     📏max: 297📏mm
+
+### Cards
+
+🃏card:
+    description: is playing card
+    tags: 🖨️pao 📄format 💠abstract
+
+🃏magics:
+    title: Magic card format
+    tags: 🖨️pao 🃏card
+    📏min: 63.5📏mm
+    📏max: 88.9📏mm
+
+🃏poker:
+    title: poker card format
+    tags: 🖨️pao 🃏card
+    📏min: 63📏mm
+    📏max: 89📏mm
+
+🃏bridge:
+    title: bridge card format    
+    tags: 🖨️pao 🃏card
+    📏min: 63📏mm
+    📏max: 89📏mm
+
+🃏tarot:
+    title: tarot card format
+    tags: 🖨️pao 🃏card
+    📏min: 60📏mm
+    📏max: 113📏mm
+
+## printing
+
+📘document:
+    description: |
+        export as printable document (PDF)
+        attach 🖨️copies into the request 📑foreach
+    tags: 🖨️pao 📐output
+    properties: 📄format 🔄orientation 📏margins 📐template 📐parameters 📑foreach 
+
+🖨️printing:
+    description: print a collection of 📘document
+    properties: 📑foreach 🖨️mode
+    tags: 🖨️pao
+
+🖨️assembly:
+    description: |
+        print a collection of 📘document like  🖨️printing
+        but assemble the 📄pages of document into larger 📄pages as much as possible.
+        sample of layout: `|📏margins|📄page|📏gunter|📄page|📏gunter|📄page|📏margins|`
+    tags: 🖨️pao
+    properties: 📄format 🔄orientation 📏margins 📏gunter 📑foreach 🖨️mode
+  
+🖨️mode:
+    description: printing behavior
+    tags: 🖨️pao
+
+🚀production:
+    tag: 🖨️pao 🖨️mode
+
+🛑review:
+    description: ignore 🖨️copies statement
+    tag: 🖨️pao 🖨️mode
+
+

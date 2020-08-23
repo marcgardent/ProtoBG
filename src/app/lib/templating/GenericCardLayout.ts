@@ -1,9 +1,9 @@
 import * as nunjucks from 'nunjucks';
 import { Glossary } from '../tags/Glossary';
-import { Pao } from './pao.tags';
+import { Pao } from '../pao/pao.tags';
 import { TagExpression } from '../tags/TagExpression';
 import { Meta } from '@angular/platform-browser';
-import { Core } from './meta.tags';
+
 
 export class GenericCardLayout {
 

@@ -3,7 +3,7 @@ import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
 import { exportAsTypescript } from './lib/tags/TypescriptExporter';
 import { fixTagsDeclaration } from './lib/tags/TagParser';
 import { Pao } from './lib/pao/pao.tags';
-import { GenericCardLayout } from './lib/pao/GenericCardLayout';
+import { GenericCardLayout } from './lib/templating/GenericCardLayout';
 import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
 import { jsPDF } from "jspdf";
@@ -80,7 +80,7 @@ export class AppComponent {
   public code: string = "{}";
 
   public content: string = `
-# example for PAOCard
+# example for PAO
 
 ## My domain
 
@@ -95,14 +95,17 @@ export class AppComponent {
     📉consume: 10🧱raw
     ⚒️build: 100🧱raw
 
-## Export as cardsheet
+## printing
 
-📐myCardLayout:
-    tags: 📐CardLayout
+📘myDeck:
+    tags: 📘document 
     📑foreach:
         - { 📑is: 🏭factory, 🖨️copies: 1}
         - { 📑is: 🧰goods, 🖨️copies: 1}
-    📐template: 📐myDefaultNunjucks
+    📐template: 📐myCardTemplate
+    📄format: 🃏poker 
+    🔄orientation: 🔄portrait
+    📏margins : 0📏mm
     📐parameters:
       📏paddings: 2📏mm
       📏corners: 4📏mm
@@ -110,23 +113,50 @@ export class AppComponent {
       ⬛right: 📈produce
       ⬛bottom: ⚒️build
 
-🖨️myGrid:
-  tags: 🖨️grid
-  📑foreach: { 📑is: 📐myCardLayout }
-  📄page: 📄A4
-  🃏card: 🃏poker
-  📏margins: 10📏mm
-  🔄orientation: 🔄portrait
+🖨️myPrinting: 
+  tags: 🖨️printing
+  📑foreach: { 📑is: 📘myDeck }
+  🖨️mode: 🛑review
+  
+🖨️myAssembly:
+  tags: 🖨️assembly
+  📑foreach: { 📑is: 📘myDeck }
+  🖨️mode: 🚀production
+  📄format: 📄A4
+  🔄orientation: 🔄portait
+  📏margins: 10📏mm 
+  📏gunter: 0📏mm 
 
-🖨️myReview:
-  tags: 🖨️review
-  🃏card: 🃏poker
-  📑foreach: { 📑is: ⬛myCardLayout }
 
-🖨️myFullBleed:
-  tags: 🖨️fullBleed
-  🃏card: 🃏poker
-  📑foreach: { 📑is: ⬛myCardLayout }
+📐myCardTemplate:
+  tags: 📐nunjucks 
+  📐definition: |
+    {% set paddings = '📏paddings' | fromParameters | millimeter  %}
+    {% set corners = '📏corners' | fromParameters | millimeter %}
 
+    {% set contentCorners = corners /2  %}
+    {% set contentWidth = width - (paddings*2)  %}
+    {% set contentHeight = height - (paddings*2)  %}
+    {% set contentHalfWidth = contentWidth/2  %}
+    {% set contentHalfHeight = contentWidth/2  %}
+    
+    {% set lineHeight = 10  %}
+    {% set fontSize = lineHeight-3  %}
+    {% set title = 'name' | fromModel %}
+    {% set icon = 'icon' | fromModel  %}
+    
+    <svg xmlns="http://www.w3.org/2000/svg" 
+    width="{{ width }}"
+    height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
+      <rect x="0" y="0" width="{{width}}" height="{{height}}" rx="4" ry="4" fill="gray"/>
+      <g id="content" class="debug" transform="translate({{paddings}}, {{paddings}})">
+        <rect x="0" y="0"  width="{{contentWidth}}" height="{{contentHeight}}" rx="{{contentCorners}}" ry="{{contentCorners}}" fill="red"
+    stroke="green" stroke-width="0"/>
+        <rect id="title" class="debug" width="{{contentWidth}}" height="{{lineHeight}}" rx="{{contentCorners}}" ry="{{contentCorners}}" fill="green"/>
+        <text text-anchor="middle" x="{{contentHalfWidth}}" y="{{fontSize}}" font-size="{{fontSize}}">
+            {{icon}}{{title}}
+        </text>
+      </g>
+    </svg>
 `
 }
