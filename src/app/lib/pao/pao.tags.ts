@@ -40,8 +40,8 @@ export class Pao{
   public static ABSTRACT = "💠abstract";
   public static PROPERTY = "💠property";
   public static OUTPUT = "📐output";
-
-
+  public static DENSITY = "📏density";
+  
   public static metadata = {
    "🖨️pao" : {"title":"PAO namespace","name":"pao","icon":"🖨️","codeName":"PAO","tags":[]},
    "⬜canvas" : {"description":"is an rectangle to display something","tag":"🖨️pao 💠abstract","name":"canvas","icon":"⬜","codeName":"CANVAS","tags":[]},

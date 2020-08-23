@@ -5,8 +5,26 @@ export class TagExpression {
 
     }
 
+    public mandatoryValueAt(entry:any, tag: string){
+        if(entry[tag] == undefined) {
+            console.error("except the property:", tag, "in the entry:", entry);
+            throw Error("except the property:"+ tag);
+        }
+        return entry[tag];
+    }
+
+    public mandatoryReferenceAt(entry:any, tag: string){
+        const ref =this.mandatoryValueAt(entry, tag);
+        const val = this.glossary.get(ref);
+        if(val == undefined){
+            console.error("except the entry named:", tag, "in the glossary");
+            throw Error("except the entry named:"+ tag);
+        }
+        return val;
+    }
+
     public quantityOf(exp: string) {
-        const parsed = exp.match(/^(\d+(\.\d+)?)(\W+\w+)?$/);
+        const parsed = exp.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
         if (parsed) {
             return {
                 value: parseFloat(parsed[1]),

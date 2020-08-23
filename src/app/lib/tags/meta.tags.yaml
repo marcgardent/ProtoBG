@@ -28,3 +28,7 @@
     
 📑request:
     description: is request
+
+📑foreach:
+    description: to do something for each entry of the 📑request 
+    tags: 📑request 

@@ -24,6 +24,9 @@
     title: distance unit
     tags: 🖨️pao 📏unit 💠property 💠abstract
 
+📏density:
+    tags: 🖨️pao 📏unit 💠property 💠abstract
+
 🔄orientation:
     description: orientation of a 📄format 
     tags: 🖨️pao
@@ -50,10 +53,10 @@
 📏inch:
     alias: inches
     description: 📏distance in inch
-    tags: 🖨️pao  
+    tags: 🖨️pao  📏distance
 
 📏dpi:
-    tags: 🖨️pao 💠property 📏unit
+    tags: 🖨️pao 📏density
 
 ## Canvas properties
     
@@ -63,22 +66,6 @@
 
 📏height:
     title: ⬜canvas' height
-    tags: 🖨️pao 📏distance 💠property
-  
-📏margins:
-    title: ⬜canvas' margin
-    description: |
-        printing margin 
-        for the consistance of definition it possible to set negative value :
-            * positive 📏margins: is inside the ⬜canvas
-            * negative 📏margins: is outside the ⬜canvas, in another words is the bleed.
-    tags: 🖨️pao 📏distance 💠property
-
-📏bleed:
-    description: is the printable part of 📏margins
-
-📏padding:
-    title: ⬜canvas' paddings
     tags: 🖨️pao 📏distance 💠property
 
 📏corners:
@@ -139,23 +126,23 @@
 
 📘document:
     description: |
-        export as printable document (PDF)
+        generate a collection of 📄pages with a 📐template 
         attach 🖨️copies into the request 📑foreach
     tags: 🖨️pao 📐output
-    properties: 📄format 🔄orientation 📏margins 📐template 📐parameters 📑foreach 
+    properties: 📄format 🔄orientation 📏paddings 📏bleeds 📐template 📐parameters 📑foreach 
 
 🖨️printing:
     description: print a collection of 📘document
-    properties: 📑foreach 🖨️mode
+    properties: 📑foreach 🖨️mode 📏margins
     tags: 🖨️pao
 
-🖨️assembly:
-    description: |
-        print a collection of 📘document like  🖨️printing
-        but assemble the 📄pages of document into larger 📄pages as much as possible.
-        sample of layout: `|📏margins|📄page|📏gunter|📄page|📏gunter|📄page|📏margins|`
-    tags: 🖨️pao
-    properties: 📄format 🔄orientation 📏margins 📏gunter 📑foreach 🖨️mode
+# 🖨️assembly:
+#     description: |
+#         print a collection of 📘document like  🖨️printing
+#         but assemble the 📄pages of document into larger 📄pages as much as possible.
+#         sample of layout: `|📏margins|📏gunter|📄page|📏gunter|📄page|📏gunter|📄page|📏gunter|📏margins|`
+#     tags: 🖨️pao
+#     properties: 📄format 🔄orientation 📏margins 📏gunter 📑foreach 🖨️mode
   
 🖨️mode:
     description: printing behavior
@@ -168,4 +155,39 @@
     description: ignore 🖨️copies statement
     tag: 🖨️pao 🖨️mode
 
+## Printing Boxes
 
+⬜box:
+    description: |
+        ⬜mediaBox > ⬜bleedBox > ⬜trimBox > ⬜artBox
+
+⬜mediaBox:
+    description: the physical support
+    
+⬜bleedBox:
+    description: bleed
+    
+⬜trimBox:
+    description: The ⬜trimBox defines the intended dimensions of the finished page
+
+⬜artBox:
+    description: safe zone
+
+➕marks:
+    description: trim marks
+
+📏margins:
+    description: |
+        space between ⬜mediaBox and ⬜bleedBox 
+        use to add ➕marks and metadata.
+    tags: 🖨️pao 📏distance 💠property
+
+📏bleeds:
+    description: |
+        bleed is where printing goes all the way to the edge of the page. 
+        space between ⬜bleedBox and ⬜trimBox
+    tags: 🖨️pao 📏distance 💠property
+
+📏paddings:
+    description: space between ⬜trimBox ⬜artBox
+    tags: 🖨️pao 📏distance 💠property
