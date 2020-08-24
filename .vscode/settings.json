@@ -3,8 +3,12 @@
         "artbox",
         "bleedbox",
         "cardsheet",
+        "datauristring",
         "mediabox",
         "templating",
-        "trimbox"
+        "trimbox",
+        "xmin",
+        "xstep",
+        "ystep"
     ]
 }

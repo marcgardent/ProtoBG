@@ -1,7 +1,6 @@
 
-
 /** auto generated */
-export class Pao {
+export class Pao{
 
   public static PAO = "🖨️pao";
   public static CANVAS = "⬜canvas";
@@ -22,15 +21,18 @@ export class Pao {
   public static CORNERS = "📏corners";
   public static MIN = "📏min";
   public static MAX = "📏max";
-  public static GUNTER = "📏gunter";
+  public static GUTTERS = "📏gutters";
   public static A4 = "📄A4";
   public static CARD = "🃏card";
   public static MAGICS = "🃏magics";
   public static POKER = "🃏poker";
   public static BRIDGE = "🃏bridge";
   public static TAROT = "🃏tarot";
+  public static LAYOUT = "⏹layout";
+  public static DEFAULTLAYOUT = "⏹defaultLayout";
   public static DOCUMENT = "📘document";
   public static PRINTING = "🖨️printing";
+  public static ASSEMBLY = "🖨️assembly";
   public static MODE = "🖨️mode";
   public static PRODUCTION = "🚀production";
   public static REVIEW = "🛑review";
@@ -51,8 +53,8 @@ export class Pao {
   public static metadata = {
    "🖨️pao" : {"title":"PAO namespace","name":"pao","icon":"🖨️","codeName":"PAO","tags":[]},
    "⬜canvas" : {"description":"is an rectangle to display something","tag":"🖨️pao 💠abstract","name":"canvas","icon":"⬜","codeName":"CANVAS","tags":[]},
-   "📄format" : {"tags":["🖨️pao","⬜canvas","💠abstract"],"properties":"📏min 📏max","name":"format","icon":"📄","codeName":"FORMAT"},
-   "📄page" : {"properties":"📄format 🔄orientation","name":"page","icon":"📄","codeName":"PAGE","tags":[]},
+   "📄format" : {"tags":["🖨️pao","💠abstract"],"properties":"📏min 📏max","name":"format","icon":"📄","codeName":"FORMAT"},
+   "📄page" : {"tags":["🖨️pao","⬜canvas"],"name":"page","icon":"📄","codeName":"PAGE"},
    "📏unit" : {"tags":["🖨️pao","💠property","💠abstract"],"name":"unit","icon":"📏","codeName":"UNIT"},
    "📏distance" : {"title":"distance unit","tags":["🖨️pao","📏unit","💠property","💠abstract"],"name":"distance","icon":"📏","codeName":"DISTANCE"},
    "📏density" : {"tags":["🖨️pao","📏unit","💠property","💠abstract"],"name":"density","icon":"📏","codeName":"DENSITY"},
@@ -68,15 +70,18 @@ export class Pao {
    "📏corners" : {"title":"radius corner of ⬜canvas","tags":["🖨️pao","📏distance","💠property"],"name":"corners","icon":"📏","codeName":"CORNERS"},
    "📏min" : {"title":"is min side of ⬜canvas","tags":["🖨️pao","📏distance","💠property"],"name":"min","icon":"📏","codeName":"MIN"},
    "📏max" : {"title":"is max side of ⬜canvas","tags":["🖨️pao","📏distance","💠property"],"name":"max","icon":"📏","codeName":"MAX"},
-   "📏gunter" : {"description":"space between two ⬜canvas\n","tags":["🖨️pao","📏distance","💠property"],"name":"gunter","icon":"📏","codeName":"GUNTER"},
+   "📏gutters" : {"description":"space between two ⬜canvas\n","tags":["🖨️pao","📏distance","💠property"],"name":"gutters","icon":"📏","codeName":"GUTTERS"},
    "📄A4" : {"description":"it is a 📄format in A4 Format.","tags":["🖨️pao","📄format"],"📏min":"210📏mm","📏max":"297📏mm","name":"A4","icon":"📄","codeName":"A4"},
    "🃏card" : {"description":"is playing card","tags":["🖨️pao","📄format","💠abstract"],"name":"card","icon":"🃏","codeName":"CARD"},
    "🃏magics" : {"title":"Magic card format","tags":["🖨️pao","🃏card"],"📏min":"63.5📏mm","📏max":"88.9📏mm","name":"magics","icon":"🃏","codeName":"MAGICS"},
    "🃏poker" : {"title":"poker card format","tags":["🖨️pao","🃏card"],"📏min":"63📏mm","📏max":"89📏mm","name":"poker","icon":"🃏","codeName":"POKER"},
    "🃏bridge" : {"title":"bridge card format","tags":["🖨️pao","🃏card"],"📏min":"63📏mm","📏max":"89📏mm","name":"bridge","icon":"🃏","codeName":"BRIDGE"},
    "🃏tarot" : {"title":"tarot card format","tags":["🖨️pao","🃏card"],"📏min":"60📏mm","📏max":"113📏mm","name":"tarot","icon":"🃏","codeName":"TAROT"},
-   "📘document" : {"description":"generate a collection of 📄pages with a 📐template \nattach 🖨️copies into the request 📑foreach\n","tags":["🖨️pao","📐output"],"properties":"📄format 🔄orientation 📏paddings 📏bleeds 📐template 📐parameters 📑foreach","name":"document","icon":"📘","codeName":"DOCUMENT"},
+   "⏹layout" : {"description":"by defaut ⏹defaultLayout are used.\n","tags":["🖨️pao","💠property"],"properties":"📄format 🔄orientation 📏paddings 📏bleeds 📏corners","name":"layout","icon":"⏹","codeName":"LAYOUT"},
+   "⏹defaultLayout" : {"tags":["🖨️pao","⏹layout"],"📄page":"📄A4 🔄portrait","📏paddings":"0📏mm","📏bleeds":"0📏mm","📏corners":"0📏mm","name":"defaultLayout","icon":"⏹","codeName":"DEFAULTLAYOUT"},
+   "📘document" : {"description":"generate a collection of fullbleed art1work with a 📐template \nattach 🖨️copies into the request 📑foreach\n","tags":["🖨️pao","📐output"],"properties":"⏹layout 📐template 📐parameters 📑foreach","name":"document","icon":"📘","codeName":"DOCUMENT"},
    "🖨️printing" : {"description":"print a collection of 📘document","properties":"📑foreach 🖨️mode 📏margins","tags":["🖨️pao"],"name":"printing","icon":"🖨️","codeName":"PRINTING"},
+   "🖨️assembly" : {"description":"print a collection of 📘document like  🖨️printing\nbut assemble the 📄pages of document into larger 📄pages as much as possible.\nsample of layout: `|📏margins|📏gutters|📄page|📏gutters|📄page|📏gutters|📄page|📏gutters|📏margins|`\n","tags":["🖨️pao"],"properties":"📄format 🔄orientation 📏margins 📏gutters 📑foreach 🖨️mode","name":"assembly","icon":"🖨️","codeName":"ASSEMBLY"},
    "🖨️mode" : {"description":"printing behavior","tags":["🖨️pao"],"name":"mode","icon":"🖨️","codeName":"MODE"},
    "🚀production" : {"tag":"🖨️pao 🖨️mode","name":"production","icon":"🚀","codeName":"PRODUCTION","tags":[]},
    "🛑review" : {"description":"ignore 🖨️copies statement","tag":"🖨️pao 🖨️mode","name":"review","icon":"🛑","codeName":"REVIEW","tags":[]},

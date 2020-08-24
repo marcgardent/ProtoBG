@@ -5,7 +5,7 @@ import { fixTagsDeclaration } from './lib/tags/TagParser';
 import { Pao } from './lib/pao/pao.tags';
 import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
-import { printingFactory } from './lib/pao/printingFactory';
+import { PaoContext } from './lib/pao/PaoContext';
 
 
 @Component({
@@ -20,9 +20,11 @@ export class AppComponent {
     const data = readGlossaryFromYaml(this.content);
     fixTagsDeclaration(data);
     const glossary = new Glossary(Pao.metadata, data);
-    const printing = glossary.get("🖨️myPrinting");
-    const p = printingFactory(glossary, new TagExpression(glossary), printing);
-    
+    const pao = new PaoContext(glossary, new TagExpression(glossary));
+
+    const printing = glossary.get("🖨️myAssembly");
+    const p = pao.entryAsPrinting(printing);
+
     p.toPdf().then(x => {
       this.pdfSrc = x;
     });
@@ -61,17 +63,22 @@ export class AppComponent {
     📑foreach:
         - { 📑is: 🏭factory, 🖨️copies: 1}
         - { 📑is: 🧰goods, 🖨️copies: 1}
+    ⏹layout: ⏹myLayout
     📐template: 📐debugTemplate
     📐parameters:
-      font: 10
       ⬛left: 📉consume
       ⬛right: 📈produce
       ⬛bottom: ⚒️build
-    📄format: 🃏poker 
-    🔄orientation: 🔄portrait
-    📏paddings: 10📏mm
-    📏bleeds: 5📏mm
-    📏corners: 4📏mm
+
+⏹myLayout:
+  description: accordingly the https://printeurope.fr specification
+  tags: ⏹layout
+  📄format: 🃏poker 
+  🔄orientation: 🔄portrait
+  📏paddings: 4📏mm
+  📏bleeds: 2📏mm
+  📏corners: 4📏mm
+
 
 🖨️myPrinting: 
   tags: 🖨️printing
@@ -87,15 +94,15 @@ export class AppComponent {
   📄format: 📄A4
   🔄orientation: 🔄portait
   📏margins: 10📏mm 
-  📏gunter: 0📏mm 
+  📏gutters: 0📏mm 
   📏density: 300📏dpi  
 
 📐debugTemplate:
   tags: 📐nunjucks 
   📐definition: |
     <svg xmlns="http://www.w3.org/2000/svg" 
-    width="{{ mediabox.width }}"
-    height="{{ mediabox.height }}" viewBox="0 0 {{ mediabox.width }} {{ mediabox.height }}">
+    width="{{ width }}"
+    height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
       <g id="bleedLayer" transform="translate({{bleedbox.x}}, {{bleedbox.y}})">
         <rect id="bleedbox" x="0" y="0" width="{{bleedbox.width}}" height="{{bleedbox.height}}" fill="lightgreen"/>
       </g>
@@ -132,8 +139,8 @@ export class AppComponent {
     {% set icon = 'icon' | fromModel  %}
     
     <svg xmlns="http://www.w3.org/2000/svg" 
-    width="{{ mediabox.width }}"
-    height="{{ mediabox.height }}" viewBox="0 0 {{ mediabox.width }} {{ mediabox.height }}">
+    width="{{ width }}"
+    height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
       <rect x="0" y="0" width="{{width}}" height="{{height}}" rx="4" ry="4" fill="gray"/>
       <g id="content" class="debug" transform="translate({{paddings}}, {{paddings}})">
         <rect x="0" y="0"  width="{{contentWidth}}" height="{{contentHeight}}" rx="{{contentCorners}}" ry="{{contentCorners}}" fill="red"

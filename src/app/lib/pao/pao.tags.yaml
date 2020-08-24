@@ -11,11 +11,18 @@
     tag: 🖨️pao 💠abstract
 
 📄format:
-    tags: 🖨️pao ⬜canvas 💠abstract
+    tags: 🖨️pao 💠abstract
     properties: 📏min 📏max
 
+
 📄page:
-    properties: 📄format 🔄orientation
+    tags: 🖨️pao ⬜canvas
+
+# 📄page:
+#     description: |
+#         set 📄page's 💠property inline: `📄format 🔄orientation`
+#     tags: ⬜canvas 💠property
+#     properties: 📄format 🔄orientation
 
 📏unit:
     tags: 🖨️pao 💠property 💠abstract 
@@ -80,7 +87,7 @@
     title: is max side of ⬜canvas
     tags: 🖨️pao 📏distance 💠property
 
-📏gunter:
+📏gutters:
     description: |
         space between two ⬜canvas
     tags: 🖨️pao 📏distance 💠property
@@ -124,25 +131,38 @@
 
 ## printing
 
+⏹layout:
+    description: |
+        by defaut ⏹defaultLayout are used.
+    tags: 🖨️pao  💠property  
+    properties: 📄format 🔄orientation 📏paddings 📏bleeds 📏corners
+
+⏹defaultLayout:
+    tags: 🖨️pao ⏹layout 
+    📄page: 📄A4 🔄portrait
+    📏paddings: 0📏mm
+    📏bleeds: 0📏mm
+    📏corners: 0📏mm
+
 📘document:
     description: |
-        generate a collection of 📄pages with a 📐template 
+        generate a collection of fullbleed art1work with a 📐template 
         attach 🖨️copies into the request 📑foreach
     tags: 🖨️pao 📐output
-    properties: 📄format 🔄orientation 📏paddings 📏bleeds 📐template 📐parameters 📑foreach 
+    properties: ⏹layout 📐template 📐parameters 📑foreach 
 
 🖨️printing:
     description: print a collection of 📘document
     properties: 📑foreach 🖨️mode 📏margins
     tags: 🖨️pao
 
-# 🖨️assembly:
-#     description: |
-#         print a collection of 📘document like  🖨️printing
-#         but assemble the 📄pages of document into larger 📄pages as much as possible.
-#         sample of layout: `|📏margins|📏gunter|📄page|📏gunter|📄page|📏gunter|📄page|📏gunter|📏margins|`
-#     tags: 🖨️pao
-#     properties: 📄format 🔄orientation 📏margins 📏gunter 📑foreach 🖨️mode
+🖨️assembly:
+    description: |
+        print a collection of 📘document like  🖨️printing
+        but assemble the 📄pages of document into larger 📄pages as much as possible.
+        sample of layout: `|📏margins|📏gutters|📄page|📏gutters|📄page|📏gutters|📄page|📏gutters|📏margins|`
+    tags: 🖨️pao
+    properties: 📄format 🔄orientation 📏margins 📏gutters 📑foreach 🖨️mode
   
 🖨️mode:
     description: printing behavior
