@@ -32,7 +32,8 @@ export class Printing {
         );
     }
 
-    public toPdf(): Promise<string> {
+    public toCanvas(): { ready: Promise<any>, images: Array<{ canvas: HTMLCanvasElement, copies: number, layout: any }> } {
+
         const promises = [];
         const images = [];
 
@@ -43,45 +44,62 @@ export class Printing {
                 const imgUrl = page.content;
                 const p = loadImage(imgUrl).then((x: HTMLImageElement) => {
                     const canvas = document.createElement("canvas") as HTMLCanvasElement;
-
-                    canvas.height = page.height / 25.4 * this.density.value; // TODO unit
-                    canvas.width = page.width / 25.4 * this.density.value; // TODO unit
-
+                    canvas.height = page.layout.mediabox.height / 25.4 * this.density.value; // TODO unit
+                    canvas.width = page.layout.mediabox.width / 25.4 * this.density.value; // TODO unit
                     const context = canvas.getContext("2d");
-                    context.fillStyle = "red";
-                    context.fillRect(0, 0, canvas.width, canvas.height);
+
+                    //context.fillStyle = "red";
+                    //context.fillRect(0, 0, canvas.width, canvas.height);
+
                     context.drawImage(x, 0, 0, canvas.width, canvas.height);
                     images.push({
                         canvas: canvas,
                         copies: page.copies,
-                        width: page.width,
-                        height: page.height,
+                        layout: page.layout
                     });
                 });
                 promises.push(p);
             }
         }
+        return {
+            ready: Promise.all(promises),
+            images: images
+        }
+    }
 
-        return Promise.all(promises).then(() => {
+    private box(box: any, scale: number) {
+        return {
+            bottomLeftX: box.x * scale,
+            bottomLeftY: box.y * scale,
+            topRightX: (box.x + box.width) * scale,
+            topRightY: (box.x + box.height) * scale
+        }
+    }
+
+    public toPdf(): Promise<string> {
+        const canvas = this.toCanvas();
+        const images = canvas.images;
+        return canvas.ready.then(() => {
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [10, 10] });
             for (let item of images) {
                 const copies = this.mode == Pao.REVIEW ? 1 : item.copies;
-
                 for (let i = 0; i < copies; i++) {
-                    doc.addPage([item.width + this.margins.value * 2, item.height + this.margins.value * 2], 'portrait');
+                    doc.addPage(
+                        [
+                            item.layout.mediabox.width + this.margins.value * 2,
+                            item.layout.mediabox.height + this.margins.value * 2
+                        ], 'portrait');
                     const page = doc.getCurrentPageInfo();
-                    // const scale = 72 / 25.4; //mm
-                    // page.pageContext.trimBox = { bottomLeftX: 10 * scale, bottomLeftY: 10 * scale, topRightX: 40 * scale, topRightY: 60 * scale }
-                    // page.pageContext.bleedBox = { bottomLeftX: 12 * scale, bottomLeftY: 12 * scale, topRightX: 38 * scale, topRightY: 58 * scale }
-                    // page.pageContext.artBox = { bottomLeftX: 14 * scale, bottomLeftY: 14 * scale, topRightX: 36 * scale, topRightY: 56 * scale }
-                    
-                    doc.addImage(item.canvas, this.margins.value, this.margins.value, item.width, item.height);
 
+                    const scale = 72 / 25.4; //mm TODO unit system
+                    page.pageContext.bleedBox = this.box(item.layout.bleedbox, scale);
+                    page.pageContext.trimBox = this.box(item.layout.trimbox, scale);
+                    page.pageContext.artBox = this.box(item.layout.artbox, scale);
+                    doc.addImage(item.canvas, this.margins.value, this.margins.value, item.layout.mediabox.width, item.layout.mediabox.height);
                 }
             }
-            
+
             doc.deletePage(1);
-            //doc.save();
             return doc.output('datauristring');
         });
     }

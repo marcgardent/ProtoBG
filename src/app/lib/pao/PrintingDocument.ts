@@ -65,8 +65,7 @@ export class PrintingDocument {
     public toImages(): {
         content: string;
         copies: number;
-        width: number;
-        height: number;
+        layout : any;
     }[] {
         const ret = new Array();
         for (let source of this.foreachEntries) {
@@ -75,8 +74,7 @@ export class PrintingDocument {
             ret.push({
                 content: "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content))),
                 copies: copies,
-                width:  this.layout.mediabox.width,
-                height: this.layout.mediabox.height
+                layout: this.layout
             });
         }
         return ret;
