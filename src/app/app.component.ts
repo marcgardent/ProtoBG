@@ -61,7 +61,7 @@ export class AppComponent {
 📘myDeck:
     tags: 📘document 
     📑foreach:
-        - { 📑is: 🏭factory, 🖨️copies: 1}
+        - { 📑is: 🏭factory, 🖨️copies: 10}
         - { 📑is: 🧰goods, 🖨️copies: 1}
     ⏹layout: ⏹myLayout
     📐template: 📐debugTemplate
@@ -92,9 +92,9 @@ export class AppComponent {
   📑foreach: { 📑is: 📘myDeck }
   🖨️mode: 🚀production
   📄format: 📄A4
-  🔄orientation: 🔄portait
+  🔄orientation: 🔄landscape
   📏margins: 10📏mm 
-  📏gutters: 0📏mm 
+  📏gutters: 5📏mm 
   📏density: 300📏dpi  
 
 📐debugTemplate:

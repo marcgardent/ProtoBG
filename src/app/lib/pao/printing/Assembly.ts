@@ -22,12 +22,13 @@ export class Assembly implements IPrinting {
     public toPdf(): Promise<string> {
         const { ready, images } = this.printing.toCanvas();
         return ready.then(() => {
-            const doc = new jsPDF({ format: [this.page.width, this.page.height], unit: "mm" });
+            debugger;
+            const doc = new jsPDF({ format: [this.page.width, this.page.height],  unit: "mm",
+              orientation : this.page.width > this.page.height ? "landscape" : "portrait" });
             const x = this.margins.value;
             const y = this.margins.value;
             const width = this.page.width - this.margins.value * 2;
             const height = this.page.height - this.margins.value * 2;
-
             if (images.length > 0) {
                 const layout = images[0].layout;
                 // TODO check all layout
@@ -39,23 +40,27 @@ export class Assembly implements IPrinting {
                     const ymax = this.margins.value + height;
                     const xstep = layout.width;
                     const ystep = layout.height;
-                    let x = xmin;
+                    let x = xmin - this.gutters.value;
                     let y = ymin;
 
                     for (let item of this.printing.enumerateCopies(images)) {
-                        // new row
+                        // new row ?
                         if (x + xstep > xmax) {
                             x = xmin;
-                            y += ystep;
+                            y += ystep + this.gutters.value;
+                            // new page?
+                            if (y + ystep > ymax) {
+                                x = xmin;
+                                y = ymin;
+                                doc.addPage([this.page.width, this.page.height])
+                            }
+                        }
+                        else {
+                            x += this.gutters.value;
                         }
 
-                        // new page
-                        if (y + ystep > ymax) {
-                            x = xmin;
-                            y = ymin;
-                            doc.addPage([this.page.width, this.page.height])
-                        }
-                        doc.addImage(item.canvas, x, y, layout.width, layout.height);
+                        this.printing.drawImage(doc, item.canvas, this.gutters.value, layout.trimbox, x, y, item.layout.width, item.layout.height);
+
                         x += xstep;
                     }
                 }
@@ -64,7 +69,7 @@ export class Assembly implements IPrinting {
                 }
             }
 
-            doc.save();
+            //doc.save();
             return doc.output('datauristring');
         });
     }

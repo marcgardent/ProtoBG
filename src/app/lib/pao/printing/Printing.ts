@@ -109,31 +109,34 @@ export class Printing implements IPrinting {
                 page.pageContext.trimBox = this.box(item.layout.trimbox, scale);
                 page.pageContext.artBox = this.box(item.layout.artbox, scale);
 
-                {
-                    doc.setLineWidth(0.5);
-
-                    const v1 = this.margins.value + item.layout.trimbox.x;
-                    const v2 = this.margins.value + item.layout.trimbox.x + item.layout.trimbox.width;
-                    const h1 = this.margins.value + item.layout.trimbox.y;
-                    const h2 = this.margins.value + item.layout.trimbox.y + item.layout.trimbox.height;
-
-                    doc.line(v1, 0, v1, height);
-                    doc.line(v2, 0, v2, height);
-                    doc.line(0, h1, width, h1);
-                    doc.line(0, h2, width, h2);
-
-                    doc.setFillColor(255, 255, 255);
-                    doc.rect(this.margins.value, this.margins.value, item.layout.bleedbox.width, item.layout.bleedbox.height, 'F');
-                }
-
-                doc.addImage(item.canvas, this.margins.value, this.margins.value, item.layout.width, item.layout.height);
-
-
-
+                this.drawImage(doc, item.canvas, this.margins.value, item.layout.trimbox, this.margins.value, this.margins.value, item.layout.width, item.layout.height);
             }
 
             doc.deletePage(1);
             return doc.output('datauristring');
         });
+    }
+    
+    drawImage(doc: jsPDF, image: HTMLCanvasElement, trimSize:number, trimbox: any, x: number, y: number, width: number, height: number) {
+        {
+            const trimWidth = 0.5;//TODO Model with Default value
+            doc.setLineWidth(trimWidth);
+
+            const v1 = x + trimbox.x;
+            const v2 = x + trimbox.x+ trimbox.width;
+            const h1 = y + trimbox.y;
+            const h2 = y + trimbox.x+trimbox.height;
+
+            doc.line(v1, y - trimSize, v1, y + height + trimSize);
+            doc.line(v2, y - trimSize, v2, y + height + trimSize);
+            
+            doc.line(x - trimSize, h1, x + width + trimSize, h1);
+            doc.line(x - trimSize, h2, x + width + trimSize, h2);
+
+            doc.setFillColor(255, 255, 0);
+            doc.rect(x, y, width, height, 'F');
+        }
+
+        doc.addImage(image, x, y, width, height);
     }
 }
