@@ -5,16 +5,6 @@ import { PrintingDocument } from '../PrintingDocument';
 import { Pao } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
 
-function loadImage(url) {
-    return new Promise((resolve, reject) => {
-        let img = new Image();
-        img.addEventListener('load', e => resolve(img));
-        img.addEventListener('error', () => {
-            reject(new Error(`Failed to load image's URL: ${url}`));
-        });
-        img.src = url;
-    });
-}
 
 export class Printing implements IPrinting {
     private readonly foreachEntries: any[];
@@ -44,7 +34,7 @@ export class Printing implements IPrinting {
 
             for (let page of doc.toImages()) {
                 const imgUrl = page.content;
-                const p = loadImage(imgUrl).then((x: HTMLImageElement) => {
+                const p = this.loadImage(imgUrl).then((x: HTMLImageElement) => {
                     const canvas = document.createElement("canvas") as HTMLCanvasElement;
                     canvas.height = page.layout.height / 25.4 * this.density.value; // TODO unit
                     canvas.width = page.layout.width / 25.4 * this.density.value; // TODO unit
@@ -52,7 +42,6 @@ export class Printing implements IPrinting {
 
                     //context.fillStyle = "red";
                     //context.fillRect(0, 0, canvas.width, canvas.height);
-
                     context.drawImage(x, 0, 0, canvas.width, canvas.height);
                     images.push({
                         canvas: canvas,
@@ -109,34 +98,47 @@ export class Printing implements IPrinting {
                 page.pageContext.trimBox = this.box(item.layout.trimbox, scale);
                 page.pageContext.artBox = this.box(item.layout.artbox, scale);
 
-                this.drawImage(doc, item.canvas, this.margins.value, item.layout.trimbox, this.margins.value, this.margins.value, item.layout.width, item.layout.height);
+                this.drawTrimLines(doc, item.canvas, this.margins.value, item.layout.trimbox, this.margins.value, this.margins.value, item.layout.width, item.layout.height);
+                doc.addImage(item.canvas, this.margins.value, this.margins.value, item.layout.width, item.layout.height)
             }
 
             doc.deletePage(1);
             return doc.output('datauristring');
         });
     }
-    
-    drawImage(doc: jsPDF, image: HTMLCanvasElement, trimSize:number, trimbox: any, x: number, y: number, width: number, height: number) {
+
+
+    loadImage(url) {
+        return new Promise<HTMLImageElement>((resolve, reject) => {
+            let img = new Image();
+            img.addEventListener('load', e => resolve(img));
+            img.addEventListener('error', () => {
+                reject(new Error(`Failed to load image's URL: ${url}`));
+            });
+            img.src = url;
+        });
+    }
+
+    drawTrimLines(doc: jsPDF, image: HTMLCanvasElement, trimSize: number, trimbox: any, x: number, y: number, width: number, height: number) {
         {
             const trimWidth = 0.5;//TODO Model with Default value
             doc.setLineWidth(trimWidth);
 
             const v1 = x + trimbox.x;
-            const v2 = x + trimbox.x+ trimbox.width;
+            const v2 = x + trimbox.x + trimbox.width;
             const h1 = y + trimbox.y;
-            const h2 = y + trimbox.x+trimbox.height;
+            const h2 = y + trimbox.x + trimbox.height;
 
             doc.line(v1, y - trimSize, v1, y + height + trimSize);
             doc.line(v2, y - trimSize, v2, y + height + trimSize);
-            
+
             doc.line(x - trimSize, h1, x + width + trimSize, h1);
             doc.line(x - trimSize, h2, x + width + trimSize, h2);
 
             doc.setFillColor(255, 255, 0);
-            doc.rect(x, y, width, height, 'F');
+
+            //doc.rect(x, y, width, height, 'F');
         }
 
-        doc.addImage(image, x, y, width, height);
     }
 }

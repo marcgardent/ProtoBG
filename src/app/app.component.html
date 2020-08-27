@@ -1,33 +1,40 @@
-<h1>🏭GameBench</h1>
+<div id="wrapper">
 
-<button mat-raised-button color="primary" (click)="processAsCode()">as code</button>
-<button mat-raised-button color="primary" (click)="processAsSvg()">as svg</button>
-<div class="layout">
-  <div class="editor">
-    <h2>text plain</h2>
-    <form>
-      <textarea #editor matInput name="content" [(ngModel)]="content"></textarea>
-    </form>
-  </div>
-  <!-- <div>
-    <h2>glossary parsed</h2>
-    <ng-container *ngFor="let item of definitions">
-      <app-definition *ngIf="item.type=='entry'" [data]="item"></app-definition>
-      <div style="color:gray" *ngIf="item.type=='markdown'">
-        {{item.data}}
-      </div> 
-    </ng-container>
-  </div> -->
-  <!-- <div class="doc">
-    <h2>Markdown rendering</h2>
-    <markdown [data]="content"></markdown>
-  </div> -->
-  <div>
-    <h2>Typescript Export</h2>
-    <textarea matInput name="content" [(ngModel)]="code"></textarea>
-  </div>
-  <div>
-    <h2>PDF Export</h2>
-      <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
-  </div>
-</div>
+  <mat-tab-group id="tab-group" (selectedTabChange)="onTabsChanged($event)">
+    <mat-tab label="📗Model &amp; 🖨️Printings" (click)="processAsCode()">
+
+      <div class="content">
+        <ngs-code-editor
+      style="height: 100%;"
+  [theme]="theme"
+  [codeModel]="codeModel"
+  [options]="options" style="height:"
+></ngs-code-editor>
+      </div>
+
+    </mat-tab>
+    <mat-tab label="📄PDF"  (click)="processAsSvg()">
+
+      <div class="content">
+        <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
+      </div>
+
+    </mat-tab>
+    <mat-tab label="📄Code">
+
+      <div class="content">
+        <pre style="overflow-x:hidden">
+        {{code}}
+      </pre>
+      </div>
+
+    </mat-tab>
+
+    <mat-tab label="❔About">
+
+      <div class="content" style="padding:1em">
+        <markdown src="assets/about.md"></markdown>
+      </div>
+
+    </mat-tab>
+  </mat-tab-group>

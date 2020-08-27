@@ -196,6 +196,19 @@
 ➕marks:
     description: trim marks
 
+➕lines:
+    description: |
+        trim marks for production.
+        it works with 📏gutters and 📏bleeds.
+    tags: ➕marks
+
+➕cross:
+    description: |
+        Trim marks added on each corner.
+        This save papers and trimming time.
+        But don't forget to implement 📏corners.
+    tags: ➕marks
+
 📏margins:
     description: |
         space between ⬜mediaBox and ⬜bleedBox 

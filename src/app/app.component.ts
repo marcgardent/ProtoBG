@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
 import { exportAsTypescript } from './lib/tags/TypescriptExporter';
 import { fixTagsDeclaration } from './lib/tags/TagParser';
@@ -6,6 +6,8 @@ import { Pao } from './lib/pao/pao.tags';
 import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
+import { CodeModel } from '@ngstack/code-editor';
+import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 
 
 @Component({
@@ -13,11 +15,48 @@ import { PaoContext } from './lib/pao/PaoContext';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+
+  constructor(){
+
+  }
+
+  ngOnInit(): void {
+    this.codeModel.value = this.content;
+  }
+
+  theme = 'vs';
+
+  codeModel: CodeModel = {
+    language: 'markdown',
+    uri: 'printing.md',
+    value: 'content',
+  };
+
+  options = {
+    contextmenu: true,
+    minimap: {
+      enabled: true,
+    },
+  };
+
   public definitions = [];
 
+  public onTabsChanged(event: MatTabChangeEvent){
+    
+    
+    if(event.index == 1){
+      this.processAsSvg();
+    }
+    else if (event.index==2) {
+      this.processAsCode();
+    }
+
+  }
+
   public processAsSvg() {
-    const data = readGlossaryFromYaml(this.content);
+    const data = readGlossaryFromYaml(this.codeModel.value);
     fixTagsDeclaration(data);
     const glossary = new Glossary(Pao.metadata, data);
     const pao = new PaoContext(glossary, new TagExpression(glossary));
@@ -79,7 +118,6 @@ export class AppComponent {
   📏bleeds: 2📏mm
   📏corners: 4📏mm
 
-
 🖨️myPrinting: 
   tags: 🖨️printing
   📑foreach: { 📑is: 📘myDeck }
@@ -92,6 +130,7 @@ export class AppComponent {
   📑foreach: { 📑is: 📘myDeck }
   🖨️mode: 🚀production
   📄format: 📄A4
+  ➕marks: ➕lines
   🔄orientation: 🔄landscape
   📏margins: 10📏mm 
   📏gutters: 5📏mm 
@@ -104,11 +143,11 @@ export class AppComponent {
     width="{{ width }}"
     height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
       <g id="bleedLayer" transform="translate({{bleedbox.x}}, {{bleedbox.y}})">
-        <rect id="bleedbox" x="0" y="0" width="{{bleedbox.width}}" height="{{bleedbox.height}}" fill="lightgreen"/>
+        <rect id="bleedbox" x="0" y="0" width="{{bleedbox.width}}" height="{{bleedbox.height}}" fill="yellow"/>
       </g>
       <g id="trimLayer" transform="translate({{trimbox.x}}, {{trimbox.y}})">
         <rect id="trimbox" x="0" y="0" width="{{trimbox.width}}" height="{{trimbox.height}}" stroke-width="0.1"
-            fill="transparent" rx="{{trimbox.corners}}" ry="{{trimbox.corners}}" stroke="red"/>
+            fill="lightgreen" rx="{{trimbox.corners}}" ry="{{trimbox.corners}}" stroke="red"/>
         <text text-anchor="left" alignment-baseline="hanging" x="{{trimbox.corners}}" y="0" font-size="4" fill="red">
             trimbox
         </text>

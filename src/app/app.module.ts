@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DefinitionComponent } from './definition/definition.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { CodeEditorModule } from '@ngstack/code-editor';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MyMaterialModule,
+    CodeEditorModule.forRoot(),
     MarkdownModule.forRoot({
       loader: HttpClient,
       sanitize: SecurityContext.NONE,
