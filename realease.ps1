@@ -1,2 +1,1 @@
-ng build --prod
-Copy-Item -Recurse ./dist/protobg/* ./docs/
+ng build --prod --output-path docs --base-href /ProtoBG/

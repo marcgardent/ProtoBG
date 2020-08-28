@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
 import { exportAsTypescript } from './lib/tags/TypescriptExporter';
 import { fixTagsDeclaration } from './lib/tags/TagParser';
@@ -8,6 +8,7 @@ import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
 import { CodeModel } from '@ngstack/code-editor';
 import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -17,13 +18,49 @@ import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 })
 export class AppComponent implements OnInit {
 
+  constructor(private snackBar: MatSnackBar) {
+    const txt = localStorage.getItem("protobg-code");
+    if (txt) {
+      this.content = txt;
+    }
+  }
 
-  constructor(){
+  public printings = [];
+  private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
+  public currentPrinting: any = this.defaultPrinting;
 
+  onCodeChanged(): any {
+
+  }
+
+  updatePrint() {
+    const data = readGlossaryFromYaml(this.codeModel.value);
+    fixTagsDeclaration(data);
+    const glossary = new Glossary(Pao.metadata, data);
+    this.printings = [...glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
+    if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
+      this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
+    }
+  }
+
+  @HostListener('window:keydown.control.s', ['$event'])
+  refresh($event: KeyboardEvent) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    localStorage.setItem("protobg-code", this.codeModel.value);
+    this.snackBar.open("saved", undefined, { duration: 1000 });
+    this.updatePrint();
+    this.processAsSvg();
+  }
+  changePrint(print: any) {
+    this.currentPrinting = print;
+    this.processAsSvg();
   }
 
   ngOnInit(): void {
     this.codeModel.value = this.content;
+    this.updatePrint();
+    this.processAsSvg();
   }
 
   theme = 'vs';
@@ -43,27 +80,26 @@ export class AppComponent implements OnInit {
 
   public definitions = [];
 
-  public onTabsChanged(event: MatTabChangeEvent){
-    
-    
-    if(event.index == 1){
+  public onTabsChanged(event: MatTabChangeEvent) {
+
+
+    if (event.index == 1) {
       this.processAsSvg();
     }
-    else if (event.index==2) {
+    else if (event.index == 2) {
       this.processAsCode();
     }
 
   }
 
   public processAsSvg() {
+
     const data = readGlossaryFromYaml(this.codeModel.value);
     fixTagsDeclaration(data);
     const glossary = new Glossary(Pao.metadata, data);
     const pao = new PaoContext(glossary, new TagExpression(glossary));
-
-    const printing = glossary.get("🖨️myAssembly");
-    const p = pao.entryAsPrinting(printing);
-
+    this.currentPrinting = glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
+    const p = pao.entryAsPrinting(this.currentPrinting);
     p.toPdf().then(x => {
       this.pdfSrc = x;
     });

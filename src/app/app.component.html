@@ -1,40 +1,52 @@
-<div id="wrapper">
-
-  <mat-tab-group id="tab-group" (selectedTabChange)="onTabsChanged($event)">
-    <mat-tab label="📗Model &amp; 🖨️Printings" (click)="processAsCode()">
-
-      <div class="content">
-        <ngs-code-editor
-      style="height: 100%;"
+<div class="body">
+  <div class="left">
+    <ngs-code-editor
   [theme]="theme"
   [codeModel]="codeModel"
-  [options]="options" style="height:"
+  [options]="options" 
+  (valueChanged)="onCodeChanged($event)"
 ></ngs-code-editor>
-      </div>
+  </div>
+  <div class="right">
+    <mat-tab-group id="tab-group" (selectedTabChange)="onTabsChanged($event)">
 
-    </mat-tab>
-    <mat-tab label="📄PDF"  (click)="processAsSvg()">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          {{currentPrinting.icon}}{{currentPrinting.name}}
+          <button *ngIf="printings.length>0" mat-icon-button [matMenuTriggerFor]="Menu" class="cloneIcon">
+            <mat-icon>unfold_more</mat-icon>
+          </button>
+        </ng-template>
+        <div class="content">
+          <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
+        </div>
+        <mat-menu #Menu="matMenu">
+          <button mat-menu-item *ngFor="let print of printings" (click)="changePrint(print)">{{print.icon}}{{print.name}}</button>
+        </mat-menu>
+      </mat-tab>
+      <mat-tab label="📄Code" >
 
-      <div class="content">
-        <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
-      </div>
-
-    </mat-tab>
-    <mat-tab label="📄Code">
-
-      <div class="content">
-        <pre style="overflow-x:hidden">
+        <div class="content">
+          <pre style="overflow-x:hidden">
         {{code}}
       </pre>
-      </div>
+        </div>
 
-    </mat-tab>
+      </mat-tab>
 
-    <mat-tab label="❔About">
+      <mat-tab label="❔About">
 
-      <div class="content" style="padding:1em">
-        <markdown src="assets/about.md"></markdown>
-      </div>
+        <div class="content" style="padding:1em">
+          <markdown src="assets/about.md"></markdown>
+        </div>
 
-    </mat-tab>
-  </mat-tab-group>
+      </mat-tab>
+    </mat-tab-group>
+
+  </div>
+</div>
+
+<!-- <div id="wrapper">
+ 
+
+-->
