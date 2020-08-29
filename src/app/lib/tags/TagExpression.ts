@@ -1,6 +1,7 @@
 import { Glossary } from './Glossary';
 export class TagExpression {
 
+
     entryHas(entry: any, tag: string) {
         return entry.tags.indexOf (tag) > -1;
     }
@@ -27,12 +28,12 @@ export class TagExpression {
         return val;
     }
 
-    public quantityOf(exp: string) {
-        const parsed = exp.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
+    public asQuantity(value: string) {
+        const parsed = value.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
         if (parsed) {
             return {
                 value: parseFloat(parsed[1]),
-                unit: this.glossary.get(parsed[3])
+                unit: this.glossary.get(parsed[4])
             };
         }
     }
@@ -60,6 +61,14 @@ export class TagExpression {
         else {
             return value.split(/\s+/);
         }
+    }
+
+    asArrayOfQuantities(value: any) {
+        const ret = [];
+        for(let val of this.asArray(value)){
+            ret.push(this.asQuantity(val));
+        }
+        return ret;
     }
 
     coalesce(...arg0: any[]) {

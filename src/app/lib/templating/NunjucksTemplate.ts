@@ -35,11 +35,15 @@ export class NunjucksTemplate implements ITemplate {
             return dict[key];
         });
         env.addFilter('quantity', function (exp) {
-            return self.reader.quantityOf(exp);
+            return self.reader.asQuantity(exp);
+        });
+        env.addFilter('arrayOfQuantities', function (exp) {
+            return self.reader.asArrayOfQuantities(exp);
         });
         env.addFilter('millimeter', function (exp) {
-            return self.reader.quantityOf(exp).value;
+            return self.reader.asQuantity(exp).value;
         });
+        
         return env.renderString(this.template, local);
     }
 }

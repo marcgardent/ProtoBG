@@ -16,8 +16,8 @@ export class Printing implements IPrinting {
     get glossary() { return this.context.glossary }
 
     constructor(private readonly context: PaoContext, private readonly printingEntry: any) {
-        this.margins = this.reader.quantityOf(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
-        this.density = this.reader.quantityOf(this.reader.mandatoryValueAt(printingEntry, Pao.DENSITY));
+        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
+        this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.DENSITY));
         this.mode = this.reader.mandatoryValueAt(printingEntry, Pao.MODE);
         this.foreachEntries = this.reader.resolveRequestsAt(
             printingEntry,

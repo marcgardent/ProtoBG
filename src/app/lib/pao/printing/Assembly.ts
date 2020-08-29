@@ -15,8 +15,8 @@ export class Assembly implements IPrinting {
 
     constructor(private readonly context: PaoContext, private readonly printingEntry: any) {
         this.page = this.context.entryAsPageInfo(printingEntry);
-        this.margins = this.reader.quantityOf(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
-        this.gutters = this.reader.quantityOf(this.reader.mandatoryValueAt(printingEntry, Pao.GUTTERS));
+        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
+        this.gutters = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.GUTTERS));
         this.marks = this.reader.mandatoryValueAt(printingEntry, Pao.MARKS);
         this.printing = new Printing(this.context, this.printingEntry);
     }

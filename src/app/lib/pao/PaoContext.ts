@@ -12,9 +12,9 @@ export interface IPrinting {
 export class PaoContext {
 
     entryAsLayout(entry: any): any {
-        const bleeds = this.reader.quantityOf(this.reader.mandatoryValueAt(entry, Pao.BLEEDS)).value;
-        const paddings = this.reader.quantityOf(this.reader.mandatoryValueAt(entry, Pao.PADDINGS)).value;
-        const corners = this.reader.quantityOf(this.reader.mandatoryValueAt(entry, Pao.CORNERS)).value;
+        const bleeds = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.BLEEDS)).value;
+        const paddings = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.PADDINGS)).value;
+        const corners = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.CORNERS)).value;
         const { width, height } = this.entryAsPageInfo(entry);
 
         return {
@@ -48,8 +48,8 @@ export class PaoContext {
 
     entryAsPageInfo(entry: any) {
         const format = this.reader.mandatoryReferenceAt(entry, Pao.FORMAT);
-        const min = this.reader.quantityOf(this.reader.mandatoryValueAt(format, Pao.MIN));
-        const max = this.reader.quantityOf(this.reader.mandatoryValueAt(format, Pao.MAX));
+        const min = this.reader.asQuantity(this.reader.mandatoryValueAt(format, Pao.MIN));
+        const max = this.reader.asQuantity(this.reader.mandatoryValueAt(format, Pao.MAX));
         const orientation = this.reader.mandatoryValueAt(entry, Pao.ORIENTATION);
 
         const width = orientation == Pao.LANDSCAPE ? max.value : min.value;
