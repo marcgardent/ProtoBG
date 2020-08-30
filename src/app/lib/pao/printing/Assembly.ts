@@ -65,7 +65,12 @@ export class Assembly implements IPrinting {
                 });
                 x += xstep;
             }
+
+            if(artworks.length){
+                pages.push(artworks);
+            }
         }
+        
         return pages;
     }
 
@@ -81,7 +86,7 @@ export class Assembly implements IPrinting {
             context.drawImage(markImg, 0, 0, markCanvas.width, markCanvas.height);
             return markCanvas;
         });
-
+        
         return Promise.all([ready, markReady]).then(() => {
             const markPng = markCanvas.toDataURL('image/PNG');
             const doc = new jsPDF({

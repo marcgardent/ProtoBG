@@ -9,7 +9,8 @@ import { PaoContext } from './lib/pao/PaoContext';
 import { CodeModel } from '@ngstack/code-editor';
 import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { gameIcons } from './lib/gameicons/gameicons';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +19,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private snackBar: MatSnackBar) {
+  public gameIcons = gameIcons;
+
+  constructor(private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
     const txt = localStorage.getItem("protobg-code");
     if (txt) {
       this.content = txt;
     }
+    console.debug(this.gameIcons)
   }
 
   public printings = [];
@@ -76,6 +80,7 @@ export class AppComponent implements OnInit {
     minimap: {
       enabled: true,
     },
+    fontFamily: "game-icons, monospace"
   };
 
   public definitions = [];
@@ -113,6 +118,11 @@ export class AppComponent implements OnInit {
   }
 
   public pdfSrc: string = "";
+
+  public get pdfSrcSafe() {
+    return this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
+  }
+
   public code: string = "{}";
 
   public content: string = `

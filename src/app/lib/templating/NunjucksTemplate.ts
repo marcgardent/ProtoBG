@@ -13,14 +13,39 @@ export class NunjucksTemplate implements ITemplate {
         this.template = reader.mandatoryValueAt(nunjucksEntry, Templating.DEFINITION);
     }
 
-    public apply(parameters:any, context: any, me: any, local: any): string {
+    public apply(parameters: any, context: any, me: any, local: any): Promise<string> {
         var env = new nunjucks.Environment();
-        const self = this; 
+        const self = this;
+
+        env.addFilter('dataUri', function (url, callback) {
+            //callback(null, url);
+            fetch(url).then((response) => {
+                return response.blob();
+            }, reason => {
+                console.error("dataUri", url, reason);
+                callback(reason);
+            }).then((blob: Blob) => {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    console.debug("dataUri done!", url, this);
+                    callback(null, this.result);
+                };
+                reader.onerror = function (ev) {
+                    console.error("dataUri", url, ev);
+                    callback(ev);
+                }
+                reader.readAsDataURL(blob);
+            }).catch(reason => {
+
+                console.error("dataUri", url, reason);
+                callback(reason)
+            });
+        }, true);
 
         env.addFilter('fromContext', function (key) {
             return context[key];
         });
-        
+
         env.addFilter('fromParameters', function (key) {
             return parameters[key];
         });
@@ -43,7 +68,18 @@ export class NunjucksTemplate implements ITemplate {
         env.addFilter('millimeter', function (exp) {
             return self.reader.asQuantity(exp).value;
         });
-        
-        return env.renderString(this.template, local);
+
+        return new Promise<string>((resolve, reject) => {
+            env.renderString(this.template, local, function (err, res) {
+                console.debug(err, res);
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(res);
+                }
+            });
+        });
+
     }
 }

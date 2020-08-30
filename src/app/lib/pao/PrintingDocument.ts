@@ -28,7 +28,7 @@ export class PrintingDocument {
     }
 
     public toImages(): {
-        content: string;
+        content: Promise<string>;
         copies: number;
         layout: any;
     }[] {
@@ -36,8 +36,9 @@ export class PrintingDocument {
         for (let source of this.foreachEntries) {
             const content = this.template.apply(this.parameters, this.documentEntry, source.result, this.layout);
             const copies = this.reader.coalesce(parseInt(source.request[Pao.COPIES]), 1);
+            
             ret.push({
-                content: "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(content))),
+                content: content.then( c => { return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(c)))}),
                 copies: copies,
                 layout: this.layout
             });
