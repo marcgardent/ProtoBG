@@ -6,11 +6,13 @@ import { Pao } from './lib/pao/pao.tags';
 import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
-import { CodeModel } from '@ngstack/code-editor';
+import { CodeModel, CodeEditorService } from '@ngstack/code-editor';
 import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MetaTags } from './lib/tags/meta.tags';
+import { Templating } from './lib/templating/templating.tag';
 
 @Component({
   selector: 'app-root',
@@ -19,14 +21,53 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class AppComponent implements OnInit {
 
+  theme = 'vs';
+
+  codeModel: CodeModel = {
+    language: 'markdown',
+    uri: 'printing.markdown',
+    value: 'content',
+  };
+
+  options = {
+    contextmenu: true,
+    minimap: {
+      enabled: true,
+    },
+    fontFamily: "game-icons, monospace"
+  };
+
+  public definitions = [];
+  public suggestions = [];
+  private monaco: any;
+
   public gameIcons = gameIcons;
 
-  constructor(private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
+  constructor(private readonly editorService: CodeEditorService, private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
     const txt = localStorage.getItem("protobg-code");
     if (txt) {
       this.content = txt;
     }
-    console.debug(this.gameIcons)
+    console.debug(this.gameIcons);
+
+    editorService.loaded.subscribe(res => {
+      this.monaco = res.monaco;
+      // debugger;
+      // this.monaco.languages.register({ id: 'protobg' });
+      // this.codeModel.language = 'protobg';
+
+      // Register a completion item provider for the new language
+
+      this.monaco.languages.registerCompletionItemProvider(this.codeModel.language, {
+        provideCompletionItems: () => {
+          return { suggestions: this.suggestions };
+        }
+      });
+    });
+  }
+
+  loadConstants() {
+
   }
 
   public printings = [];
@@ -67,26 +108,9 @@ export class AppComponent implements OnInit {
     this.processAsSvg();
   }
 
-  theme = 'vs';
 
-  codeModel: CodeModel = {
-    language: 'markdown',
-    uri: 'printing.md',
-    value: 'content',
-  };
-
-  options = {
-    contextmenu: true,
-    minimap: {
-      enabled: true,
-    },
-    fontFamily: "game-icons, monospace"
-  };
-
-  public definitions = [];
 
   public onTabsChanged(event: MatTabChangeEvent) {
-
 
     if (event.index == 1) {
       this.processAsSvg();
@@ -101,14 +125,25 @@ export class AppComponent implements OnInit {
 
     const data = readGlossaryFromYaml(this.codeModel.value);
     fixTagsDeclaration(data);
-    const glossary = new Glossary(Pao.metadata, data);
+    const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
     const pao = new PaoContext(glossary, new TagExpression(glossary));
+    {
+      this.suggestions = [];
+      for (let index of glossary.search.indexes) {
+        const tag = glossary.get(index);
+        this.suggestions.push({
+          label: tag.name,
+          kind: this.monaco.languages.CompletionItemKind.Contanst,
+          insertText: index
+        });
+      }
+    }
+
     this.currentPrinting = glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
     const p = pao.entryAsPrinting(this.currentPrinting);
     p.toPdf().then(x => {
       this.pdfSrc = x;
     });
-
   }
 
   public processAsCode() {
