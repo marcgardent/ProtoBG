@@ -97,6 +97,7 @@ export class AppComponent implements OnInit {
     this.updatePrint();
     this.processAsSvg();
   }
+
   changePrint(print: any) {
     this.currentPrinting = print;
     this.processAsSvg();
@@ -108,8 +109,6 @@ export class AppComponent implements OnInit {
     this.processAsSvg();
   }
 
-
-
   public onTabsChanged(event: MatTabChangeEvent) {
 
     if (event.index == 1) {
@@ -118,7 +117,6 @@ export class AppComponent implements OnInit {
     else if (event.index == 2) {
       this.processAsCode();
     }
-
   }
 
   public processAsSvg() {
@@ -127,13 +125,14 @@ export class AppComponent implements OnInit {
     fixTagsDeclaration(data);
     const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
     const pao = new PaoContext(glossary, new TagExpression(glossary));
-    {
+
+    { 
       this.suggestions = [];
-      for (let index of glossary.search.indexes) {
-        const tag = glossary.get(index);
+      for (let [index, tag] of Object.entries(glossary.glossary)) {
+        console.debug("suggest", index, tag);
         this.suggestions.push({
           label: tag.name,
-          kind: this.monaco.languages.CompletionItemKind.Contanst,
+          kind: this.monaco.languages.CompletionItemKind.Reference,
           insertText: index
         });
       }

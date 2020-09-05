@@ -1,7 +1,7 @@
 import { Search } from './Search';
 
 export class Glossary {
-    private readonly glossary: Map<string, any>;
+    public readonly glossary: Map<string, any>;
     public readonly search: Search<string, any>;
 
     constructor(...sources: any[]) {
@@ -14,9 +14,7 @@ export class Glossary {
     }
 }
 
-
 function mergeSources(...sources: any[]) {
-    
     const ret = new Map<string,any>()
     for(let glossary of sources){
         for(let key in glossary){
