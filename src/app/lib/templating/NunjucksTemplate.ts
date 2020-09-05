@@ -56,9 +56,7 @@ export class NunjucksTemplate implements ITemplate {
         env.addFilter('fromGlossary', function (key) {
             return self.glossary.get(key);
         });
-        env.addFilter('get', function (dict, key) {
-            return dict[key];
-        });
+        
         env.addFilter('quantity', function (exp) {
             return self.reader.asQuantity(exp);
         });
