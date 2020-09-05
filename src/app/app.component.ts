@@ -13,6 +13,7 @@ import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MetaTags } from './lib/tags/meta.tags';
 import { Templating } from './lib/templating/templating.tag';
+import { Entry } from './lib/tags/Entry';
 
 @Component({
   selector: 'app-root',
@@ -37,55 +38,82 @@ export class AppComponent implements OnInit {
     fontFamily: "game-icons, monospace"
   };
 
-  public definitions = [];
-  public suggestions = [];
+  private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
+  private glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata);
   private monaco: any;
-
+  public definitions = [];
+  public tagSuggestions = [];
+  public snippetSuggestions = [];
   public gameIcons = gameIcons;
+  public printings = [];
+  public currentPrinting: any = this.defaultPrinting;
 
   constructor(private readonly editorService: CodeEditorService, private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
+
+
     const txt = localStorage.getItem("protobg-code");
     if (txt) {
       this.content = txt;
     }
-    console.debug(this.gameIcons);
 
     editorService.loaded.subscribe(res => {
       this.monaco = res.monaco;
-      // debugger;
-      // this.monaco.languages.register({ id: 'protobg' });
-      // this.codeModel.language = 'protobg';
-
-      // Register a completion item provider for the new language
+      const self = this;
 
       this.monaco.languages.registerCompletionItemProvider(this.codeModel.language, {
-        provideCompletionItems: () => {
-          return { suggestions: this.suggestions };
+        provideCompletionItems: (model, position, context) => {
+
+          if (position.column === 1) {
+            return { suggestions: this.snippetSuggestions };
+          } else {
+            return { suggestions: this.tagSuggestions };
+          }
         }
       });
+
+      this.monaco.languages.registerHoverProvider(this.codeModel.language, {
+        provideHover: function (model, position) {
+
+          const { column, lineNumber } = position;
+          const txt = model.getLineContent(lineNumber);
+          let start = 0;
+          let end = 0;
+          let theWord = "";
+          for (let word of txt.split(/\s/)) {
+            end = start + Math.max(1, word.length + 1);
+            if (column >= start && column < end) {
+              theWord = word;
+              break;
+            }
+            start = end;
+          }
+          const tag = theWord.match(/[0-9]*([^:]*)(\:)?/)[1];
+          const entry = self.glossary.getAsEntry(tag);
+
+          if (entry.isValid) {
+            return {
+              range: new self.monaco.Range(lineNumber, start + 1, lineNumber, end),
+              contents: [
+                { value: `## ${entry.displayName}` },
+                { value: `**tags:** ${entry.tags.map(x => x.displayName).join(", ")}` },
+                { value: `**description:** ${entry.description}` },
+                { value: `**implements:** ${entry.properties.join(", ")}` }
+              ]
+            }
+          }
+          else {
+            return undefined;
+          }
+        }
+      });
+
+      this.codeModel.value = this.content;
+      this.updateGlossary();
+      this.updateSuggestions();
+      this.updatePrint();
+      this.processAsPDF();
+
     });
-  }
-
-  loadConstants() {
-
-  }
-
-  public printings = [];
-  private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
-  public currentPrinting: any = this.defaultPrinting;
-
-  onCodeChanged(): any {
-
-  }
-
-  updatePrint() {
-    const data = readGlossaryFromYaml(this.codeModel.value);
-    fixTagsDeclaration(data);
-    const glossary = new Glossary(Pao.metadata, data);
-    this.printings = [...glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
-    if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
-      this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
-    }
   }
 
   @HostListener('window:keydown.control.s', ['$event'])
@@ -94,51 +122,106 @@ export class AppComponent implements OnInit {
     $event.stopPropagation();
     localStorage.setItem("protobg-code", this.codeModel.value);
     this.snackBar.open("saved", undefined, { duration: 1000 });
-    this.updatePrint();
-    this.processAsSvg();
+
+    if (this.updateGlossary()) {
+      this.updateSuggestions();
+      this.updatePrint();
+      this.processAsPDF();
+    }
+  }
+
+
+  private updateGlossary() {
+    try {
+      const data = readGlossaryFromYaml(this.codeModel.value);
+      fixTagsDeclaration(data);
+      this.glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
+    } catch (exception) {
+
+      this.snackBar.open("fix the glossary", undefined, { duration: 1000 });
+      console.error(exception);
+      return false;
+    }
+
+    return true;
+  }
+
+  updatePrint() {
+    this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
+    if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
+      this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
+    }
   }
 
   changePrint(print: any) {
     this.currentPrinting = print;
-    this.processAsSvg();
+    this.processAsPDF();
   }
 
   ngOnInit(): void {
-    this.codeModel.value = this.content;
-    this.updatePrint();
-    this.processAsSvg();
+
   }
 
   public onTabsChanged(event: MatTabChangeEvent) {
 
     if (event.index == 1) {
-      this.processAsSvg();
+      this.processAsPDF();
     }
     else if (event.index == 2) {
       this.processAsCode();
     }
   }
 
-  public processAsSvg() {
+  private updateSuggestions() {
+    this.tagSuggestions = [];
+    this.snippetSuggestions = [];
+    for (let [index, tag] of Object.entries(this.glossary.glossary)) {
+      
+      const entry = new Entry(this.glossary, tag);
+      this.tagSuggestions.push({
+        label: index,
+        filterText: tag.name,
+        kind: this.monaco.languages.CompletionItemKind.Keyword,
+        insertText: index,
+        documentation: { value: `## ${entry.displayName}
+        
+${entry.description}
 
-    const data = readGlossaryFromYaml(this.codeModel.value);
-    fixTagsDeclaration(data);
-    const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
-    const pao = new PaoContext(glossary, new TagExpression(glossary));
+**tags:** ${entry.tags.map(x => x.displayName).join(", ")}
+**implements:** ${entry.properties.join(", ")}
+`}
+      });
 
-    { 
-      this.suggestions = [];
-      for (let [index, tag] of Object.entries(glossary.glossary)) {
-        console.debug("suggest", index, tag);
-        this.suggestions.push({
-          label: tag.name,
-          kind: this.monaco.languages.CompletionItemKind.Reference,
-          insertText: index
-        });
+      console.debug(tag.properties);
+
+      {
+        // snippets
+        const props = entry.properties;
+        if (props.length > 0) {
+          const insertText = []
+
+          insertText.push(`${entry.icon}\$\{1:name\}:`);
+          insertText.push(`  tags: ${entry.canonicalName}`);
+          let tab = 1;
+          for (let prop of props) {
+            tab++;
+            insertText.push(`  ${prop}: \$${tab}`);
+          }
+
+          this.snippetSuggestions.push({
+            label: tag.name,
+            kind: this.monaco.languages.CompletionItemKind.Snippet,
+            insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            insertText: insertText.join("\n")
+          });
+        }
       }
     }
+  }
 
-    this.currentPrinting = glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
+  public processAsPDF() {
+    const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
+    this.currentPrinting = this.glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
     const p = pao.entryAsPrinting(this.currentPrinting);
     p.toPdf().then(x => {
       this.pdfSrc = x;

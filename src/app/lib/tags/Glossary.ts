@@ -1,4 +1,5 @@
 import { Search } from './Search';
+import { Entry } from './Entry';
 
 export class Glossary {
     public readonly glossary: Map<string, any>;
@@ -9,20 +10,25 @@ export class Glossary {
         this.search = newSearch(this.glossary);
     }
 
-    get(index: string){
+    public get(index: string) {
         return this.glossary[index];
+    }
+
+    public getAsEntry(index: string): Entry {
+        const data = this.get(index);
+        return new Entry(this, data);
     }
 }
 
 function mergeSources(...sources: any[]) {
-    const ret = new Map<string,any>()
-    for(let glossary of sources){
-        for(let key in glossary){
+    const ret = new Map<string, any>()
+    for (let glossary of sources) {
+        for (let key in glossary) {
             const item = glossary[key];
-            if(ret.has(key)){
+            if (key in ret) {
                 console.debug("ignore the conflict", key, ret[key], item)
             }
-            else{
+            else {
                 ret[key] = item;
             }
         }
@@ -31,11 +37,11 @@ function mergeSources(...sources: any[]) {
     return ret;
 }
 
-function newSearch(bible:Map<string,any>){
-    const search = new Search<string,any>();
-    for(let key in bible){
+function newSearch(bible: Map<string, any>) {
+    const search = new Search<string, any>();
+    for (let key in bible) {
         const item = bible[key];
-        const tags =item.tags ? item.tags : [];
+        const tags = item.tags ? item.tags : [];
         search.add(item, tags);
     }
 
