@@ -50,7 +50,6 @@ export class AppComponent implements OnInit {
 
   constructor(private readonly editorService: CodeEditorService, private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
 
-
     const txt = localStorage.getItem("protobg-code");
     if (txt) {
       this.content = txt;
@@ -60,14 +59,41 @@ export class AppComponent implements OnInit {
       this.monaco = res.monaco;
       const self = this;
 
+      // this.monaco.languages.register({'id': this.codeModel.language})
+
       this.monaco.languages.registerCompletionItemProvider(this.codeModel.language, {
+        //triggerCharacters: [' '],
         provideCompletionItems: (model, position, context) => {
 
           if (position.column === 1) {
             return { suggestions: this.snippetSuggestions };
           } else {
+
+            let range = {
+              startLineNumber: position.lineNumber,
+              endLineNumber: position.lineNumber,
+              startColumn: position.column,
+              endColumn: position.column,
+            };
+
+            const theWord = model.getWordAtPosition(position);
+            if (theWord) {
+              const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
+              console.debug("theWord", theWord);
+              range = {
+                startLineNumber: position.lineNumber,
+                endLineNumber: position.lineNumber,
+                startColumn: theWord.startColumn,
+                endColumn: theWord.endColumn,
+              };
+            }
+            
+
+            this.tagSuggestions.forEach(x => { x.range = range });
+
             return { suggestions: this.tagSuggestions };
           }
+
         }
       });
 
@@ -75,33 +101,26 @@ export class AppComponent implements OnInit {
         provideHover: function (model, position) {
 
           const { column, lineNumber } = position;
-          const txt = model.getLineContent(lineNumber);
-          let start = 0;
-          let end = 0;
-          let theWord = "";
-          for (let word of txt.split(/\s/)) {
-            end = start + Math.max(1, word.length + 1);
-            if (column >= start && column < end) {
-              theWord = word;
-              break;
+          const theWord = model.getWordAtPosition(position);
+          if (theWord) {
+            const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
+            const entry = self.glossary.getAsEntry(parsed[2]);
+            console.debug("theWord!", parsed[2]);
+            if (entry.isValid) {
+              return {
+                range: new self.monaco.Range(lineNumber, theWord.startColumn, lineNumber, theWord.endColumn),
+                contents: [
+                  { value: `## ${entry.displayName}` },
+                  { value: `**tags:** ${entry.tags.map(x => x.displayName).join(", ")}` },
+                  { value: `**description:** ${entry.description}` },
+                  { value: `**implements:** ${entry.properties.join(", ")}` }
+                ]
+              }
             }
-            start = end;
-          }
-          const tag = theWord.match(/[0-9]*([^:]*)(\:)?/)[1];
-          const entry = self.glossary.getAsEntry(tag);
-
-          if (entry.isValid) {
-            return {
-              range: new self.monaco.Range(lineNumber, start + 1, lineNumber, end),
-              contents: [
-                { value: `## ${entry.displayName}` },
-                { value: `**tags:** ${entry.tags.map(x => x.displayName).join(", ")}` },
-                { value: `**description:** ${entry.description}` },
-                { value: `**implements:** ${entry.properties.join(", ")}` }
-              ]
+            else {
+              return undefined;
             }
-          }
-          else {
+          } else {
             return undefined;
           }
         }
@@ -176,14 +195,15 @@ export class AppComponent implements OnInit {
     this.tagSuggestions = [];
     this.snippetSuggestions = [];
     for (let [index, tag] of Object.entries(this.glossary.glossary)) {
-      
+
       const entry = new Entry(this.glossary, tag);
       this.tagSuggestions.push({
         label: index,
         filterText: tag.name,
         kind: this.monaco.languages.CompletionItemKind.Keyword,
         insertText: index,
-        documentation: { value: `## ${entry.displayName}
+        documentation: {
+          value: `## ${entry.displayName}
         
 ${entry.description}
 
