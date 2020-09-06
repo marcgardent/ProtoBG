@@ -79,15 +79,16 @@ export class AppComponent implements OnInit {
             const theWord = model.getWordAtPosition(position);
             if (theWord) {
               const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
-              console.debug("theWord", theWord);
-              range = {
-                startLineNumber: position.lineNumber,
-                endLineNumber: position.lineNumber,
-                startColumn: theWord.startColumn,
-                endColumn: theWord.endColumn,
-              };
+              if (parsed[1].length == 0) {
+                range = {
+                  startLineNumber: position.lineNumber,
+                  endLineNumber: position.lineNumber,
+                  startColumn: theWord.startColumn,
+                  endColumn: theWord.endColumn,
+                };
+              }
             }
-            
+
 
             this.tagSuggestions.forEach(x => { x.range = range });
 
