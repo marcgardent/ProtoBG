@@ -61,6 +61,52 @@ export class AppComponent implements OnInit {
 
       // this.monaco.languages.register({'id': this.codeModel.language})
 
+      this.monaco.languages.registerRenameProvider(this.codeModel.language, {
+        provideRenameEdits: (model, position, newName) => {
+
+          //custom range
+          const theWord = model.getWordAtPosition(position);
+          if (theWord) {
+            const parsed = theWord.word.match(/([0-9]*)(.+)/);
+
+            const match = new RegExp(parsed[2], "g");
+            let lineNumber = 1;
+
+            const edits = new Array();
+
+            for (let line of model.getLinesContent()) {
+              for (let matched of [...line.matchAll(match)]) {
+
+                edits.push({
+                  resource: model.uri,
+                  edit: {
+                    range: {
+                      endColumn: matched.index + 1 + matched[0].length,
+                      endLineNumber: lineNumber,
+                      startColumn: matched.index + 1,
+                      startLineNumber: lineNumber,
+                    },
+                    text: newName
+                  }
+                });
+
+              }
+
+              lineNumber++;
+            }
+
+            const ret = {
+              edits: edits
+            }
+            console.debug(ret);
+            return ret;
+          }
+          else {
+            return { rejectReason: "not possible to rename here!" }
+          }
+        }
+      });
+
       this.monaco.languages.registerCompletionItemProvider(this.codeModel.language, {
         //triggerCharacters: [' '],
         provideCompletionItems: (model, position, context) => {
@@ -116,9 +162,6 @@ export class AppComponent implements OnInit {
             else {
               this.tagSuggestions.forEach(x => { x.range = range; x.sortText = x.insertText });
             }
-
-
-
             return { suggestions: this.tagSuggestions };
           }
 
