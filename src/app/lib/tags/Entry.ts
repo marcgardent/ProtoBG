@@ -23,8 +23,12 @@ export class Entry {
     get canonicalName() {
         return `${this.data.icon}${this.data.name}`;
     }
-    get tags(): Array<Entry> {
+    get tagAsEntries(): Array<Entry> {
         return this.data.tags ? this.data.tags.map(x => this.glossary.getAsEntry(x)) : [];
+    }
+
+    get tags(): Array<string> {
+        return this.data.tags ? this.data.tags : [];
     }
 
     get description() {

@@ -69,6 +69,7 @@ export class AppComponent implements OnInit {
             return { suggestions: this.snippetSuggestions };
           } else {
 
+            //Default range
             let range = {
               startLineNumber: position.lineNumber,
               endLineNumber: position.lineNumber,
@@ -76,6 +77,7 @@ export class AppComponent implements OnInit {
               endColumn: position.column,
             };
 
+            //custom range
             const theWord = model.getWordAtPosition(position);
             if (theWord) {
               const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
@@ -85,12 +87,37 @@ export class AppComponent implements OnInit {
                   endLineNumber: position.lineNumber,
                   startColumn: theWord.startColumn,
                   endColumn: theWord.endColumn,
+
                 };
               }
             }
 
+            // sort suggestions
+            const tagContext = (<string>model.getLineContent(position.lineNumber)).match(/^\s+((\W+)(\w+)):/);
+            if (tagContext) {
+              console.debug("context", tagContext[1]);
 
-            this.tagSuggestions.forEach(x => { x.range = range });
+              this.tagSuggestions.forEach(suggestion => {
+                suggestion.range = range;
+                if (suggestion._entry.tags.indexOf(tagContext[1]) >= 0) {
+
+                  suggestion.sortText = "__" + suggestion.insertText;
+                  suggestion.label = suggestion.insertText + " 💖";
+                }
+                else if (tagContext[1].startsWith(suggestion._entry.icon)) {
+                  suggestion.sortText = "_" + suggestion.insertText;
+                  suggestion.label = suggestion.insertText + " 🤍";
+                }
+                else {
+                  suggestion.label = suggestion.sortText = suggestion.insertText;
+                }
+              });
+            }
+            else {
+              this.tagSuggestions.forEach(x => { x.range = range; x.sortText = x.insertText });
+            }
+
+
 
             return { suggestions: this.tagSuggestions };
           }
@@ -112,7 +139,7 @@ export class AppComponent implements OnInit {
                 range: new self.monaco.Range(lineNumber, theWord.startColumn, lineNumber, theWord.endColumn),
                 contents: [
                   { value: `## ${entry.displayName}` },
-                  { value: `**tags:** ${entry.tags.map(x => x.displayName).join(", ")}` },
+                  { value: `**tags:** ${entry.tagAsEntries.map(x => x.displayName).join(", ")}` },
                   { value: `**description:** ${entry.description}` },
                   { value: `**implements:** ${entry.properties.join(", ")}` }
                 ]
@@ -199,16 +226,18 @@ export class AppComponent implements OnInit {
 
       const entry = new Entry(this.glossary, tag);
       this.tagSuggestions.push({
+        _entry: entry,
         label: index,
         filterText: tag.name,
         kind: this.monaco.languages.CompletionItemKind.Keyword,
         insertText: index,
+        sortText: index,
         documentation: {
           value: `## ${entry.displayName}
         
 ${entry.description}
 
-**tags:** ${entry.tags.map(x => x.displayName).join(", ")}
+**tags:** ${entry.tagAsEntries.map(x => x.displayName).join(", ")}
 **implements:** ${entry.properties.join(", ")}
 `}
       });
