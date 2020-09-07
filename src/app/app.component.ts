@@ -6,7 +6,7 @@ import { Pao } from './lib/pao/pao.tags';
 import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
-import { CodeModel, CodeEditorService } from '@ngstack/code-editor';
+
 import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { gameIcons } from './lib/gameicons/gameicons';
@@ -24,11 +24,11 @@ export class AppComponent implements OnInit {
 
   theme = 'vs';
 
-  codeModel: CodeModel = {
-    language: 'markdown',
-    uri: 'printing.markdown',
-    value: 'content',
-  };
+  // codeModel: CodeModel = {
+  //   language: 'markdown',
+  //   uri: 'printing.markdown',
+  //   value: 'content',
+  // };
 
   options = {
     contextmenu: true,
@@ -48,169 +48,27 @@ export class AppComponent implements OnInit {
   public printings = [];
   public currentPrinting: any = this.defaultPrinting;
 
-  constructor(private readonly editorService: CodeEditorService, private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
+  constructor(private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
 
     const txt = localStorage.getItem("protobg-code");
     if (txt) {
       this.content = txt;
     }
 
-    editorService.loaded.subscribe(res => {
-      this.monaco = res.monaco;
-      const self = this;
-
-      // this.monaco.languages.register({'id': this.codeModel.language})
-
-      this.monaco.languages.registerRenameProvider(this.codeModel.language, {
-        provideRenameEdits: (model, position, newName) => {
-
-          //custom range
-          const theWord = model.getWordAtPosition(position);
-          if (theWord) {
-            const parsed = theWord.word.match(/([0-9]*)(.+)/);
-
-            const match = new RegExp(parsed[2], "g");
-            let lineNumber = 1;
-
-            const edits = new Array();
-
-            for (let line of model.getLinesContent()) {
-              for (let matched of [...line.matchAll(match)]) {
-
-                edits.push({
-                  resource: model.uri,
-                  edit: {
-                    range: {
-                      endColumn: matched.index + 1 + matched[0].length,
-                      endLineNumber: lineNumber,
-                      startColumn: matched.index + 1,
-                      startLineNumber: lineNumber,
-                    },
-                    text: newName
-                  }
-                });
-
-              }
-
-              lineNumber++;
-            }
-
-            const ret = {
-              edits: edits
-            }
-            console.debug(ret);
-            return ret;
-          }
-          else {
-            return { rejectReason: "not possible to rename here!" }
-          }
-        }
-      });
-
-      this.monaco.languages.registerCompletionItemProvider(this.codeModel.language, {
-        //triggerCharacters: [' '],
-        provideCompletionItems: (model, position, context) => {
-
-          if (position.column === 1) {
-            return { suggestions: this.snippetSuggestions };
-          } else {
-
-            //Default range
-            let range = {
-              startLineNumber: position.lineNumber,
-              endLineNumber: position.lineNumber,
-              startColumn: position.column,
-              endColumn: position.column,
-            };
-
-            //custom range
-            const theWord = model.getWordAtPosition(position);
-            if (theWord) {
-              const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
-              if (parsed[1].length == 0) {
-                range = {
-                  startLineNumber: position.lineNumber,
-                  endLineNumber: position.lineNumber,
-                  startColumn: theWord.startColumn,
-                  endColumn: theWord.endColumn,
-
-                };
-              }
-            }
-
-            // sort suggestions
-            const tagContext = (<string>model.getLineContent(position.lineNumber)).match(/^\s+((\W+)(\w+)):/);
-            if (tagContext) {
-              console.debug("context", tagContext[1]);
-
-              this.tagSuggestions.forEach(suggestion => {
-                suggestion.range = range;
-                if (suggestion._entry.tags.indexOf(tagContext[1]) >= 0) {
-
-                  suggestion.sortText = "__" + suggestion.insertText;
-                  suggestion.label = suggestion.insertText + " 💖";
-                }
-                else if (tagContext[1].startsWith(suggestion._entry.icon)) {
-                  suggestion.sortText = "_" + suggestion.insertText;
-                  suggestion.label = suggestion.insertText + " 🤍";
-                }
-                else {
-                  suggestion.label = suggestion.sortText = suggestion.insertText;
-                }
-              });
-            }
-            else {
-              this.tagSuggestions.forEach(x => { x.range = range; x.sortText = x.insertText });
-            }
-            return { suggestions: this.tagSuggestions };
-          }
-
-        }
-      });
-
-      this.monaco.languages.registerHoverProvider(this.codeModel.language, {
-        provideHover: function (model, position) {
-
-          const { column, lineNumber } = position;
-          const theWord = model.getWordAtPosition(position);
-          if (theWord) {
-            const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
-            const entry = self.glossary.getAsEntry(parsed[2]);
-            console.debug("theWord!", parsed[2]);
-            if (entry.isValid) {
-              return {
-                range: new self.monaco.Range(lineNumber, theWord.startColumn, lineNumber, theWord.endColumn),
-                contents: [
-                  { value: `## ${entry.displayName}` },
-                  { value: `**tags:** ${entry.tagAsEntries.map(x => x.displayName).join(", ")}` },
-                  { value: `**description:** ${entry.description}` },
-                  { value: `**implements:** ${entry.properties.join(", ")}` }
-                ]
-              }
-            }
-            else {
-              return undefined;
-            }
-          } else {
-            return undefined;
-          }
-        }
-      });
-
-      this.codeModel.value = this.content;
-      this.updateGlossary();
-      this.updateSuggestions();
-      this.updatePrint();
-      this.processAsPDF();
-
-    });
+      /* monaco.onload */ {
+      //this.codeModel.value = this.content;
+      // this.updateGlossary();
+      // this.updateSuggestions();
+      // this.updatePrint();
+      // this.processAsPDF();
+    }
   }
 
   @HostListener('window:keydown.control.s', ['$event'])
   refresh($event: KeyboardEvent) {
     $event.preventDefault();
     $event.stopPropagation();
-    localStorage.setItem("protobg-code", this.codeModel.value);
+    localStorage.setItem("protobg-code", "TODO value");
     this.snackBar.open("saved", undefined, { duration: 1000 });
 
     if (this.updateGlossary()) {
@@ -219,11 +77,10 @@ export class AppComponent implements OnInit {
       this.processAsPDF();
     }
   }
-
-
+  
   private updateGlossary() {
     try {
-      const data = readGlossaryFromYaml(this.codeModel.value);
+      const data = readGlossaryFromYaml("TODO value");
       fixTagsDeclaration(data);
       this.glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
     } catch (exception) {

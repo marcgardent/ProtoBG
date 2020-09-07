@@ -1,14 +1,9 @@
 <div class="body">
   <div class="left">
-    <ngs-code-editor
-  [theme]="theme"
-  [codeModel]="codeModel"
-  [options]="options" 
-></ngs-code-editor>
+    <app-editor></app-editor>
   </div>
   <div class="right">
     <mat-tab-group id="tab-group" (selectedTabChange)="onTabsChanged($event)">
-
       <mat-tab>
         <ng-template mat-tab-label>
           {{currentPrinting.icon}}{{currentPrinting.name}}
@@ -20,7 +15,8 @@
           <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
         </div>
         <mat-menu #Menu="matMenu">
-          <a mat-menu-item [href]="pdfSrcSafe" [download]="currentPrinting.name + '.pdf'">📥 <b>{{currentPrinting.name}}.pdf</b></a>
+          <a mat-menu-item [href]="pdfSrcSafe" [download]="currentPrinting.name + '.pdf'">📥 <b>{{currentPrinting.name}}.pdf</b>
+          </a>
 
           <button mat-menu-item *ngFor="let print of printings" (click)="changePrint(print)">{{print.icon}}{{print.name}}</button>
         </mat-menu>
@@ -44,7 +40,7 @@
         </div>
       </mat-tab>
 
-    <mat-tab label="❔About">
+      <mat-tab label="❔About">
         <div class="content" style="padding:1em">
           <markdown src="assets/about.md"></markdown>
         </div>

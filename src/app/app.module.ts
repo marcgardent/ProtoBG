@@ -11,12 +11,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DefinitionComponent } from './definition/definition.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { CodeEditorModule } from '@ngstack/code-editor';
+import { EditorComponent } from './editor/editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DefinitionComponent
+    DefinitionComponent,
+    EditorComponent
   ],
   imports: [
     PdfViewerModule,
@@ -27,7 +28,6 @@ import { CodeEditorModule } from '@ngstack/code-editor';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MyMaterialModule,
-    CodeEditorModule.forRoot(),
     MarkdownModule.forRoot({
       loader: HttpClient,
       sanitize: SecurityContext.NONE,
