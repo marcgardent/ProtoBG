@@ -1,27 +1,12 @@
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const path = require('path');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 
 module.exports = {
-  entry: {
-      app: './index.js',
-      "editor.worker": 'monaco-editor-core/esm/vs/editor/editor.worker.js'
-    },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename:  'app.js',
-  },
-  module: {
-    rules: [{
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader']
-    }, {
-      test: /\.ttf$/,
-      use: ['file-loader']
-    }]
-  },
-  plugins: [
-    new MonacoWebpackPlugin({
-        languages: ['typescript', 'javascript', 'css']
-    })
-  ]
-};
+  configureWebpack: {
+   plugins: [
+      new MonacoWebpackPlugin({
+        // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+        languages: ['javascript', 'css', 'html', 'typescript', 'json', 'xml', 'yaml']
+      })
+    ]
+  }
+}

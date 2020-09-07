@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import * as worker from 'monaco-editor/esm/vs/editor/editor.worker';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import * as monaco from 'monaco-editor'
+
 
 @Component({
   selector: 'app-editor',
@@ -11,24 +11,39 @@ export class EditorComponent implements OnInit {
 
   @ViewChild('editor', { static: true })
   editorContent: ElementRef<HTMLDivElement>;
-
+  editor: monaco.editor.IStandaloneCodeEditor;
 
   constructor() {
+    window["MonacoEnvironment"] = {
+      getWorker: (moduleId, label) => {
 
-    (self as any).MonacoEnvironment = {
-      getWorker: function (moduleId, label) {
-        return new Worker('editor.worker.js');
+        // editorWorkerService, javascript
+        if (label == "editorWorkerService") {
+          return new Worker("node_modules/monaco-editor/esm/vs/editor/editor.worker.js", { type: 'module' });
+        }
+        else {
+          console.exception("unknown monaco worker", moduleId, label);
+          throw ("not implemented");
+        }
       }
-    }
-
+    };
   }
 
   ngOnInit(): void {
 
-    monaco.editor.create(this.editorContent.nativeElement, {
-      value: "function hello() {\n\talert('Hello world!');\n}",
-      language: "javascript"
+    this.editor = monaco.editor.create(this.editorContent.nativeElement, {
+      value: "# test",
+      language: "markdown",
+      contextmenu: true,
+      minimap: { enabled: true },
+      fontFamily: "game-icons, monospace"
     });
   }
 
+  @HostListener('window:resize')
+  onResize() {
+    if (this.editor) {
+      this.editor.layout();
+    }
+  }
 }

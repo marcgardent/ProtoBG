@@ -3,7 +3,7 @@
     <app-editor></app-editor>
   </div>
   <div class="right">
-    <mat-tab-group id="tab-group" (selectedTabChange)="onTabsChanged($event)">
+    <mat-tab-group (selectedTabChange)="onTabsChanged($event)">
       <mat-tab>
         <ng-template mat-tab-label>
           {{currentPrinting.icon}}{{currentPrinting.name}}
@@ -32,7 +32,7 @@
       </mat-tab>
 
       <mat-tab label="🔣Glyphs">
-        <div class="content" style="font-family:game-icons;width:80%">
+        <div class="content" style="font-family: 'game-icons';">
           <div *ngFor="let item of gameIcons | keyvalue" style="display:inline-block;margin:0.1em;border:1px black solid;">
             <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
             <div>{{item.key}}</div>
@@ -46,11 +46,5 @@
         </div>
       </mat-tab>
     </mat-tab-group>
-
   </div>
 </div>
-
-<!-- <div id="wrapper">
- 
-
--->
