@@ -12,12 +12,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DefinitionComponent } from './definition/definition.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { EditorComponent } from './editor/editor.component';
+import { ExplorerComponent } from './explorer/explorer.component';
+import { MonacoService } from './services/monaco.service';
+import { WarehouseService } from './services/warehouse.service';
+import { GlossaryService } from './services/glossary.service';
+import { EventhubService } from './services/eventhub.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     DefinitionComponent,
-    EditorComponent
+    EditorComponent,
+    ExplorerComponent
   ],
   imports: [
     PdfViewerModule,
@@ -37,7 +43,7 @@ import { EditorComponent } from './editor/editor.component';
       },
    }),
   ],
-  providers: [],
+  providers: [EventhubService, WarehouseService, GlossaryService, MonacoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

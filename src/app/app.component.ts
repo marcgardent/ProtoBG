@@ -13,7 +13,8 @@ import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MetaTags } from './lib/tags/meta.tags';
 import { Templating } from './lib/templating/templating.tag';
-import { Entry } from './lib/tags/Entry';
+import { EventhubService } from './services/eventhub.service';
+import { WarehouseService } from './services/warehouse.service';
 
 @Component({
   selector: 'app-root',
@@ -22,46 +23,27 @@ import { Entry } from './lib/tags/Entry';
 })
 export class AppComponent implements OnInit {
 
-  theme = 'vs';
-
-  // codeModel: CodeModel = {
-  //   language: 'markdown',
-  //   uri: 'printing.markdown',
-  //   value: 'content',
-  // };
-
-  options = {
-    contextmenu: true,
-    minimap: {
-      enabled: true,
-    },
-    fontFamily: "game-icons, monospace"
-  };
-
   private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
   private glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata);
-  private monaco: any;
   public definitions = [];
-  public tagSuggestions = [];
-  public snippetSuggestions = [];
+
   public gameIcons = gameIcons;
   public printings = [];
   public currentPrinting: any = this.defaultPrinting;
 
-  constructor(private snackBar: MatSnackBar, private readonly sanitizer: DomSanitizer) {
+  constructor(private snackBar: MatSnackBar,
+    private readonly sanitizer: DomSanitizer,
+    private readonly warehouse: WarehouseService,
+    private readonly hub : EventhubService) {
 
-    const txt = localStorage.getItem("protobg-code");
-    if (txt) {
-      this.content = txt;
-    }
+    this.hub.onSuccess.subscribe((m)=>{
+      this.snackBar.open(m, undefined, { duration: 1000 });
+    });
+    
+    this.hub.onError.subscribe((m)=>{
+      this.snackBar.open(m, undefined, { duration: 4000 });
+    });
 
-      /* monaco.onload */ {
-      //this.codeModel.value = this.content;
-      // this.updateGlossary();
-      // this.updateSuggestions();
-      // this.updatePrint();
-      // this.processAsPDF();
-    }
   }
 
   @HostListener('window:keydown.control.s', ['$event'])
@@ -69,29 +51,8 @@ export class AppComponent implements OnInit {
     $event.preventDefault();
     $event.stopPropagation();
     localStorage.setItem("protobg-code", "TODO value");
-    this.snackBar.open("saved", undefined, { duration: 1000 });
-
-    if (this.updateGlossary()) {
-      this.updateSuggestions();
-      this.updatePrint();
-      this.processAsPDF();
-    }
   }
-  
-  private updateGlossary() {
-    try {
-      const data = readGlossaryFromYaml("TODO value");
-      fixTagsDeclaration(data);
-      this.glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
-    } catch (exception) {
 
-      this.snackBar.open("fix the glossary", undefined, { duration: 1000 });
-      console.error(exception);
-      return false;
-    }
-
-    return true;
-  }
 
   updatePrint() {
     this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
@@ -119,55 +80,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private updateSuggestions() {
-    this.tagSuggestions = [];
-    this.snippetSuggestions = [];
-    for (let [index, tag] of Object.entries(this.glossary.glossary)) {
 
-      const entry = new Entry(this.glossary, tag);
-      this.tagSuggestions.push({
-        _entry: entry,
-        label: index,
-        filterText: tag.name,
-        kind: this.monaco.languages.CompletionItemKind.Keyword,
-        insertText: index,
-        sortText: index,
-        documentation: {
-          value: `## ${entry.displayName}
-        
-${entry.description}
-
-**tags:** ${entry.tagAsEntries.map(x => x.displayName).join(", ")}
-**implements:** ${entry.properties.join(", ")}
-`}
-      });
-
-      console.debug(tag.properties);
-
-      {
-        // snippets
-        const props = entry.properties;
-        if (props.length > 0) {
-          const insertText = []
-
-          insertText.push(`${entry.icon}\$\{1:name\}:`);
-          insertText.push(`  tags: ${entry.canonicalName}`);
-          let tab = 1;
-          for (let prop of props) {
-            tab++;
-            insertText.push(`  ${prop}: \$${tab}`);
-          }
-
-          this.snippetSuggestions.push({
-            label: tag.name,
-            kind: this.monaco.languages.CompletionItemKind.Snippet,
-            insertTextRules: this.monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            insertText: insertText.join("\n")
-          });
-        }
-      }
-    }
-  }
 
   public processAsPDF() {
     const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));

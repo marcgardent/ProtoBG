@@ -1,6 +1,12 @@
+<div class="header">protoBG - all-in-one ⚒️tool to create 🖼️artworks templated and published as 📄PDF.</div>
 <div class="body">
   <div class="left">
-    <app-editor></app-editor>
+    <div class="explorer">
+      explorer
+    </div>
+    <div class="editor-content">
+      <app-editor></app-editor>
+    </div>
   </div>
   <div class="right">
     <mat-tab-group (selectedTabChange)="onTabsChanged($event)">
@@ -15,13 +21,15 @@
           <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
         </div>
         <mat-menu #Menu="matMenu">
-          <a mat-menu-item [href]="pdfSrcSafe" [download]="currentPrinting.name + '.pdf'">📥 <b>{{currentPrinting.name}}.pdf</b>
+          <a mat-menu-item [href]="pdfSrcSafe" [download]="currentPrinting.name + '.pdf'">📥
+            <b>{{currentPrinting.name}}.pdf</b>
           </a>
 
-          <button mat-menu-item *ngFor="let print of printings" (click)="changePrint(print)">{{print.icon}}{{print.name}}</button>
+          <button mat-menu-item *ngFor="let print of printings"
+            (click)="changePrint(print)">{{print.icon}}{{print.name}}</button>
         </mat-menu>
       </mat-tab>
-      <mat-tab label="📄Code" >
+      <mat-tab label="📄Code">
 
         <div class="content">
           <pre style="overflow-x:hidden">
@@ -33,7 +41,8 @@
 
       <mat-tab label="🔣Glyphs">
         <div class="content" style="font-family: 'game-icons';">
-          <div *ngFor="let item of gameIcons | keyvalue" style="display:inline-block;margin:0.1em;border:1px black solid;">
+          <div *ngFor="let item of gameIcons | keyvalue"
+            style="display:inline-block;margin:0.1em;border:1px black solid;">
             <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
             <div>{{item.key}}</div>
           </div>
