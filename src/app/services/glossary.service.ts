@@ -16,13 +16,16 @@ export class GlossaryService {
   constructor(private readonly hub: EventhubService) {
     this.hub.workspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
-    })
+    });
+
+    this.hub.glossary.next(new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata));
   }
 
   private updateGlossary(workspace: IWorkspace) {
-    const content = '\n'.concat(...workspace.ressources.filter(x => x.type === 'yaml').map(x => x.content));
+    const content = '\n'.concat(...workspace.ressources.filter(x => x.type === 'glossary').map(x => x.content));
 
     try {
+      debugger;
       const data = readGlossaryFromYaml(content);
       fixTagsDeclaration(data);
       const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);

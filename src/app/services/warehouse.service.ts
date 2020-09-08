@@ -19,10 +19,14 @@ export class WarehouseService {
     hub.warehouse.next(warehouse);
     hub.workspace.next(workspace);
     hub.ressource.next(ressource);
+
+    hub.onWorkspaceUpdated.subscribe(x=> {
+      this.saveAll();
+    });
   }
 
   private loadWarehouseFromLocalStorage(): IWarehouse {
-    let ret = { workspaces: [{ name: 'default', ressources: [{ name: "/default.yml", content: "#TODO2", type: "yaml" }] }] };
+    let ret = { workspaces: [{ name: 'default', ressources: [{ name: "/default.yml", content: "#TODO2", type: "glossary" }] }] };
     const text = localStorage.getItem(localStorageKey);
     if (text) {
       try {

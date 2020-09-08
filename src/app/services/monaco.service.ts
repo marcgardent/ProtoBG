@@ -48,6 +48,29 @@ export class MonacoService {
     });
   }
 
+  public rehydrateWorkspace() {
+    if(this.hub.workspace.value){
+      for(let ressource of this.hub.workspace.value.ressources){
+        this.rehydrateRessource(ressource);
+      }
+      this.hub.onWorkspaceUpdated.next(this.hub.workspace.value);
+    }
+  }
+
+  private rehydrateRessource(ressource:IRessource){
+    if(ressource){
+      const model = this.getModel(ressource);
+      if(model){
+        ressource.content = model.getValue();
+        this.hub.onRessourceUpdated.next(ressource);
+      }
+      else{
+        console.error("model not loaded for", ressource);
+        this.hub.onError.next("internal error [press F12]");
+      }
+    }
+  }
+
   public createEditor(domElement: HTMLDivElement): monaco.editor.IStandaloneCodeEditor {
     this.editor = monaco.editor.create(domElement, {
       //value: this.hub.ressource.value ? this.hub.ressource.value.content : "",
@@ -63,12 +86,22 @@ export class MonacoService {
     return this.editor;
   }
 
+  private getModel(ressource: IRessource){
+    const r = monaco.editor.getModels().filter(x=> x.uri.path== ressource.name);
+    if(r.length==1){
+      return r[0];
+    }
+    else {
+      return undefined;
+    }
+  }
+
   private loadRessource(ressource: IRessource){
     if(this.editor && ressource){
-      const r = monaco.editor.getModels().filter(x=> x.uri.path== ressource.name);
-      if(r.length==1){
-        const model = r[0];
-        this.editor.setModel(model);
+      const r = this.getModel(ressource);
+      if(r){
+        this.editor.setModel(r);
+        console.debug("setModel", r.uri)
       }
       else{
         console.error("model not loaded for", ressource);
@@ -99,8 +132,12 @@ export class MonacoService {
     if (ext == 'nunjucks') {
       return "html";
     }
-    else {
-      return "markdown"
+    else if (ext == 'glossary') {
+      return customLanguage;
+    }
+    else{
+      console.warn("undefined ext.", ext);
+      return null;
     }
   }
 
@@ -206,7 +243,6 @@ ${entry.description}
     monaco.languages.registerCompletionItemProvider(customLanguage, {
       //triggerCharacters: [' '],
       provideCompletionItems: (model: monaco.editor.ITextModel, position: monaco.Position, context) => {
-
         if (position.column === 1) {
           return { suggestions: this.snippetSuggestions };
         } else {

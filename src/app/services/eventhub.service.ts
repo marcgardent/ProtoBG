@@ -16,6 +16,8 @@ export class EventhubService {
   
   public onError = new Subject<string>();
   public onSuccess = new Subject<string>();
+  public onRessourceUpdated = new Subject<IRessource>();
+  public onWorkspaceUpdated = new Subject<IWorkspace>();
 
   constructor() {
 

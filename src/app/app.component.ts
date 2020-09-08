@@ -15,6 +15,7 @@ import { MetaTags } from './lib/tags/meta.tags';
 import { Templating } from './lib/templating/templating.tag';
 import { EventhubService } from './services/eventhub.service';
 import { WarehouseService } from './services/warehouse.service';
+import { GlossaryService } from './services/glossary.service';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ import { WarehouseService } from './services/warehouse.service';
 export class AppComponent implements OnInit {
 
   private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
-  private glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata);
+  
   public definitions = [];
 
   public gameIcons = gameIcons;
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
 
   constructor(private snackBar: MatSnackBar,
     private readonly sanitizer: DomSanitizer,
+    private readonly glossaryService : GlossaryService,
     private readonly warehouse: WarehouseService,
     private readonly hub : EventhubService) {
 
@@ -43,15 +45,9 @@ export class AppComponent implements OnInit {
     this.hub.onError.subscribe((m)=>{
       this.snackBar.open(m, undefined, { duration: 4000 });
     });
-
   }
 
-  @HostListener('window:keydown.control.s', ['$event'])
-  refresh($event: KeyboardEvent) {
-    $event.preventDefault();
-    $event.stopPropagation();
-    localStorage.setItem("protobg-code", "TODO value");
-  }
+
 
 
   updatePrint() {

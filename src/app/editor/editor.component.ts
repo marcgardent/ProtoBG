@@ -27,4 +27,12 @@ export class EditorComponent implements OnInit {
       this.editor.layout();
     }
   }
+
+  @HostListener('window:keydown.control.s', ['$event'])
+  refresh($event: KeyboardEvent) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    debugger;
+    this.monacoService.rehydrateWorkspace();
+  }
 }
