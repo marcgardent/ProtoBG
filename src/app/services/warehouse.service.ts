@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EventhubService } from './eventhub.service';
+import { EventHubService } from './eventhub.service';
 import { IWarehouse } from '../lib/editor/models';
 
 
@@ -10,23 +10,33 @@ const localStorageKey = "WAREHOUSE-R1";
 })
 export class WarehouseService {
 
-  constructor(private readonly hub : EventhubService) {
-    
+  constructor(private readonly hub: EventHubService) {
+
     const warehouse = this.loadWarehouseFromLocalStorage();
     const workspace = warehouse && warehouse.workspaces.length > 0 ? warehouse.workspaces[0] : undefined;
-    const ressource = workspace && workspace.ressources.length > 0  ? workspace.ressources[0] : undefined;
+    const resource = workspace && workspace.resources.length > 0 ? workspace.resources[0] : undefined;
 
     hub.currentWarehouse.next(warehouse);
     hub.currentWorkspace.next(workspace);
-    hub.currentRessource.next(ressource);
+    hub.currentResource.next(resource);
 
-    hub.onWorkspaceUpdated.subscribe(x=> {
+    hub.onWorkspaceUpdated.subscribe(x => {
       this.saveAll();
     });
   }
 
   private loadWarehouseFromLocalStorage(): IWarehouse {
-    let ret = { workspaces: [{ name: 'default', ressources: [{ name: "/default.yml", content: "#TODO2", type: "glossary" }] }] };
+    
+    let ret = {
+      saved: new Date().toUTCString(),
+      currentWorkspace: 'default',
+      workspaces: [{
+        name: 'default',
+        currentResource: "/default.yml",
+        resources: [{ name: "/default.yml", content: "#TODO2", type: "glossary" }]
+      }]
+    };
+
     const text = localStorage.getItem(localStorageKey);
     if (text) {
       try {
@@ -41,6 +51,7 @@ export class WarehouseService {
   }
 
   public saveAll() {
+    this.hub.currentWarehouse.value.saved = new Date().toUTCString();
     const dump = JSON.stringify(this.hub.currentWarehouse.value);
     localStorage.setItem(localStorageKey, dump);
     this.hub.onSuccess.next("Workspaces saved!");

@@ -16,7 +16,7 @@ import { ExplorerComponent } from './explorer/explorer.component';
 import { MonacoService } from './services/monaco.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
-import { EventhubService } from './services/eventhub.service';
+import { EventHubService } from './services/eventhub.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
 
 @NgModule({
@@ -45,7 +45,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
       },
    }),
   ],
-  providers: [EventhubService, WarehouseService, GlossaryService, MonacoService],
+  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

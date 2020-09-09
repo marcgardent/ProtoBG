@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { EventhubService } from './services/eventhub.service';
+import { EventHubService } from './services/eventhub.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
 
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly glossaryService: GlossaryService,
     private readonly warehouse: WarehouseService,
-    private readonly hub: EventhubService) {
+    private readonly hub: EventHubService) {
 
     this.hub.onSuccess.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 1000 });

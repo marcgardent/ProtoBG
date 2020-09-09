@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import * as monaco from 'monaco-editor';
-import { EventhubService } from './eventhub.service';
+import { EventHubService } from './eventhub.service';
 import { Glossary } from '../lib/tags/Glossary';
 import { Entry } from '../lib/tags/Entry';
-import { IWorkspace, IRessource } from '../lib/editor/models';
-import { ThrowStmt } from '@angular/compiler';
+import { IWorkspace, IResource } from '../lib/editor/models';
+
 
 const customLanguage = "markdown";
 
@@ -17,7 +17,7 @@ export class MonacoService {
   public snippetSuggestions = [];
   private editor: monaco.editor.IStandaloneCodeEditor = undefined;
 
-  constructor(private readonly hub: EventhubService) {
+  constructor(private readonly hub: EventHubService) {
 
     monaco.editor.setTheme("vs-dark");
 
@@ -43,29 +43,29 @@ export class MonacoService {
       this.loadWorkspace(w);
     });
 
-    this.hub.currentRessource.subscribe((r) => {
-      this.loadRessource(r);
+    this.hub.currentResource.subscribe((r) => {
+      this.loadResource(r);
     });
   }
 
   public rehydrateWorkspace() {
     if(this.hub.currentWorkspace.value){
-      for(let ressource of this.hub.currentWorkspace.value.ressources){
-        this.rehydrateRessource(ressource);
+      for(let resource of this.hub.currentWorkspace.value.resources){
+        this.rehydrateResource(resource);
       }
       this.hub.onWorkspaceUpdated.next(this.hub.currentWorkspace.value);
     }
   }
 
-  private rehydrateRessource(ressource:IRessource){
-    if(ressource){
-      const model = this.getModel(ressource);
+  private rehydrateResource(resource:IResource){
+    if(resource){
+      const model = this.getModel(resource);
       if(model){
-        ressource.content = model.getValue();
-        this.hub.onRessourceUpdated.next(ressource);
+        resource.content = model.getValue();
+        this.hub.onResourceUpdated.next(resource);
       }
       else{
-        console.error("model not loaded for", ressource);
+        console.error("model not loaded for", resource);
         this.hub.onError.next("internal error [press F12]");
       }
     }
@@ -73,7 +73,7 @@ export class MonacoService {
 
   public createEditor(domElement: HTMLDivElement): monaco.editor.IStandaloneCodeEditor {
     this.editor = monaco.editor.create(domElement, {
-      //value: this.hub.ressource.value ? this.hub.ressource.value.content : "",
+      //value: this.hub.resource.value ? this.hub.resource.value.content : "",
       //language: "markdown",
       contextmenu: true,
       minimap: { enabled: true },
@@ -81,12 +81,12 @@ export class MonacoService {
     });
 
     this.loadWorkspace(this.hub.currentWorkspace.value);
-    this.loadRessource(this.hub.currentRessource.value);
+    this.loadResource(this.hub.currentResource.value);
 
     return this.editor;
   }
 
-  private getModel(ressource: IRessource){
+  private getModel(ressource: IResource){
     const r = monaco.editor.getModels().filter(x=> x.uri.path== ressource.name);
     if(r.length==1){
       return r[0];
@@ -96,7 +96,7 @@ export class MonacoService {
     }
   }
 
-  private loadRessource(ressource: IRessource){
+  private loadResource(ressource: IResource){
     if(this.editor && ressource){
       const r = this.getModel(ressource);
       if(r){
@@ -120,7 +120,7 @@ export class MonacoService {
         model.dispose();
       }
 
-      for (let ressource of workspace.ressources) {
+      for (let ressource of workspace.resources) {
 
         const m = monaco.editor.createModel(ressource.content, this.getLanguage(ressource.type), monaco.Uri.file(ressource.name));
         console.debug("loaded", m.uri.path, m);

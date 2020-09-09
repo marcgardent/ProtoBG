@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EventhubService } from './eventhub.service';
+import { EventHubService } from './eventhub.service';
 import { IWorkspace } from '../lib/editor/models';
 import { fixTagsDeclaration } from '../lib/tags/TagParser';
 import { readGlossaryFromYaml } from '../lib/tags/YamlTagLexer';
@@ -14,7 +14,7 @@ import { Pao } from '../lib/pao/pao.tags';
 export class GlossaryService {
 
 
-  constructor(private readonly hub: EventhubService) {
+  constructor(private readonly hub: EventHubService) {
     this.hub.currentWorkspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
     });
@@ -28,7 +28,7 @@ export class GlossaryService {
 
   mergeAll(workspace: IWorkspace): string {
     if(workspace){
-    return '\n'.concat(...workspace.ressources.filter(x => x.type === 'glossary').map(x => x.content));
+    return '\n'.concat(...workspace.resources.filter(x => x.type === 'glossary').map(x => x.content));
     }
     else{
       return "";

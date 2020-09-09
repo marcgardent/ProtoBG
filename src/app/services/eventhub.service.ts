@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { IWarehouse, IWorkspace, IRessource } from '../lib/editor/models';
+import { IWarehouse, IWorkspace, IResource } from '../lib/editor/models';
 import { Glossary } from '../lib/tags/Glossary';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class EventhubService {
+export class EventHubService {
 
   public currentWarehouse = new BehaviorSubject<IWarehouse>(undefined);
   public currentWorkspace = new BehaviorSubject<IWorkspace>(undefined);
-  public currentRessource = new BehaviorSubject<IRessource>(undefined);
+  public currentResource = new BehaviorSubject<IResource>(undefined);
   public currentGlossary = new BehaviorSubject<Glossary>(undefined);
 
   public onError = new Subject<string>();
   public onSuccess = new Subject<string>();
-  public onRessourceUpdated = new Subject<IRessource>();
+  public onResourceUpdated = new Subject<IResource>();
   public onWorkspaceUpdated = new Subject<IWorkspace>();
 
   constructor() {
@@ -27,11 +27,11 @@ export class EventhubService {
 
     this.currentWarehouse.subscribe((w) => { console.debug("⚡currentWarehouse", w) });
     this.currentWorkspace.subscribe((w) => { console.debug("⚡currentWorkspace", w) });
-    this.currentRessource.subscribe((w) => { console.debug("⚡currentRessource", w) });
+    this.currentResource.subscribe((w) => { console.debug("⚡currentResource", w) });
     this.currentGlossary.subscribe((w) => { console.debug("⚡currentGlossary", w) });
     this.onError.subscribe((w) => { console.debug("⚡onError", w) });
     this.onSuccess.subscribe((w) => { console.debug("⚡onSuccess", w) });
-    this.onRessourceUpdated.subscribe((w) => { console.debug("⚡onRessourceUpdated", w) });
+    this.onResourceUpdated.subscribe((w) => { console.debug("⚡onResourceUpdated", w) });
     this.onWorkspaceUpdated.subscribe((w) => { console.debug("⚡onWorkspaceUpdated", w) });
 
   }

@@ -1,5 +1,5 @@
 
-export interface IRessource {
+export interface IResource {
     name: string;
     content: string;
     type: string;
@@ -7,11 +7,12 @@ export interface IRessource {
   
   export interface IWorkspace {
     name: string;
-    ressources: Array<IRessource>;
+    currentResource: string;
+    resources: Array<IResource>;
   }
   
   export interface IWarehouse {
+    saved : string;
+    currentWorkspace: string;
     workspaces: Array<IWorkspace>;
   }
-  
-  
