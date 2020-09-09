@@ -17,13 +17,15 @@ import { MonacoService } from './services/monaco.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
 import { EventhubService } from './services/eventhub.service';
+import { ConfigurationComponent } from './configuration/configuration.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DefinitionComponent,
     EditorComponent,
-    ExplorerComponent
+    ExplorerComponent,
+    ConfigurationComponent
   ],
   imports: [
     PdfViewerModule,
