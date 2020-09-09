@@ -16,9 +16,9 @@ export class WarehouseService {
     const workspace = warehouse && warehouse.workspaces.length > 0 ? warehouse.workspaces[0] : undefined;
     const ressource = workspace && workspace.ressources.length > 0  ? workspace.ressources[0] : undefined;
 
-    hub.warehouse.next(warehouse);
-    hub.workspace.next(workspace);
-    hub.ressource.next(ressource);
+    hub.currentWarehouse.next(warehouse);
+    hub.currentWorkspace.next(workspace);
+    hub.currentRessource.next(ressource);
 
     hub.onWorkspaceUpdated.subscribe(x=> {
       this.saveAll();
@@ -41,7 +41,7 @@ export class WarehouseService {
   }
 
   public saveAll() {
-    const dump = JSON.stringify(this.hub.warehouse.value);
+    const dump = JSON.stringify(this.hub.currentWarehouse.value);
     localStorage.setItem(localStorageKey, dump);
     this.hub.onSuccess.next("Workspaces saved!");
   }

@@ -35,25 +35,25 @@ export class MonacoService {
 
     this.registerCustomLanguage();
 
-    this.hub.glossary.subscribe((g) => {
+    this.hub.currentGlossary.subscribe((g) => {
       if (g) { this.updateSuggestions(g) }
     });
 
-    this.hub.workspace.subscribe((w) => {
+    this.hub.currentWorkspace.subscribe((w) => {
       this.loadWorkspace(w);
     });
 
-    this.hub.ressource.subscribe((r) => {
+    this.hub.currentRessource.subscribe((r) => {
       this.loadRessource(r);
     });
   }
 
   public rehydrateWorkspace() {
-    if(this.hub.workspace.value){
-      for(let ressource of this.hub.workspace.value.ressources){
+    if(this.hub.currentWorkspace.value){
+      for(let ressource of this.hub.currentWorkspace.value.ressources){
         this.rehydrateRessource(ressource);
       }
-      this.hub.onWorkspaceUpdated.next(this.hub.workspace.value);
+      this.hub.onWorkspaceUpdated.next(this.hub.currentWorkspace.value);
     }
   }
 
@@ -80,8 +80,8 @@ export class MonacoService {
       fontFamily: "game-icons, monospace"
     });
 
-    this.loadWorkspace(this.hub.workspace.value);
-    this.loadRessource(this.hub.ressource.value);
+    this.loadWorkspace(this.hub.currentWorkspace.value);
+    this.loadRessource(this.hub.currentRessource.value);
 
     return this.editor;
   }
@@ -305,9 +305,9 @@ ${entry.description}
 
         const { column, lineNumber } = position;
         const theWord = model.getWordAtPosition(position);
-        if (theWord && this.hub.glossary.value) {
+        if (theWord && this.hub.currentGlossary.value) {
           const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
-          const entry = this.hub.glossary.value.getAsEntry(parsed[2]);
+          const entry = this.hub.currentGlossary.value.getAsEntry(parsed[2]);
           console.debug("theWord!", parsed[2]);
           if (entry.isValid) {
             return {

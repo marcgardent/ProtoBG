@@ -6,221 +6,234 @@
 🖨️pao:
   title: PAO namespace
 
-⬜canvas:
-    description: is an rectangle to display something
-    tag: 🖨️pao 💠abstract
+⬜rectangle:
+  description: is an rectangle to display something
+  tags: 🖨️pao 💠abstract
 
 📄format:
-    tags: 🖨️pao 💠abstract
-    properties: 📏min 📏max
-
+  tags: 🖨️pao 💠abstract
+  properties: 📏min 📏max
 
 📄page:
-    tags: 🖨️pao ⬜canvas
-
-# 📄page:
-#     description: |
-#         set 📄page's 💠property inline: `📄format 🔄orientation`
-#     tags: ⬜canvas 💠property
-#     properties: 📄format 🔄orientation
+  tags: 🖨️pao ⬜rectangle
 
 📏unit:
-    tags: 🖨️pao 💠property 💠abstract 
+  tags: 🖨️pao 💠property 💠abstract 
 
 📏distance:
-    title: distance unit
-    tags: 🖨️pao 📏unit 💠property 💠abstract
+  tags: 🖨️pao 📏unit 💠property 💠abstract
+  title: distance unit
 
 📏density:
-    tags: 🖨️pao 📏unit 💠property 💠abstract
+  tags: 🖨️pao 📏unit 💠property 💠abstract
 
 🔄orientation:
-    description: orientation of a 📄format 
-    tags: 🖨️pao
+  tags: 🖨️pao
+  description: orientation of a 📄format 
 
 🔄landscape:
-    description: use .max size for the 📄format's width and .min size for 📄format's height 
-    tags: 🔄orientation
+  tags: 🔄orientation
+  description: use .max size for the 📄format's width and .min size for 📄format's height 
 
 🔄portrait:
-    description: use .min size for the 📄format's width and .max size for 📄format's height
-    tags: 🔄orientation
+  tags: 🔄orientation
+  description: use .min size for the 📄format's width and .max size for 📄format's height
 
 🖨️copies:
-    description: quantity printed
-    tags: 🖨️pao
+  tags: 🖨️pao
+  description: quantity printed
 
 ## Units
 
 📏mm:
-    alias: millimeter
-    description: 📏distance in millimeter
-    tags: 🖨️pao 📏distance
+  tags: 🖨️pao 📏distance
+  alias: millimeter
+  description: 📏distance in millimeter
 
 📏inch:
-    alias: inches
-    description: 📏distance in inch
-    tags: 🖨️pao  📏distance
+  alias: inches
+  description: 📏distance in inch
+  tags: 🖨️pao  📏distance
 
 📏dpi:
-    tags: 🖨️pao 📏density
+  tags: 🖨️pao 📏density
 
 ## Canvas properties
     
 📏width:
-    title: ⬜canvas' width
-    tags: 🖨️pao 📏distance 💠property
+  title: ⬜rectangle's width
+  tags: 🖨️pao 📏distance 💠property
 
 📏height:
-    title: ⬜canvas' height
-    tags: 🖨️pao 📏distance 💠property
+  title: ⬜rectangle's height
+  tags: 🖨️pao 📏distance 💠property
 
 📏corners:
-    title: radius corner of ⬜canvas 
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  title: radius corner of ⬜rectangle 
 
 📏min:
-    title: is min side of ⬜canvas
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  title: is min side of ⬜rectangle
 
 📏max:
-    title: is max side of ⬜canvas
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  title: is max side of ⬜rectangle
 
 📏gutters:
-    description: |
-        space between two ⬜canvas
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  description: |
+    is layouting property to define the space between two ⬜rectangle
 ## Pages
 
 📄A4:
-    description: it is a 📄format in A4 Format.
-    tags: 🖨️pao 📄format
-    📏min: 210📏mm 
-    📏max: 297📏mm
+  tags: 🖨️pao 📄format
+  description: is standart A4 📄format.
+  📏min: 210📏mm 
+  📏max: 297📏mm
 
 ### Cards
 
-🃏card:
-    description: is playing card
-    tags: 🖨️pao 📄format 💠abstract
-
 🃏magics:
-    title: Magic card format
-    tags: 🖨️pao 🃏card
-    📏min: 63.5📏mm
-    📏max: 88.9📏mm
+  tags: 🖨️pao 📄format
+  title: Magic card 📄format
+  📏min: 63.5📏mm
+  📏max: 88.9📏mm
 
 🃏poker:
-    title: poker card format
-    tags: 🖨️pao 🃏card
-    📏min: 63📏mm
-    📏max: 89📏mm
+  tags: 🖨️pao 📄format
+  title: poker card 📄format
+  📏min: 63📏mm
+  📏max: 89📏mm
 
 🃏bridge:
-    title: bridge card format    
-    tags: 🖨️pao 🃏card
-    📏min: 63📏mm
-    📏max: 89📏mm
+  tags: 🖨️pao 📄format
+  title: bridge card 📄format    
+  📏min: 63📏mm
+  📏max: 89📏mm
 
 🃏tarot:
-    title: tarot card format
-    tags: 🖨️pao 🃏card
-    📏min: 60📏mm
-    📏max: 113📏mm
+  tags: 🖨️pao 📄format
+  title: tarot card 📄format
+  📏min: 60📏mm
+  📏max: 113📏mm
 
 ## printing
 
 ⏹layout:
-    description: |
-        by defaut ⏹defaultLayout are used.
-    tags: 🖨️pao  💠property  
-    properties: 📄format 🔄orientation 📏paddings 📏bleeds 📏corners
+  tags: 🖨️pao 💠property  
+  description: |
+    define layouting properties for an 🖼️artwork.
+  properties: 📄format 🔄orientation 📏paddings 📏bleeds 📏corners
 
-⏹defaultLayout:
-    tags: 🖨️pao ⏹layout 
-    📄page: 📄A4 🔄portrait
-    📏paddings: 0📏mm
-    📏bleeds: 0📏mm
-    📏corners: 0📏mm
+🖼️artwork:
+  tags: 🖨️pao ⬜rectangle
+  description: |
+    is a picture produce when the 📐template is applied.
 
-📘document:
-    description: |
-        generate a collection of fullbleed art1work with a 📐template 
-        attach 🖨️copies into the request 📑foreach
-    tags: 🖨️pao 📐output
-    properties: ⏹layout 📐template 📐parameters 📑foreach 
+🖼️collection:
+  tags: 🖨️pao
+  description: |
+    is a collection of fullbleed 🖼️artwork.
+
+    for each entry of 📑foreach request, it produce one 🖼️artwork.
+    the 📐template is applied with the entry (akka model) and ⏹layout and 📐parameters
+    
+    > you have to implement ⏹layout constraint into your 📐template (⬜trimBox and ⬜bleedBox and 📄format)
+    
+    You can attach the quantities of 🖨️copies into the 📑foreach request:
+
+    ```yaml
+    📑foreach: { 📑is: 🏭factory, 🖨️copies: 10}
+    ```  
+  properties: ⏹layout 📐template 📐parameters 📑foreach 
 
 🖨️printing:
-    description: print a collection of 📘document
-    properties: 📑foreach 🖨️mode 📏margins
-    tags: 🖨️pao
+  tags: 🖨️pao
+  description: |
+    print all 🖼️artwork of 🖼️collections defined by the 📑foreach request.
+    It prints one 🖼️artwork by 📄page into the PDF.
+  properties: 📏margins 📏density 🖨️mode 📑foreach 
 
-🖨️assembly:
-    description: |
-        print a collection of 📘document like  🖨️printing
-        but assemble the 📄pages of document into larger 📄pages as much as possible.
-        sample of layout: `|📏margins|📏gutters|📄page|📏gutters|📄page|📏gutters|📄page|📏gutters|📏margins|`
-    tags: 🖨️pao
-    properties: 📄format 🔄orientation 📏margins 📏gutters 📑foreach 🖨️mode
-  
+🖨️assembling:
+  tags: 🖨️pao
+  description: |
+    print all 🖼️artwork of 🖼️collections defined by the 📑foreach request.
+    it prints multiple 🖼️artworks by page as much as possible with the contrainsts (📄format, 📏gutters,📏margins).
+  properties: 📄format 🔄orientation 📏density 📏margins 📏gutters 🖨️mode 📑foreach 
+
 🖨️mode:
-    description: printing behavior
-    tags: 🖨️pao
+  tags: 🖨️pao
+  description: printing behavior
 
 🚀production:
-    tag: 🖨️pao 🖨️mode
+  description: print all 🖨️copies
+  tags: 🖨️pao 🖨️mode
 
 🛑review:
-    description: ignore 🖨️copies statement
-    tag: 🖨️pao 🖨️mode
+  description: |
+    ignore the 🖨️copies statement
+
+    > this is useful for reviewing one copy of each 🖼️artwork
+
+  tags: 🖨️pao 🖨️mode
 
 ## Printing Boxes
 
-⬜box:
-    description: |
-        ⬜mediaBox > ⬜bleedBox > ⬜trimBox > ⬜artBox
-
 ⬜mediaBox:
-    description: the physical support
+  tags: 🖨️pao ⬜rectangle 
+  description: |
+    the physical support
+
+    > it's contains in order: ⬜bleedBox, ⬜trimBox, ⬜artBox
     
 ⬜bleedBox:
-    description: bleed
+  tags: 🖨️pao ⬜rectangle 
+  description: |
+    This is an ⬜rectangle greater than finished page
+    but you have to fill with your background.
+
+    > it's contains in order: ⬜trimBox, ⬜artBox
     
 ⬜trimBox:
-    description: The ⬜trimBox defines the intended dimensions of the finished page
+  tags: 🖨️pao ⬜rectangle 
+  description: |
+    It defines the intended dimensions of the finished page.
+
+    > it's contains ⬜artBox.
 
 ⬜artBox:
-    description: safe zone
-
+  tags: 🖨️pao ⬜rectangle
+  description: |
+    print important content only in this ⬜rectangle.
+  
 ➕marks:
-    description: trim marks
+  description: trim marks
 
 ➕lines:
-    description: |
-        trim marks for production.
-        it works with 📏gutters and 📏bleeds.
-    tags: ➕marks
+  tags: ➕marks
+  description: |
+    trim marks for production.
+    it's useful with 📏gutters and 📏bleeds.
 
 ➕cross:
-    description: |
-        Trim marks added on each corner.
-        This save papers and trimming time.
-        But don't forget to implement 📏corners.
-    tags: ➕marks
+  description: |
+    Trim marks added on each corner.
+    This save papers and trimming time.
+    But don't forget to implement 📏corners.
+  tags: ➕marks
 
 📏margins:
-    description: |
-        space between ⬜mediaBox and ⬜bleedBox 
-        use to add ➕marks and metadata.
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  description: |
+    distance between ⬜mediaBox and ⬜bleedBox 
+    use to add ➕marks and metadata.
 
 📏bleeds:
-    description: |
-        bleed is where printing goes all the way to the edge of the page. 
-        space between ⬜bleedBox and ⬜trimBox
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  description: |
+      distance between ⬜bleedBox and ⬜trimBox.
 
 📏paddings:
-    description: space between ⬜trimBox ⬜artBox
-    tags: 🖨️pao 📏distance 💠property
+  tags: 🖨️pao 📏distance 💠property
+  description: distance between ⬜trimBox ⬜artBox.

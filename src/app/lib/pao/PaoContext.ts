@@ -59,7 +59,7 @@ export class PaoContext {
     }
 
     entryAsPrinting(printingEntry: any): IPrinting {
-        if (this.reader.entryHas(printingEntry, Pao.ASSEMBLY)) {
+        if (this.reader.entryHas(printingEntry, Pao.ASSEMBLING)) {
             return new Assembly(this, printingEntry);
         }
         else {

@@ -3,7 +3,6 @@ import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
 import { exportAsTypescript } from './lib/tags/TypescriptExporter';
 import { fixTagsDeclaration } from './lib/tags/TagParser';
 import { Pao } from './lib/pao/pao.tags';
-import { Glossary } from './lib/tags/Glossary';
 import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
 
@@ -11,8 +10,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MetaTags } from './lib/tags/meta.tags';
-import { Templating } from './lib/templating/templating.tag';
+
 import { EventhubService } from './services/eventhub.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
@@ -32,7 +30,7 @@ export class AppComponent implements OnInit {
   public printings = [];
   public currentPrinting: any = this.defaultPrinting;
 
-  private get glossary() { return this.hub.glossary.value; }
+  private get glossary() { return this.hub.currentGlossary.value; }
 
   constructor(private snackBar: MatSnackBar,
     private readonly sanitizer: DomSanitizer,
@@ -47,6 +45,13 @@ export class AppComponent implements OnInit {
     this.hub.onError.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 4000 });
     });
+
+    this.hub.currentGlossary.subscribe((g) => {
+      this.updatePrint();
+      this.processAsPDF();
+      this.processAsCode();
+    });
+
   }
 
   ngOnInit(): void {
@@ -55,7 +60,7 @@ export class AppComponent implements OnInit {
 
   updatePrint() {
     if (this.glossary) {
-      this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
+      this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLING, Pao.PRINTING).toList()];
       if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
         this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
       }
@@ -68,13 +73,12 @@ export class AppComponent implements OnInit {
   }
 
   public onTabsChanged(event: MatTabChangeEvent) {
-
-    if (event.index == 1) {
-      this.processAsPDF();
-    }
-    else if (event.index == 2) {
-      this.processAsCode();
-    }
+    // if (event.index == 0) {
+    //   this.processAsPDF();
+    // }
+    // else if (event.index == 1) {
+    //   this.processAsCode();
+    // }
   }
 
   public processAsPDF() {
@@ -88,14 +92,14 @@ export class AppComponent implements OnInit {
           this.pdfSrc = x;
         });
       }
-      else{
+      else {
         this.currentPrinting = this.defaultPrinting;
       }
     }
   }
 
   public processAsCode() {
-    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.hub.workspace.value));
+    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.hub.currentWorkspace.value));
     fixTagsDeclaration(data);
     this.code = exportAsTypescript(data);
   }
@@ -127,7 +131,7 @@ export class AppComponent implements OnInit {
 ## printing
 
 📘myDeck:
-    tags: 📘document 
+    tags: 🖼️artworks 
     📑foreach:
         - { 📑is: 🏭factory, 🖨️copies: 10}
         - { 📑is: 🧰goods, 🖨️copies: 1}

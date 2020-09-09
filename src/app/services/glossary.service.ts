@@ -15,11 +15,15 @@ export class GlossaryService {
 
 
   constructor(private readonly hub: EventhubService) {
-    this.hub.workspace.subscribe((w) => {
+    this.hub.currentWorkspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
     });
 
-    this.hub.glossary.next(new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata));
+    this.hub.onWorkspaceUpdated.subscribe( (w)=> {
+      if (w) { this.updateGlossary(w); }
+    });
+
+    this.hub.currentGlossary.next(new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata));
   }
 
   mergeAll(workspace: IWorkspace): string {
@@ -33,11 +37,10 @@ export class GlossaryService {
 
   private updateGlossary(workspace: IWorkspace) {
     try {
-      debugger;
       const data = readGlossaryFromYaml(this.mergeAll(workspace));
       fixTagsDeclaration(data);
       const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
-      this.hub.glossary.next(glossary);
+      this.hub.currentGlossary.next(glossary);
 
     } catch (exception) {
       this.hub.onError.next("fix the glossary");

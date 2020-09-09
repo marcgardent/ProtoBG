@@ -10,11 +10,7 @@
 📐parameters:
     title: custom parameters for 📐template
     description: it is custom map to define parameters for a 📐template   
-  
-📐output:
-    description: |
-      📑foreach 💠entry the process apply the 📐template  with 📐parameters.
-    properties: 📐template 📐parameters 📑foreach
+
   
 ## Implementations
 

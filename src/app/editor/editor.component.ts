@@ -32,7 +32,6 @@ export class EditorComponent implements OnInit {
   refresh($event: KeyboardEvent) {
     $event.preventDefault();
     $event.stopPropagation();
-    debugger;
     this.monacoService.rehydrateWorkspace();
   }
 }

@@ -93,7 +93,7 @@ bind data and the template and the layout:
 
 ```yaml
 📘myDeck:
-    tags: 📘document 
+    tags: 🖼️artworks
     📑foreach:
         - { 📑is: 🏭factory, 🖨️copies: 10}
         - { 📑is: 🧰goods, 🖨️copies: 1}
