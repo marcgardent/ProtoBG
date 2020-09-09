@@ -25,45 +25,46 @@ import { GlossaryService } from './services/glossary.service';
 export class AppComponent implements OnInit {
 
   private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
-  
+
   public definitions = [];
 
   public gameIcons = gameIcons;
   public printings = [];
   public currentPrinting: any = this.defaultPrinting;
 
+  private get glossary() { return this.hub.glossary.value; }
+
   constructor(private snackBar: MatSnackBar,
     private readonly sanitizer: DomSanitizer,
-    private readonly glossaryService : GlossaryService,
+    private readonly glossaryService: GlossaryService,
     private readonly warehouse: WarehouseService,
-    private readonly hub : EventhubService) {
+    private readonly hub: EventhubService) {
 
-    this.hub.onSuccess.subscribe((m)=>{
+    this.hub.onSuccess.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 1000 });
     });
-    
-    this.hub.onError.subscribe((m)=>{
+
+    this.hub.onError.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 4000 });
     });
   }
 
+  ngOnInit(): void {
 
-
+  }
 
   updatePrint() {
-    this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
-    if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
-      this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
+    if (this.glossary) {
+      this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLY, Pao.PRINTING).toList()];
+      if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
+        this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
+      }
     }
   }
 
   changePrint(print: any) {
     this.currentPrinting = print;
     this.processAsPDF();
-  }
-
-  ngOnInit(): void {
-
   }
 
   public onTabsChanged(event: MatTabChangeEvent) {
@@ -76,19 +77,25 @@ export class AppComponent implements OnInit {
     }
   }
 
-
-
   public processAsPDF() {
-    const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
-    this.currentPrinting = this.glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
-    const p = pao.entryAsPrinting(this.currentPrinting);
-    p.toPdf().then(x => {
-      this.pdfSrc = x;
-    });
+
+    if (this.glossary) {
+      const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
+      this.currentPrinting = this.glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
+      if (this.currentPrinting) {
+        const p = pao.entryAsPrinting(this.currentPrinting);
+        p.toPdf().then(x => {
+          this.pdfSrc = x;
+        });
+      }
+      else{
+        this.currentPrinting = this.defaultPrinting;
+      }
+    }
   }
 
   public processAsCode() {
-    const data = readGlossaryFromYaml(this.content);
+    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.hub.workspace.value));
     fixTagsDeclaration(data);
     this.code = exportAsTypescript(data);
   }

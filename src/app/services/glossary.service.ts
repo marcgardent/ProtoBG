@@ -13,6 +13,7 @@ import { Pao } from '../lib/pao/pao.tags';
 })
 export class GlossaryService {
 
+
   constructor(private readonly hub: EventhubService) {
     this.hub.workspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
@@ -21,12 +22,19 @@ export class GlossaryService {
     this.hub.glossary.next(new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata));
   }
 
-  private updateGlossary(workspace: IWorkspace) {
-    const content = '\n'.concat(...workspace.ressources.filter(x => x.type === 'glossary').map(x => x.content));
+  mergeAll(workspace: IWorkspace): string {
+    if(workspace){
+    return '\n'.concat(...workspace.ressources.filter(x => x.type === 'glossary').map(x => x.content));
+    }
+    else{
+      return "";
+    }
+  }
 
+  private updateGlossary(workspace: IWorkspace) {
     try {
       debugger;
-      const data = readGlossaryFromYaml(content);
+      const data = readGlossaryFromYaml(this.mergeAll(workspace));
       fixTagsDeclaration(data);
       const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
       this.hub.glossary.next(glossary);

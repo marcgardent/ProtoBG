@@ -1,5 +1,5 @@
 export function exportAsTypescript(data: any) {
-
+  
     let constants = "";
     let metadata = "";
 

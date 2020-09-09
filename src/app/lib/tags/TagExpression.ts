@@ -3,6 +3,9 @@ export class TagExpression {
 
 
     entryHas(entry: any, tag: string) {
+        if(!entry || !entry.tags) {
+            debugger;
+        }
         return entry.tags.indexOf (tag) > -1;
     }
 
