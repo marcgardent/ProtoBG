@@ -1,1 +1,26 @@
-<p>explorer works!</p>
+<div *ngIf="warehouse">
+  ProtoBG://{{workspace.name}}
+  <button mat-icon-button [matMenuTriggerFor]="MenuWorkspace" class="cloneIcon">
+    <mat-icon>unfold_more</mat-icon>
+  </button>
+  /{{resource.name}}
+  <button mat-icon-button [matMenuTriggerFor]="MenuResource" class="cloneIcon">
+    <mat-icon>unfold_more</mat-icon>
+  </button>
+
+  <mat-menu #MenuWorkspace="matMenu">
+    <button mat-menu-item>workspace1</button>
+    <button mat-menu-item>workspace2</button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="renameWorkspace()">rename '{{workspace.name}}'</button>
+    <button mat-menu-item>create new workspace</button>
+  </mat-menu>
+
+  <mat-menu #MenuResource="matMenu">
+    <button mat-menu-item>sample.pdf</button>
+    <button mat-menu-item>sample2.pdf</button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="renameResource()">rename '{{resource.name}}'</button>
+    <button mat-menu-item>create new resource</button>
+  </mat-menu>
+</div>
