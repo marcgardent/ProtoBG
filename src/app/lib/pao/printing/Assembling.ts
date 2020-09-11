@@ -3,7 +3,7 @@ import { PaoContext, IPrinting } from '../PaoContext';
 import { Printing } from './Printing';
 import jsPDF from 'jspdf';
 
-export class Assembly implements IPrinting {
+export class Assembling implements IPrinting {
     private readonly gutters: { value: number; unit: any; };
     private readonly printing: Printing;
     private readonly page: { width: number; height: number; };
@@ -96,6 +96,8 @@ export class Assembly implements IPrinting {
 
             for (let pages of this.assemble(images)) {
 
+                doc.addPage();
+
                 //lines trim marks
                 if (this.marks == Pao.LINES) {
                     for (let artwork of pages) {
@@ -121,7 +123,7 @@ export class Assembly implements IPrinting {
                     }
                 }
             }
-            
+            doc.deletePage(1);
             return doc.output('datauristring');
         });
     }

@@ -2,7 +2,7 @@ import { TagExpression } from '../tags/TagExpression';
 import { Pao } from './pao.tags';
 import { Glossary } from '../tags/Glossary';
 import { Printing } from './printing/Printing';
-import { Assembly } from './printing/Assembly';
+import { Assembling } from './printing/Assembling';
 
 
 export interface IPrinting {
@@ -60,7 +60,7 @@ export class PaoContext {
 
     entryAsPrinting(printingEntry: any): IPrinting {
         if (this.reader.entryHas(printingEntry, Pao.ASSEMBLING)) {
-            return new Assembly(this, printingEntry);
+            return new Assembling(this, printingEntry);
         }
         else {
             return new Printing(this, printingEntry);

@@ -33,15 +33,17 @@ export class PrintingDocument {
         layout: any;
     }[] {
         const ret = new Array();
+        debugger;
         for (let source of this.foreachEntries) {
+
             const content = this.template.apply(this.parameters, this.documentEntry, source.result, this.layout);
             const copies = this.reader.coalesce(parseInt(source.request[Pao.COPIES]), 1);
-            
             ret.push({
-                content: content.then( c => { return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(c)))}),
+                content: content.then(c => { return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(c))) }),
                 copies: copies,
                 layout: this.layout
             });
+
         }
         return ret;
     }
