@@ -62,7 +62,7 @@ export class TagExpression {
             return value;
         }
         else {
-            return value.split(/\s+/);
+            return value.split(/\s+/).filter(x=> x!= "");
         }
     }
 
