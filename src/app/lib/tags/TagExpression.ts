@@ -40,6 +40,18 @@ export class TagExpression {
                 unit: this.glossary.get(parsed[4])
             };
         }
+        else {
+            const entry = this.glossary.get(value); 
+            if(entry){
+                return {
+                    value: undefined,
+                    unit: this.glossary.get(parsed[4])
+                };
+            }  
+            else {
+                return undefined;
+            }
+        }
     }
 
     public resolveRequestsAt(entry: any, field: string) {
