@@ -4,8 +4,6 @@ import { Templating } from './templating.tag';
 import { ITemplate } from './templateFactory';
 import * as nunjucks from "nunjucks";
 
-
-
 export class NunjucksTemplate implements ITemplate {
     private readonly template: string;
 
@@ -42,27 +40,30 @@ export class NunjucksTemplate implements ITemplate {
             });
         }, true);
 
-        env.addFilter('fromContext', function (key) {
-            return context[key];
+        env.addFilter('fromContext', function (key, defaultVal) {
+            return self.reader.fallback(defaultVal, context, ...self.reader.asArray(key));
         });
 
-        env.addFilter('fromParameters', function (key) {
-            return parameters[key];
+        env.addFilter('fromParameters', function (key, defaultVal) {
+            return self.reader.fallback(defaultVal, parameters, ...self.reader.asArray(key));
         });
 
-        env.addFilter('fromModel', function (key) {
-            return me[key];
+        env.addFilter('fromModel', function (key, defaultVal) {
+            return self.reader.fallback(defaultVal, me, ...self.reader.asArray(key));
         });
-        env.addFilter('fromGlossary', function (key) {
-            return self.glossary.get(key);
+
+        env.addFilter('fromGlossary', function (key, defaultVal) {
+            return self.reader.fallback(defaultVal, self.glossary.glossary, ...self.reader.asArray(key)); 
         });
-        
+
         env.addFilter('quantity', function (exp) {
             return self.reader.asQuantity(exp);
         });
+
         env.addFilter('arrayOfQuantities', function (exp) {
             return self.reader.asArrayOfQuantities(exp);
         });
+
         env.addFilter('millimeter', function (exp) {
             return self.reader.asQuantity(exp).value;
         });
@@ -78,6 +79,5 @@ export class NunjucksTemplate implements ITemplate {
                 }
             });
         });
-
     }
 }

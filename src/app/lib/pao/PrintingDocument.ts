@@ -33,7 +33,6 @@ export class PrintingDocument {
         layout: any;
     }[] {
         const ret = new Array();
-        debugger;
         for (let source of this.foreachEntries) {
 
             const content = this.template.apply(this.parameters, this.documentEntry, source.result, this.layout);

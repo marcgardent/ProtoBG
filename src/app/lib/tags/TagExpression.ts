@@ -33,24 +33,29 @@ export class TagExpression {
     }
 
     public asQuantity(value: string) {
-        const parsed = value.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
-        if (parsed) {
-            return {
-                value: parseFloat(parsed[1]),
-                unit: this.glossary.get(parsed[4])
-            };
-        }
-        else {
-            const entry = this.glossary.get(value); 
-            if(entry){
+        if (value) {
+            const parsed = value.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
+            if (parsed) {
                 return {
-                    value: undefined,
+                    value: parseFloat(parsed[1]),
                     unit: this.glossary.get(parsed[4])
                 };
-            }  
-            else {
-                return undefined;
             }
+            else {
+                const entry = this.glossary.get(value);
+                if (entry) {
+                    return {
+                        value: undefined,
+                        unit: this.glossary.get(parsed[4])
+                    };
+                }
+                else {
+                    return undefined;
+                }
+            }
+        }
+        else {
+            return { value: undefined, unit: undefined }
         }
     }
 
@@ -74,8 +79,11 @@ export class TagExpression {
         if (Array.isArray(value)) {
             return value;
         }
-        else {
+        else if (typeof value === "string") {
             return value.split(/\s+/).filter(x => x != "");
+        }
+        else {
+            return [value];
         }
     }
 
@@ -92,6 +100,14 @@ export class TagExpression {
             if (v) return v;
         }
         return undefined;
+    }
+
+    public fallback(defaultValue: any, source, ...keys: string[]): any {
+        for (let key of keys) {
+            const val = source[key];
+            if (val !== undefined) return source[key];
+        }
+        return defaultValue;
     }
 
     public resolveRequest(exp: any): any[] {
