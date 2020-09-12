@@ -46,11 +46,11 @@ export class TagExpression {
                 if (entry) {
                     return {
                         value: undefined,
-                        unit: this.glossary.get(parsed[4])
+                        unit: entry
                     };
                 }
                 else {
-                    return undefined;
+                    return  { value: undefined, unit: undefined }
                 }
             }
         }
