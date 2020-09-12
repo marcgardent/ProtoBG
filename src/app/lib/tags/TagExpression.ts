@@ -1,12 +1,13 @@
 import { Glossary } from './Glossary';
+import { MetaTags } from './meta.tags';
 export class TagExpression {
 
 
     entryHas(entry: any, tag: string) {
-        if(!entry || !entry.tags) {
+        if (!entry || !entry.tags) {
             debugger;
         }
-        return entry.tags.indexOf (tag) > -1;
+        return entry.tags.indexOf(tag) > -1;
     }
 
     constructor(private readonly glossary: Glossary) {
@@ -39,6 +40,18 @@ export class TagExpression {
                 unit: this.glossary.get(parsed[4])
             };
         }
+        else {
+            const entry = this.glossary.get(value); 
+            if(entry){
+                return {
+                    value: undefined,
+                    unit: this.glossary.get(parsed[4])
+                };
+            }  
+            else {
+                return undefined;
+            }
+        }
     }
 
     public resolveRequestsAt(entry: any, field: string) {
@@ -62,13 +75,13 @@ export class TagExpression {
             return value;
         }
         else {
-            return value.split(/\s+/);
+            return value.split(/\s+/).filter(x => x != "");
         }
     }
 
     asArrayOfQuantities(value: any) {
         const ret = [];
-        for(let val of this.asArray(value)){
+        for (let val of this.asArray(value)) {
             ret.push(this.asQuantity(val));
         }
         return ret;
@@ -83,21 +96,20 @@ export class TagExpression {
 
     public resolveRequest(exp: any): any[] {
         const ret = [];
-        if ("📑is" in exp) {
+        if (MetaTags.IS in exp) {
             ret.push({
-                result: this.glossary.get(exp["📑is"]),
+                result: this.glossary.get(exp[MetaTags.IS]),
                 request: exp
             });
         }
 
-        else if ("📑atLeastOne" in exp) {
+        else if (MetaTags.AMONG in exp) {
 
-            const request = this.glossary.search.atLeastOne(...this.asArray(exp["📑atLeastOne"]));
-            if ("📑with" in exp) {
-                request.with(...this.asArray(exp["📑with"]))
+            const request = this.glossary.search.atLeastOne(...this.asArray(exp[MetaTags.AMONG]));
+            if (MetaTags.WITH in exp) {
+                request.with(...this.asArray(exp[MetaTags.WITH]))
             }
-
-            ret.push(...request.toList());
+            ret.push(...[...request.toList()].map(e => { return { result: e, request: exp }; }));
         }
 
         return ret;
