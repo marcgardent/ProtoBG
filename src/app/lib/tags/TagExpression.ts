@@ -1,5 +1,6 @@
 import { Glossary } from './Glossary';
 import { MetaTags } from './meta.tags';
+import { Entry } from './Entry';
 export class TagExpression {
 
 
@@ -50,12 +51,23 @@ export class TagExpression {
                     };
                 }
                 else {
-                    return  { value: undefined, unit: undefined }
+                    return { value: undefined, unit: undefined }
                 }
             }
         }
         else {
             return { value: undefined, unit: undefined }
+        }
+    }
+
+    public asDisplayName(raw: any) {
+        
+        const entry = new Entry(this.glossary, raw);
+        if (entry.isValid) {
+            return entry.icon + this.coalesce(entry.title, entry.name);
+        }
+        else {
+            return "🚫undefined";
         }
     }
 

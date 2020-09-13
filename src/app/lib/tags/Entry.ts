@@ -13,6 +13,11 @@ export class Entry {
         return this.data.name;
     }
     
+    get title() {
+        return this.data.title;
+    }
+    
+
     get icon() {
         return this.data.icon;
     }
