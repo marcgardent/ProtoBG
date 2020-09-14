@@ -1,6 +1,7 @@
 import { Glossary } from '../tags/Glossary';
 import { TagExpression } from '../tags/TagExpression';
 import { MetaTags } from '../tags/meta.tags';
+import * as JSZip  from 'jszip'
 
 /** auto generated */
 export class BundleTags {
@@ -17,7 +18,7 @@ export class BundleTags {
 }
 
 export interface IDocument {
-  toRaw(): { content: Promise<string>; context: any; model: any }[]
+  toRaw(): { content: Promise<string>; type: string, base64: boolean, context: any; model: any }[]
 }
 
 
@@ -29,13 +30,31 @@ export class Bundle {
   constructor(
     private readonly glossary: Glossary,
     private readonly reader: TagExpression,
-    private readonly bundleEntry: any,
-    private readonly documentFactory) {
+    bundleEntry: any,
+    private readonly documentFactory : (entry:any) => IDocument) {
     this.filename = this.reader.mandatoryValueAt(bundleEntry, BundleTags.FILENAME);
     this.foreachEntries = this.reader.resolveRequestsAt(bundleEntry, MetaTags.FOREACH);
   }
 
   public toZip() {
 
+    for(let entry of this.foreachEntries){
+      const documents = this.documentFactory(entry);
+
+      const rdz = []
+      for(let doc of documents.toRaw()){
+        rdz.push(doc.content.then(x=> { return {content: x, base64: doc.base64, filename: entry.name + doc.type }; }));
+      }
+      
+      return Promise.all(rdz).then((files)=>{
+        var zip = new JSZip();
+        for(let file of files){
+          zip.file(file.filename, file.content, {base64 : file.base64});
+        }
+        
+        return zip.generateAsync({type : "string"});
+      });
+
+    }
   }
 }

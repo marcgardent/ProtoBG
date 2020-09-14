@@ -10,14 +10,18 @@ export class RawDocument implements IDocument {
     private readonly foreachEntries: any[];
     private readonly parameters: any;
 
-    constructor(private readonly glossary: Glossary, private readonly reader: TagExpression,  private readonly documentEntry: any) {
+    constructor(
+        private readonly glossary: Glossary,
+        private readonly reader: TagExpression,
+        private readonly documentEntry: any,
+        private readonly type: string) {
         this.parameters = this.reader.mandatoryValueAt(documentEntry, Templating.PARAMETERS);
         const templateEntry = this.reader.mandatoryReferenceAt(documentEntry, Templating.TEMPLATE);
         this.template = templateFactory(this.glossary, this.reader, templateEntry);
         this.foreachEntries = this.reader.resolveRequestsAt(documentEntry, MetaTags.FOREACH);
     }
 
-    public toRaw(): { content: Promise<string>; context: any; model:any}[] {
+    public toRaw() {
         const ret = new Array();
         for (let source of this.foreachEntries) {
 
@@ -25,7 +29,9 @@ export class RawDocument implements IDocument {
             ret.push({
                 content: content,
                 context: source.request,
-                model: source.result
+                model: source.result,
+                type: this.type,
+                base64: false
             });
         }
         return ret;
@@ -34,4 +40,5 @@ export class RawDocument implements IDocument {
     protected local(){
         return {};
     }
+ 
 }

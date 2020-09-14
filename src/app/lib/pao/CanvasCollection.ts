@@ -12,7 +12,7 @@ export class CanvasCollection implements IDocument {
      * export png Base64
      */
 
-    public toRaw(): { content: Promise<string>; context: any; model: any; }[] {
+    public toRaw() {
 
         const ret = new Array();
         for (let source of this.toHTMLCanvasElement()) {
@@ -20,7 +20,9 @@ export class CanvasCollection implements IDocument {
                 content: source.content.then(c => c.toDataURL("image/png"))
                     .then(x => x.replace(/^data:image\/png;base64,/, "")),
                 context: source.context,
-                model: source.model
+                model: source.model,
+                type: "png",
+                base64: true
             });
         }
 
