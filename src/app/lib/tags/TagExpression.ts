@@ -2,8 +2,7 @@ import { Glossary } from './Glossary';
 import { MetaTags } from './meta.tags';
 import { Entry } from './Entry';
 export class TagExpression {
-
-
+    
     entryHas(entry: any, tag: string) {
         if (!entry || !entry.tags) {
             debugger;

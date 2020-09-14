@@ -17,3 +17,7 @@
   description: it's nunjucks template, see https://mozilla.github.io/nunjucks/
   tags: 📐template
   properties: 📐definition
+  
+📐document:
+  description:  publish the output of the template
+  properties: 📐template 📐parameters 📑foreach

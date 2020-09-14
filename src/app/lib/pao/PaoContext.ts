@@ -9,9 +9,17 @@ export interface IPrinting {
     toPdf(): Promise<string>;
 }
 
+export interface ILayout{
+    width : number;
+    height: number;
+    artbox : {x : number, y: number, width: number, height: number};
+    bleedbox : {x : number, y: number, width: number, height: number};
+    trimbox : {x : number, y: number, width: number, height: number, corners: number};
+}
+
 export class PaoContext {
 
-    entryAsLayout(entry: any): any {
+    entryAsLayout(entry: any): ILayout {
         const bleeds = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.BLEEDS)).value;
         const paddings = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.PADDINGS)).value;
         const corners = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.CORNERS)).value;

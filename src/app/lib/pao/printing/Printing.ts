@@ -1,9 +1,10 @@
 
 import { jsPDF } from "jspdf";
 import { MetaTags } from '../../tags/meta.tags';
-import { PrintingDocument } from '../PrintingDocument';
+import { SvgCollection } from '../SvgCollection';
 import { Pao } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
+import { CanvasCollection } from '../CanvasCollection';
 
 
 export class Printing implements IPrinting {
@@ -31,24 +32,15 @@ export class Printing implements IPrinting {
         const promises = [];
         const images = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = new PrintingDocument(this.context, docEntry.result);
+            const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
 
-            for (let page of doc.toImages()) {
-                const p = page.content.then(imgUrl => {
-                    return this.loadImage(imgUrl).then((x: HTMLImageElement) => {
-                        const canvas = document.createElement("canvas") as HTMLCanvasElement;
-                        canvas.height = page.layout.height / 25.4 * this.density.value; // TODO unit
-                        canvas.width = page.layout.width / 25.4 * this.density.value; // TODO unit
-                        const context = canvas.getContext("2d");
-
-                        //context.fillStyle = "red";
-                        //context.fillRect(0, 0, canvas.width, canvas.height);
-                        context.drawImage(x, 0, 0, canvas.width, canvas.height);
-                        images.push({
-                            canvas: canvas,
-                            copies: page.copies,
-                            layout: page.layout
-                        });
+            for (let page of doc.toHTMLCanvasElement()) {
+                const copies = this.reader.coalesce(parseInt(page.context[Pao.COPIES]), 1);
+                const p = page.content.then(canvas => {
+                    images.push({
+                        canvas: canvas,
+                        copies: copies,
+                        layout: page.layout
                     });
                 });
                 promises.push(p);

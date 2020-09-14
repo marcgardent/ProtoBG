@@ -92,7 +92,6 @@ export class NunjucksTemplate implements ITemplate {
 
         return new Promise<string>((resolve, reject) => {
             env.renderString(this.template, local, function (err, res) {
-                console.debug(err, res);
                 if (err) {
                     reject(err);
                 }
