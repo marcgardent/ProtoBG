@@ -1,4 +1,4 @@
-<div *ngIf="warehouse">
+<div *ngIf="warehouse && workspace && resource">
   ProtoBG://{{workspace.name}}
   <button mat-icon-button [matMenuTriggerFor]="MenuWorkspace" class="cloneIcon">
     <mat-icon>unfold_more</mat-icon>
@@ -9,16 +9,14 @@
   </button>
 
   <mat-menu #MenuWorkspace="matMenu">
-    <button mat-menu-item>workspace1</button>
-    <button mat-menu-item>workspace2</button>
+    <button mat-menu-item *ngFor="let workspace of warehouse.workspaces"  (click)="selectWorkspace(workspace)" >{{workspace.name}}</button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="renameWorkspace()">rename '{{workspace.name}}'</button>
     <button mat-menu-item>create new workspace</button>
   </mat-menu>
 
   <mat-menu #MenuResource="matMenu">
-    <button mat-menu-item>sample.pdf</button>
-    <button mat-menu-item>sample2.pdf</button>
+    <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)">{{resource.name}}</button>
     <mat-divider></mat-divider>
     <button mat-menu-item (click)="renameResource()">rename '{{resource.name}}'</button>
     <button mat-menu-item>create new resource</button>

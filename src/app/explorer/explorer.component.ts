@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventHubService } from '../services/eventhub.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RenameComponent } from '../rename/rename.component';
+import { IWorkspace, IResource } from '../lib/editor/models';
 
 @Component({
   selector: 'app-explorer',
@@ -18,6 +19,25 @@ export class ExplorerComponent implements OnInit {
 
   ngOnInit(): void {
 
+  }
+
+  selectWorkspace(workspace: IWorkspace) {
+    this.hub.currentWorkspace.next(workspace);
+    const resources = this.workspace.resources.filter(x => x.name == workspace.currentResource);
+    if (resources.length == 1) {
+      this.hub.currentResource.next(resources[0]);
+    }
+    else if (this.workspace.resources.length > 0) {
+      this.workspace.resources[0];
+    }
+    else {
+      this.hub.onError.next("No resource in this workspace");
+    }
+  }
+
+  selectResource(resource: IResource) {
+    this.workspace.currentResource = resource.name;
+    this.hub.currentResource.next(resource);
   }
 
   renameWorkspace(): void {
