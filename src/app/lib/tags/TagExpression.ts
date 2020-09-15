@@ -2,7 +2,7 @@ import { Glossary } from './Glossary';
 import { MetaTags } from './meta.tags';
 import { Entry } from './Entry';
 export class TagExpression {
-    
+
     entryHas(entry: any, tag: string) {
         if (!entry || !entry.tags) {
             debugger;
@@ -60,7 +60,7 @@ export class TagExpression {
     }
 
     public asDisplayName(raw: any) {
-        
+
         const entry = new Entry(this.glossary, raw);
         if (entry.isValid) {
             return entry.icon + this.coalesce(entry.title, entry.name);
@@ -70,18 +70,24 @@ export class TagExpression {
         }
     }
 
-    public resolveRequestsAt(entry: any, field: string) : {result: any, request: any}[] {
-        const ret = []
+    public resolveRequestsAt(entry: any, field: string): { result: any, request: any }[] {
         if (field in entry) {
             const forExp = entry[field];
-            if (Array.isArray(forExp)) {
-                for (let exp of forExp) {
-                    ret.push(...this.resolveRequest(exp))
-                }
+            return this.resolveRequests(forExp);
+        }
+        return [];
+    }
+
+
+    public resolveRequests(forExp: any): { result: any, request: any }[] {
+        const ret = []
+        if (Array.isArray(forExp)) {
+            for (let exp of forExp) {
+                ret.push(...this.resolveRequest(exp))
             }
-            else {
-                ret.push(...this.resolveRequest(forExp))
-            }
+        }
+        else {
+            ret.push(...this.resolveRequest(forExp))
         }
         return ret;
     }
@@ -121,7 +127,7 @@ export class TagExpression {
         return defaultValue;
     }
 
-    public resolveRequest(exp: any): {result: any, request: any}[] {
+    public resolveRequest(exp: any): { result: any, request: any }[] {
         const ret = [];
         if (MetaTags.IS in exp) {
             ret.push({

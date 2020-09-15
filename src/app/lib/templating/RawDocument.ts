@@ -14,8 +14,7 @@ export class RawDocument implements IDocument {
         private readonly glossary: Glossary,
         private readonly reader: TagExpression,
         private readonly documentEntry: any,
-        private readonly type: string,
-        private readonly locals : any) {
+        private readonly locals: any) {
         this.parameters = this.reader.mandatoryValueAt(documentEntry, Templating.PARAMETERS);
         const templateEntry = this.reader.mandatoryReferenceAt(documentEntry, Templating.TEMPLATE);
         this.template = templateFactory(this.glossary, this.reader, templateEntry);
@@ -31,12 +30,10 @@ export class RawDocument implements IDocument {
                 content: content,
                 context: source.request,
                 model: source.result,
-                type: this.type,
+                type: this.template.extension,
                 base64: false
             });
         }
         return ret;
     }
- 
- 
 }

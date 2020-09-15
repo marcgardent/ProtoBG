@@ -26,8 +26,7 @@ export class Bundle {
       const documents = this.documentFactory(occurrence.result);
       if (documents) {
         for (let doc of documents.toRaw()) {
-          rdz.push(doc.content.then(x => { return { content: x, base64: doc.base64, filename: occurrence.result.name + "." + doc.type }; }));
-
+          rdz.push(doc.content.then(x => { return { content: x, base64: doc.base64, filename: doc.model.name + "." + doc.type }; }));
         }
       }
     }

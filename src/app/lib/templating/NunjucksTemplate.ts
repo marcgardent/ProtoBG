@@ -8,9 +8,12 @@ import { NunjucksTags } from './nunjucks.tag';
 export class NunjucksTemplate implements ITemplate {
     private readonly template: string;
     private readonly pipelines: Glossary;
+    public readonly extension: any;
 
     constructor(private readonly glossary: Glossary, private readonly reader: TagExpression, private nunjucksEntry: any) {
         this.template = reader.mandatoryValueAt(nunjucksEntry, Templating.DEFINITION);
+        this.extension = reader.mandatoryValueAt(nunjucksEntry, Templating.EXTENSION);
+        
         this.pipelines = new Glossary(NunjucksTags.metadata);
     }
 
@@ -24,29 +27,32 @@ export class NunjucksTemplate implements ITemplate {
         const self = this;
 
 
+        this.addFilter(env, NunjucksTags.REQUEST, function (request) {
+            return self.reader.resolveRequests(request);
+        });
         
-        this.addFilter(env, NunjucksTags.PLAINTEXT, function (url, callback) {
+        this.addFilter(env, NunjucksTags.INCLUDEASTEXT, function (url, callback) {
 
             fetch(url).then((response: Response) => {
                 return  response.text();
             }, reason => {
-                console.error(NunjucksTags.PLAINTEXT, url, reason);
+                console.error(NunjucksTags.INCLUDEASTEXT, url, reason);
                 callback(reason);
             }).then((text: string) => {
                 callback(null, text);
             }).catch(reason => {
 
-                console.error(NunjucksTags.PLAINTEXT, url, reason);
+                console.error(NunjucksTags.INCLUDEASTEXT, url, reason);
                 callback(reason)
             });
         }, true);
 
-        this.addFilter(env, NunjucksTags.DATAURI, function (url, callback) {
+        this.addFilter(env, NunjucksTags.INCLUDEASDATAURI, function (url, callback) {
             //callback(null, url);
             fetch(url).then((response) => {
                 return response.blob();
             }, reason => {
-                console.error(NunjucksTags.DATAURI, url, reason);
+                console.error(NunjucksTags.INCLUDEASDATAURI, url, reason);
                 callback(reason);
             }).then((blob: Blob) => {
                 var reader = new FileReader();
@@ -55,13 +61,13 @@ export class NunjucksTemplate implements ITemplate {
                     callback(null, this.result);
                 };
                 reader.onerror = function (ev) {
-                    console.error(NunjucksTags.DATAURI, url, ev);
+                    console.error(NunjucksTags.INCLUDEASDATAURI, url, ev);
                     callback(ev);
                 }
                 reader.readAsDataURL(blob);
             }).catch(reason => {
 
-                console.error(NunjucksTags.DATAURI, url, reason);
+                console.error(NunjucksTags.INCLUDEASDATAURI, url, reason);
                 callback(reason)
             });
         }, true);

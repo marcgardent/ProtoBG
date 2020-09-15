@@ -38,7 +38,7 @@ export class MainContext implements ITagContext {
                 return new Printing(this.pao, entry);
             }
             else if (e.has(Templating.DOCUMENT)) {
-                return new RawDocument(this.glossary, this.reader, entry, "txt", {});
+                return new RawDocument(this.glossary, this.reader, entry, {});
             }
             else {
                 console.error("this entry is not a Document", entry)

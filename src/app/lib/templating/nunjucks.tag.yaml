@@ -5,19 +5,22 @@
   tags: 💠abstract
   description: 📐nunjucks' pipeline
 
-🏷️dataUri:
+🏷️includeAsDataUri:
+  description:  usage `<url> | includeAsDataUri | safe`
   tags: 🏷️pipeline
 
-🏷️plainText:
+🏷️includeAsText:
+  description:  usage `<url> | includeAsText | safe`
   tags: 🏷️pipeline
 
+🏷️request:
+  tags: 🏷️pipeline
+  
 🏷️fromContext:
   tags: 🏷️pipeline
 
-
 🏷️fromParameters:
   tags: 🏷️pipeline
-
 
 🏷️fromModel:
   tags: 🏷️pipeline

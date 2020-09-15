@@ -12,11 +12,13 @@
   description: it is custom map to define parameters for a 📐template   
 
 ## Implementations
+📐extension:
+  description: file's extension
 
 📐nunjucks:
   description: it's nunjucks template, see https://mozilla.github.io/nunjucks/
   tags: 📐template
-  properties: 📐definition
+  properties: 📐definition 📐extension
   
 📐document:
   description:  publish the output of the template

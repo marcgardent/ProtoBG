@@ -7,6 +7,7 @@ import { NunjucksTemplate } from './NunjucksTemplate';
 export interface ITemplate {
 
     apply(parameters: any, context: any, me: any, layout : any): Promise<string>;
+    extension : string;
 }
 
 export function templateFactory(
