@@ -1,7 +1,7 @@
 
 
 /** auto generated */
-export class Pao {
+export class PaoTags {
   public static PAO = "🖨️pao";
   public static RECTANGLE = "⬜rectangle";
   public static FORMAT = "📄format";

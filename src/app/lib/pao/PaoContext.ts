@@ -1,8 +1,11 @@
 import { TagExpression } from '../tags/TagExpression';
-import { Pao } from './pao.tags';
+import { PaoTags } from './pao.tags';
 import { Glossary } from '../tags/Glossary';
 import { Printing } from './printing/Printing';
 import { Assembling } from './printing/Assembling';
+import { IDocument } from '../bundle/temp';
+import { SvgCollection } from './SvgCollection';
+import { ITagContext } from '../tags/ITagContext';
 
 
 export interface IPrinting {
@@ -17,12 +20,16 @@ export interface ILayout{
     trimbox : {x : number, y: number, width: number, height: number, corners: number};
 }
 
-export class PaoContext {
+export class PaoContext implements ITagContext{
+
+    constructor(public readonly glossary: Glossary, public readonly reader: TagExpression) {
+
+    }
 
     entryAsLayout(entry: any): ILayout {
-        const bleeds = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.BLEEDS)).value;
-        const paddings = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.PADDINGS)).value;
-        const corners = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, Pao.CORNERS)).value;
+        const bleeds = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, PaoTags.BLEEDS)).value;
+        const paddings = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, PaoTags.PADDINGS)).value;
+        const corners = this.reader.asQuantity(this.reader.mandatoryValueAt(entry, PaoTags.CORNERS)).value;
         const { width, height } = this.entryAsPageInfo(entry);
 
         return {
@@ -50,29 +57,30 @@ export class PaoContext {
         }
     }
 
-    constructor(public readonly glossary: Glossary, public readonly reader: TagExpression) {
-
-    }
 
     entryAsPageInfo(entry: any) {
-        const format = this.reader.mandatoryReferenceAt(entry, Pao.FORMAT);
-        const min = this.reader.asQuantity(this.reader.mandatoryValueAt(format, Pao.MIN));
-        const max = this.reader.asQuantity(this.reader.mandatoryValueAt(format, Pao.MAX));
-        const orientation = this.reader.mandatoryValueAt(entry, Pao.ORIENTATION);
+        const format = this.reader.mandatoryReferenceAt(entry, PaoTags.FORMAT);
+        const min = this.reader.asQuantity(this.reader.mandatoryValueAt(format, PaoTags.MIN));
+        const max = this.reader.asQuantity(this.reader.mandatoryValueAt(format, PaoTags.MAX));
+        const orientation = this.reader.mandatoryValueAt(entry, PaoTags.ORIENTATION);
 
-        const width = orientation == Pao.LANDSCAPE ? max.value : min.value;
-        const height = orientation == Pao.LANDSCAPE ? min.value : max.value;
+        const width = orientation == PaoTags.LANDSCAPE ? max.value : min.value;
+        const height = orientation == PaoTags.LANDSCAPE ? min.value : max.value;
 
         return { width: width, height: height }; //TODO unit
     }
 
     entryAsPrinting(printingEntry: any): IPrinting {
-        if (this.reader.entryHas(printingEntry, Pao.ASSEMBLING)) {
+        if (this.reader.entryHas(printingEntry, PaoTags.ASSEMBLING)) {
             return new Assembling(this, printingEntry);
         }
         else {
             return new Printing(this, printingEntry);
         }
+    }
+
+    entryAsSvgCollection(documentEntry): SvgCollection {
+        return new SvgCollection(this, documentEntry);
     }
 }
 

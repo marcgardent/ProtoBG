@@ -70,7 +70,7 @@ export class TagExpression {
         }
     }
 
-    public resolveRequestsAt(entry: any, field: string) {
+    public resolveRequestsAt(entry: any, field: string) : {result: any, request: any}[] {
         const ret = []
         if (field in entry) {
             const forExp = entry[field];
@@ -121,7 +121,7 @@ export class TagExpression {
         return defaultValue;
     }
 
-    public resolveRequest(exp: any): any[] {
+    public resolveRequest(exp: any): {result: any, request: any}[] {
         const ret = [];
         if (MetaTags.IS in exp) {
             ret.push({

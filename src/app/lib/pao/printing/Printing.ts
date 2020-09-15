@@ -2,7 +2,7 @@
 import { jsPDF } from "jspdf";
 import { MetaTags } from '../../tags/meta.tags';
 import { SvgCollection } from '../SvgCollection';
-import { Pao } from '../pao.tags';
+import { PaoTags } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
 import { CanvasCollection } from '../CanvasCollection';
 
@@ -18,9 +18,9 @@ export class Printing implements IPrinting {
 
     constructor(private readonly context: PaoContext, private readonly printingEntry: any) {
 
-        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
-        this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.DENSITY));
-        this.mode = this.reader.mandatoryValueAt(printingEntry, Pao.MODE);
+        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.MARGINS));
+        this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.DENSITY));
+        this.mode = this.reader.mandatoryValueAt(printingEntry, PaoTags.MODE);
         
         this.foreachEntries = this.reader.resolveRequestsAt(
             printingEntry,
@@ -35,7 +35,7 @@ export class Printing implements IPrinting {
             const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
 
             for (let page of doc.toHTMLCanvasElement()) {
-                const copies = this.reader.coalesce(parseInt(page.context[Pao.COPIES]), 1);
+                const copies = this.reader.coalesce(parseInt(page.context[PaoTags.COPIES]), 1);
                 const p = page.content.then(canvas => {
                     images.push({
                         canvas: canvas,
@@ -63,7 +63,7 @@ export class Printing implements IPrinting {
 
     public *enumerateCopies(images) {
         for (let item of images) {
-            const copies = this.mode == Pao.REVIEW ? 1 : item.copies;
+            const copies = this.mode == PaoTags.REVIEW ? 1 : item.copies;
             for (let i = 0; i < copies; i++) {
                 yield {
                     layout: item.layout,

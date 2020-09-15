@@ -6,7 +6,8 @@ import { readGlossaryFromYaml } from '../lib/tags/YamlTagLexer';
 import { Glossary } from '../lib/tags/Glossary';
 import { MetaTags } from '../lib/tags/meta.tags';
 import { Templating } from '../lib/templating/templating.tag';
-import { Pao } from '../lib/pao/pao.tags';
+import { PaoTags } from '../lib/pao/pao.tags';
+import { BundleTags } from '../lib/bundle/temp';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class GlossaryService {
       if (w) { this.updateGlossary(w); }
     });
 
-    this.hub.currentGlossary.next(new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata));
+    this.hub.currentGlossary.next(new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata));
   }
 
   mergeAll(workspace: IWorkspace): string {
@@ -39,7 +40,7 @@ export class GlossaryService {
     try {
       const data = readGlossaryFromYaml(this.mergeAll(workspace));
       fixTagsDeclaration(data);
-      const glossary = new Glossary(MetaTags.metadata, Templating.metadata, Pao.metadata, data);
+      const glossary = new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata , BundleTags.metadata, data);
       this.hub.currentGlossary.next(glossary);
 
     } catch (exception) {
