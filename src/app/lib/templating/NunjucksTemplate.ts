@@ -23,6 +23,24 @@ export class NunjucksTemplate implements ITemplate {
         var env = new nunjucks.Environment();
         const self = this;
 
+
+        
+        this.addFilter(env, NunjucksTags.PLAINTEXT, function (url, callback) {
+
+            fetch(url).then((response: Response) => {
+                return  response.text();
+            }, reason => {
+                console.error(NunjucksTags.PLAINTEXT, url, reason);
+                callback(reason);
+            }).then((text: string) => {
+                callback(null, text);
+            }).catch(reason => {
+
+                console.error(NunjucksTags.PLAINTEXT, url, reason);
+                callback(reason)
+            });
+        }, true);
+
         this.addFilter(env, NunjucksTags.DATAURI, function (url, callback) {
             //callback(null, url);
             fetch(url).then((response) => {

@@ -8,6 +8,9 @@
 🏷️dataUri:
   tags: 🏷️pipeline
 
+🏷️plainText:
+  tags: 🏷️pipeline
+
 🏷️fromContext:
   tags: 🏷️pipeline
 

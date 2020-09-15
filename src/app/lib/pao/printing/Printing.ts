@@ -5,9 +5,10 @@ import { SvgCollection } from '../SvgCollection';
 import { PaoTags } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
 import { CanvasCollection } from '../CanvasCollection';
+import { IDocument } from "../../bundle/IDocument";
 
 
-export class Printing implements IPrinting {
+export class Printing implements IPrinting, IDocument {
     private readonly foreachEntries: any[];
     private readonly mode: any;
     private readonly density: { value: number; unit: any; };
@@ -26,6 +27,16 @@ export class Printing implements IPrinting {
             printingEntry,
             MetaTags.FOREACH
         );
+    }
+
+    toRaw(): { content: Promise<string>; type: string; base64: boolean; context: any; model: any; }[] {
+
+        const ret = [];
+        for (let docEntry of this.foreachEntries) {
+            const doc = <IDocument>new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
+            ret.push(...doc.toRaw());
+        }
+        return ret;
     }
 
     public toCanvas(): { ready: Promise<any>, images: Array<{ canvas: HTMLCanvasElement, copies: number, layout: any }> } {

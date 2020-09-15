@@ -3,9 +3,10 @@ import { PaoTags } from './pao.tags';
 import { Glossary } from '../tags/Glossary';
 import { Printing } from './printing/Printing';
 import { Assembling } from './printing/Assembling';
-import { IDocument } from '../bundle/temp';
+import { IDocument } from "../bundle/IDocument";
 import { SvgCollection } from './SvgCollection';
 import { ITagContext } from '../tags/ITagContext';
+import { CanvasCollection } from './CanvasCollection';
 
 
 export interface IPrinting {
@@ -82,7 +83,8 @@ export class PaoContext implements ITagContext{
     entryAsSvgCollection(documentEntry): SvgCollection {
         return new SvgCollection(this, documentEntry);
     }
+
+    entryAsPngCollection(documentEntry): IDocument {
+        return new CanvasCollection(this.entryAsSvgCollection(documentEntry), 300);
+    }
 }
-
-
-

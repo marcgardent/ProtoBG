@@ -13,7 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { EventHubService } from './services/eventhub.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
-import { BundleTags } from './lib/bundle/temp';
+import { BundleTags } from "./lib/bundle/Bundle.tags";
 import { MainContext } from './lib/MainContext';
 
 @Component({

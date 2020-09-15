@@ -3,7 +3,7 @@ import { templateFactory, ITemplate } from './templateFactory';
 import { Templating } from './templating.tag';
 import { Glossary } from '../tags/Glossary';
 import { TagExpression } from '../tags/TagExpression';
-import { IDocument } from '../bundle/temp';
+import { IDocument } from "../bundle/IDocument";
 
 export class RawDocument implements IDocument {
     private readonly template: ITemplate;

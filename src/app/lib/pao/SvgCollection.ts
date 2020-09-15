@@ -1,7 +1,7 @@
 import { PaoTags } from './pao.tags';
 import { PaoContext, ILayout } from './PaoContext';
 import { RawDocument } from '../templating/RawDocument';
-import { IDocument } from '../bundle/temp';
+import { IDocument } from "../bundle/IDocument";
 
 export class SvgCollection extends RawDocument implements IDocument {
     public readonly layout: ILayout;

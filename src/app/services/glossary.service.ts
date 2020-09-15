@@ -7,7 +7,7 @@ import { Glossary } from '../lib/tags/Glossary';
 import { MetaTags } from '../lib/tags/meta.tags';
 import { Templating } from '../lib/templating/templating.tag';
 import { PaoTags } from '../lib/pao/pao.tags';
-import { BundleTags } from '../lib/bundle/temp';
+import { BundleTags } from "../lib/bundle/Bundle.tags";
 
 @Injectable({
   providedIn: 'root'

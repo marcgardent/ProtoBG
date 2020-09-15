@@ -1,4 +1,4 @@
-import { IDocument } from '../bundle/temp';
+import { IDocument } from "../bundle/IDocument";
 import { SvgCollection } from './SvgCollection';
 import { ILayout } from './PaoContext';
 
