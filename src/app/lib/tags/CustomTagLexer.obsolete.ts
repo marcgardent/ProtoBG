@@ -7,19 +7,20 @@ function isTags(line: string) {
     return ret;
 }
 
-function readTag(text:string) {
-    const reg = text.match(TAG);
-    if(reg) {
-        return {
-            icon : reg[1],
-            name : reg[2],
-            operator : reg[4],
-            value : reg[5]
+function readTag(text: string) {
+    if (text) {
+        const reg = text.match(TAG);
+        if (reg) {
+            return {
+                icon: reg[1],
+                name: reg[2],
+                operator: reg[4],
+                value: reg[5]
+            }
         }
     }
-    else {
-        return { icon : "#", name : "undefined", operator : undefined, value: undefined }
-    }
+    return { icon: "#", name: "undefined", operator: undefined, value: undefined }
+    
 }
 
 function readSubLine(indent: string, line: string) {
@@ -87,7 +88,7 @@ export function readGlossaryFromMarkdown(block: string) {
                 for (; i < lines.length; i++) {
                     const subLine = readSubLine(indentation, lines[i]);
                     if (subLine && isTags(subLine)) {
-                        item.tags.push(subLine.split(/\s+/).map( x=> readTag(x)));
+                        item.tags.push(subLine.split(/\s+/).map(x => readTag(x)));
                         console.debug("line.tags", subLine);
                     }
                     else {
@@ -97,7 +98,7 @@ export function readGlossaryFromMarkdown(block: string) {
                     }
                 }
             }
-            
+
             item.lineEnd = i;
             ret.push(item);
         }
@@ -107,7 +108,7 @@ export function readGlossaryFromMarkdown(block: string) {
                 type: 'markdown',
                 lineBegin: i,
                 lineEnd: i,
-                data:line
+                data: line
             });
         }
         console.groupEnd();

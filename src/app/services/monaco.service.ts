@@ -308,7 +308,6 @@ ${entry.description}
         if (theWord && this.hub.currentGlossary.value) {
           const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
           const entry = this.hub.currentGlossary.value.getAsEntry(parsed[2]);
-          console.debug("theWord!", parsed[2]);
           if (entry.isValid) {
             return {
               range: new monaco.Range(lineNumber, theWord.startColumn, lineNumber, theWord.endColumn),

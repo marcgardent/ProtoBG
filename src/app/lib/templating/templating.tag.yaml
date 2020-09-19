@@ -2,19 +2,24 @@
 # Templating
 
 📐template:
-    description: is reusable template
+  description: is reusable template
 
 📐definition:
-    description: is definition of a template
+  description: is definition of a template
 
 📐parameters:
-    title: custom parameters for 📐template
-    description: it is custom map to define parameters for a 📐template   
+  title: custom parameters for 📐template
+  description: it is custom map to define parameters for a 📐template   
 
-  
 ## Implementations
+📐extension:
+  description: file's extension
 
 📐nunjucks:
-    description: it's nunjucks template, see https://mozilla.github.io/nunjucks/
-    tags: 📐template
-    properties: 📐definition
+  description: it's nunjucks template, see https://mozilla.github.io/nunjucks/
+  tags: 📐template
+  properties: 📐definition 📐extension
+  
+📐document:
+  description:  publish the output of the template
+  properties: 📐template 📐parameters 📑foreach

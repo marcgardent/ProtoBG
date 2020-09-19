@@ -2,6 +2,7 @@ import { Glossary } from './Glossary';
 
 export class Entry {
 
+
     constructor(private readonly glossary: Glossary, private readonly data: any) {
     }
 
@@ -13,6 +14,11 @@ export class Entry {
         return this.data.name;
     }
     
+    get title() {
+        return this.data.title;
+    }
+    
+
     get icon() {
         return this.data.icon;
     }
@@ -29,6 +35,10 @@ export class Entry {
 
     get tags(): Array<string> {
         return this.data.tags ? this.data.tags : [];
+    }
+
+    has(tag: string) {
+        return this.tags.indexOf(tag)>=0;
     }
 
     get description() {

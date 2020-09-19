@@ -1,12 +1,14 @@
 
 import { jsPDF } from "jspdf";
 import { MetaTags } from '../../tags/meta.tags';
-import { PrintingDocument } from '../PrintingDocument';
-import { Pao } from '../pao.tags';
+import { SvgCollection } from '../SvgCollection';
+import { PaoTags } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
+import { CanvasCollection } from '../CanvasCollection';
+import { IDocument } from "../../bundle/IDocument";
 
 
-export class Printing implements IPrinting {
+export class Printing implements IPrinting, IDocument {
     private readonly foreachEntries: any[];
     private readonly mode: any;
     private readonly density: { value: number; unit: any; };
@@ -17,9 +19,9 @@ export class Printing implements IPrinting {
 
     constructor(private readonly context: PaoContext, private readonly printingEntry: any) {
 
-        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
-        this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.DENSITY));
-        this.mode = this.reader.mandatoryValueAt(printingEntry, Pao.MODE);
+        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.MARGINS));
+        this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.DENSITY));
+        this.mode = this.reader.mandatoryValueAt(printingEntry, PaoTags.MODE);
         
         this.foreachEntries = this.reader.resolveRequestsAt(
             printingEntry,
@@ -27,28 +29,29 @@ export class Printing implements IPrinting {
         );
     }
 
+    toRaw(): { content: Promise<string>; type: string; base64: boolean; context: any; model: any; }[] {
+
+        const ret = [];
+        for (let docEntry of this.foreachEntries) {
+            const doc = <IDocument>new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
+            ret.push(...doc.toRaw());
+        }
+        return ret;
+    }
+
     public toCanvas(): { ready: Promise<any>, images: Array<{ canvas: HTMLCanvasElement, copies: number, layout: any }> } {
         const promises = [];
         const images = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = new PrintingDocument(this.context, docEntry.result);
+            const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
 
-            for (let page of doc.toImages()) {
-                const p = page.content.then(imgUrl => {
-                    return this.loadImage(imgUrl).then((x: HTMLImageElement) => {
-                        const canvas = document.createElement("canvas") as HTMLCanvasElement;
-                        canvas.height = page.layout.height / 25.4 * this.density.value; // TODO unit
-                        canvas.width = page.layout.width / 25.4 * this.density.value; // TODO unit
-                        const context = canvas.getContext("2d");
-
-                        //context.fillStyle = "red";
-                        //context.fillRect(0, 0, canvas.width, canvas.height);
-                        context.drawImage(x, 0, 0, canvas.width, canvas.height);
-                        images.push({
-                            canvas: canvas,
-                            copies: page.copies,
-                            layout: page.layout
-                        });
+            for (let page of doc.toHTMLCanvasElement()) {
+                const copies = this.reader.coalesce(parseInt(page.context[PaoTags.COPIES]), 1);
+                const p = page.content.then(canvas => {
+                    images.push({
+                        canvas: canvas,
+                        copies: copies,
+                        layout: page.layout
                     });
                 });
                 promises.push(p);
@@ -71,7 +74,7 @@ export class Printing implements IPrinting {
 
     public *enumerateCopies(images) {
         for (let item of images) {
-            const copies = this.mode == Pao.REVIEW ? 1 : item.copies;
+            const copies = this.mode == PaoTags.REVIEW ? 1 : item.copies;
             for (let i = 0; i < copies; i++) {
                 yield {
                     layout: item.layout,

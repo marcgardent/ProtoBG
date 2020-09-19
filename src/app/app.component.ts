@@ -2,11 +2,10 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { readGlossaryFromYaml } from './lib/tags/YamlTagLexer';
 import { exportAsTypescript } from './lib/tags/TypescriptExporter';
 import { fixTagsDeclaration } from './lib/tags/TagParser';
-import { Pao } from './lib/pao/pao.tags';
+import { PaoTags } from './lib/pao/pao.tags';
 import { TagExpression } from './lib/tags/TagExpression';
 import { PaoContext } from './lib/pao/PaoContext';
 
-import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { gameIcons } from './lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -14,6 +13,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { EventHubService } from './services/eventhub.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
+import { BundleTags } from "./lib/bundle/Bundle.tags";
+import { MainContext } from './lib/MainContext';
 
 @Component({
   selector: 'app-root',
@@ -22,13 +23,22 @@ import { GlossaryService } from './services/glossary.service';
 })
 export class AppComponent implements OnInit {
 
-  private readonly defaultPrinting = { icon: '🖨️', name: 'Print' };
-
-  public definitions = [];
-
   public gameIcons = gameIcons;
+  public selectedIndex: number = 0;
+
+  public readonly codeExport = { icon: '👨‍💻', name: 'Code Typescript' };
+  private readonly defaultExports = { icon: '🖨️', name: 'Exports' };
+  public currentExport: any = this.defaultExports;
   public printings = [];
-  public currentPrinting: any = this.defaultPrinting;
+  public bundles = [];
+  public bundleResult: any = undefined;
+  public download = undefined;
+  public pdfSrc: string = "";
+  public code: string = "{}";
+  public updateCurrent: () => void = () => { this.selectCode() };
+
+  get exports() { return this.printings.length + this.bundles.length + 1 }
+
 
   private get glossary() { return this.hub.currentGlossary.value; }
 
@@ -47,9 +57,7 @@ export class AppComponent implements OnInit {
     });
 
     this.hub.currentGlossary.subscribe((g) => {
-      this.updatePrint();
-      this.processAsPDF();
-      this.processAsCode();
+      this.onGlossaryUpdated();
     });
 
   }
@@ -58,59 +66,121 @@ export class AppComponent implements OnInit {
 
   }
 
-  updatePrint() {
-    if (this.glossary) {
-      this.printings = [...this.glossary.search.atLeastOne(Pao.ASSEMBLING, Pao.PRINTING).toList()];
-      if (-1 == this.printings.findIndex(x => x.name == this.currentPrinting.name && x.icon == this.currentPrinting.icon)) {
-        this.currentPrinting = this.printings.length > 0 ? this.printings[0] : this.defaultPrinting;
-      }
+  animationDone() {
+    if (this.selectedIndex == 0) {
+      this.updateCurrent();
     }
   }
 
-  changePrint(print: any) {
-    this.currentPrinting = print;
-    this.processAsPDF();
-  }
-
-  public onTabsChanged(event: MatTabChangeEvent) {
-    // if (event.index == 0) {
-    //   this.processAsPDF();
-    // }
-    // else if (event.index == 1) {
-    //   this.processAsCode();
-    // }
-  }
-
-  public processAsPDF() {
-
+  onGlossaryUpdated() {
     if (this.glossary) {
-      const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
-      this.currentPrinting = this.glossary.get(this.currentPrinting.icon + this.currentPrinting.name);
-      if (this.currentPrinting) {
-        const p = pao.entryAsPrinting(this.currentPrinting);
-        p.toPdf().then(x => {
-          this.pdfSrc = x;
-        });
+      this.printings = [...this.glossary.search.atLeastOne(PaoTags.ASSEMBLING, PaoTags.PRINTING).toList()];
+      this.bundles = [...this.glossary.search.atLeastOne(BundleTags.BUNDLE).toList()];
+      this.updateCurrent();
+    }
+  }
+
+  updatePdf() {
+    if (-1 == this.printings.findIndex(x => x.name == this.currentExport.name && x.icon == this.currentExport.icon)) {
+      if (this.printings.length > 0) {
+        this.selectPrint(this.printings[0]);
       }
       else {
-        this.currentPrinting = this.defaultPrinting;
+        this.selectCode();
       }
+    }
+    else {
+      this.selectPrint(this.currentExport);
     }
   }
 
-  public processAsCode() {
+  updateBundle() {
+    if (-1 == this.bundles.findIndex(x => x.name == this.currentExport.name && x.icon == this.currentExport.icon)) {
+      if (this.bundles.length > 0) {
+        this.selectBundle(this.bundles[0]);
+      }
+      else {
+        this.selectCode();
+      }
+    }
+    else {
+      this.selectBundle(this.currentExport);
+    }
+  }
+
+  resetSelection() {
+    this.currentExport = this.defaultExports;
+    this.download = undefined;
+    this.pdfSrc = undefined;
+    this.code = undefined;
+    this.bundleResult = undefined;
+  }
+
+  selectPrint(print: any) {
+    this.resetSelection();
+    this.currentExport = print;
+    this.processAsPDF();
+    this.setDownload(this.currentExport.name + ".pdf", this.pdfSrc);
+    this.updateCurrent = this.updatePdf;
+  }
+
+  selectCode() {
+    this.resetSelection();
+    this.currentExport = this.codeExport;
+    this.processAsCode();
+    this.setDownload("tags.ts", 'data:text/plain;charset=utf-8;base64,' + btoa(unescape(encodeURIComponent(this.code))));
+    this.updateCurrent = this.selectCode;
+  }
+
+  selectBundle(bundle: any) {
+    this.resetSelection();
+    this.currentExport = bundle;
+    this.updateCurrent = this.updateBundle;
+    this.processAsBundle();
+  }
+
+  public setDownload(name: string, data: string) {
+    this.download = { content: this.sanitizer.bypassSecurityTrustUrl(data), name: name };
+  }
+  
+  private processAsCode() {
     const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.hub.currentWorkspace.value));
     fixTagsDeclaration(data);
     this.code = exportAsTypescript(data);
   }
 
-  public pdfSrc: string = "";
-
-  public get pdfSrcSafe() {
-    return this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
+  private processAsBundle() {
+    if (this.glossary) {
+      const ctx = new MainContext(this.glossary, new TagExpression(this.glossary));
+      this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
+      const zipper = ctx.entryAsBundle(this.currentExport);
+      if (zipper) {
+        zipper.toZip().then((r) => {
+          this.bundleResult = { files: r.files, filename: r.filename };
+          r.content.then((x) => {
+            this.setDownload(r.filename, x);
+          });
+        });
+      }
+    }
   }
 
-  public code: string = "{}";
+  private processAsPDF() {
+
+    if (this.glossary) {
+      const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
+      this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
+      if (this.currentExport) {
+        const p = pao.entryAsPrinting(this.currentExport);
+        p.toPdf().then(x => {
+          this.pdfSrc = x;
+        });
+      }
+      else {
+        this.currentExport = this.defaultExports;
+      }
+    }
+  }
 
   public content: string = `
 # example for PAO

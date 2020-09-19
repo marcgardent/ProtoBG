@@ -1,0 +1,47 @@
+
+## nunjucks pipeline
+
+🏷️pipeline:
+  tags: 💠abstract
+  description: 📐nunjucks' pipeline
+
+🏷️includeAsDataUri:
+  description:  usage `<url> | includeAsDataUri | safe`
+  tags: 🏷️pipeline
+
+🏷️includeAsText:
+  description:  usage `<url> | includeAsText | safe`
+  tags: 🏷️pipeline
+
+🏷️request:
+  tags: 🏷️pipeline
+  
+🏷️fromContext:
+  tags: 🏷️pipeline
+
+🏷️fromParameters:
+  tags: 🏷️pipeline
+
+🏷️fromModel:
+  tags: 🏷️pipeline
+
+🏷️fromGlossary:
+  tags: 🏷️pipeline
+
+🏷️quantity:
+  tags: 🏷️pipeline
+
+🏷️arrayOfQuantities:
+  tags: 🏷️pipeline
+
+🏷️arrayOfDisplayName:
+  tags: 🏷️pipeline
+  
+🏷️displayName:
+  tags: 🏷️pipeline
+
+🏷️millimeter:
+  tags: 🏷️pipeline
+
+🏷️arrayFromGlossary:
+  tags: 🏷️pipeline

@@ -1,4 +1,4 @@
-import { Pao } from '../pao.tags';
+import { PaoTags } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
 import { Printing } from './Printing';
 import jsPDF from 'jspdf';
@@ -15,9 +15,9 @@ export class Assembling implements IPrinting {
 
     constructor(private readonly context: PaoContext, private readonly printingEntry: any) {
         this.page = this.context.entryAsPageInfo(printingEntry);
-        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.MARGINS));
-        this.gutters = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, Pao.GUTTERS));
-        this.marks = this.reader.mandatoryValueAt(printingEntry, Pao.MARKS);
+        this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.MARGINS));
+        this.gutters = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.GUTTERS));
+        this.marks = this.reader.mandatoryValueAt(printingEntry, PaoTags.MARKS);
         this.printing = new Printing(this.context, this.printingEntry);
     }
 
@@ -99,7 +99,7 @@ export class Assembling implements IPrinting {
                 doc.addPage();
 
                 //lines trim marks
-                if (this.marks == Pao.LINES) {
+                if (this.marks == PaoTags.LINES) {
                     for (let artwork of pages) {
                         const { item, layout, x, y } = artwork;
                         this.printing.drawTrimLines(doc, item.canvas, this.gutters.value, layout.trimbox, x, y, item.layout.width, item.layout.height);
@@ -113,7 +113,7 @@ export class Assembling implements IPrinting {
                 }
 
                 //corners trim marks
-                if (this.marks == Pao.CROSS) {
+                if (this.marks == PaoTags.CROSS) {
                     for (let artwork of pages) {
                         const { item, layout, x, y } = artwork;
                         this.addMarks(doc, markPng, x + layout.trimbox.x, y + layout.trimbox.y, layout.trimbox.corners);

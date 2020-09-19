@@ -1,7 +1,7 @@
 import { Glossary } from './Glossary';
 import { MetaTags } from './meta.tags';
+import { Entry } from './Entry';
 export class TagExpression {
-
 
     entryHas(entry: any, tag: string) {
         if (!entry || !entry.tags) {
@@ -33,39 +33,61 @@ export class TagExpression {
     }
 
     public asQuantity(value: string) {
-        const parsed = value.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
-        if (parsed) {
-            return {
-                value: parseFloat(parsed[1]),
-                unit: this.glossary.get(parsed[4])
-            };
-        }
-        else {
-            const entry = this.glossary.get(value); 
-            if(entry){
+        if (value) {
+            const parsed = value.match(/^((-)?\d+(\.\d+)?)(\W+\w+)?$/);
+            if (parsed) {
                 return {
-                    value: undefined,
+                    value: parseFloat(parsed[1]),
                     unit: this.glossary.get(parsed[4])
                 };
-            }  
-            else {
-                return undefined;
             }
+            else {
+                const entry = this.glossary.get(value);
+                if (entry) {
+                    return {
+                        value: undefined,
+                        unit: entry
+                    };
+                }
+                else {
+                    return { value: undefined, unit: undefined }
+                }
+            }
+        }
+        else {
+            return { value: undefined, unit: undefined }
         }
     }
 
-    public resolveRequestsAt(entry: any, field: string) {
-        const ret = []
+    public asDisplayName(raw: any) {
+
+        const entry = new Entry(this.glossary, raw);
+        if (entry.isValid) {
+            return entry.icon + this.coalesce(entry.title, entry.name);
+        }
+        else {
+            return "🚫undefined";
+        }
+    }
+
+    public resolveRequestsAt(entry: any, field: string): { result: any, request: any }[] {
         if (field in entry) {
             const forExp = entry[field];
-            if (Array.isArray(forExp)) {
-                for (let exp of forExp) {
-                    ret.push(...this.resolveRequest(exp))
-                }
+            return this.resolveRequests(forExp);
+        }
+        return [];
+    }
+
+
+    public resolveRequests(forExp: any): { result: any, request: any }[] {
+        const ret = []
+        if (Array.isArray(forExp)) {
+            for (let exp of forExp) {
+                ret.push(...this.resolveRequest(exp))
             }
-            else {
-                ret.push(...this.resolveRequest(forExp))
-            }
+        }
+        else {
+            ret.push(...this.resolveRequest(forExp))
         }
         return ret;
     }
@@ -74,8 +96,11 @@ export class TagExpression {
         if (Array.isArray(value)) {
             return value;
         }
-        else {
+        else if (typeof value === "string") {
             return value.split(/\s+/).filter(x => x != "");
+        }
+        else {
+            return [value];
         }
     }
 
@@ -94,7 +119,15 @@ export class TagExpression {
         return undefined;
     }
 
-    public resolveRequest(exp: any): any[] {
+    public fallback(defaultValue: any, source, ...keys: string[]): any {
+        for (let key of keys) {
+            const val = source[key];
+            if (val !== undefined) return source[key];
+        }
+        return defaultValue;
+    }
+
+    public resolveRequest(exp: any): { result: any, request: any }[] {
         const ret = [];
         if (MetaTags.IS in exp) {
             ret.push({
