@@ -215,13 +215,14 @@ ${entry.description}
           const parsed = theWord.word.match(/([0-9]*)(.+)/);
 
           const match = new RegExp(parsed[2], "g");
-          let lineNumber = 1;
+
 
           const edits = new Array<monaco.languages.WorkspaceTextEdit | monaco.languages.WorkspaceFileEdit>();
-          
+
           console.debug(monaco.editor.getModels());
 
           for (let model of monaco.editor.getModels()) {
+            let lineNumber = 1;
             for (let line of model.getLinesContent()) {
               for (let matched of [...line.matchAll(match)]) {
                 edits.push({
