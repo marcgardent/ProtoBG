@@ -4,6 +4,8 @@ import { EventHubService } from './eventhub.service';
 import { Glossary } from '../lib/tags/Glossary';
 import { Entry } from '../lib/tags/Entry';
 import { IWorkspace, IResource } from '../lib/editor/models';
+import { GlossaryService } from './glossary.service';
+import { WarehouseService } from './warehouse.service';
 
 
 const customLanguage = "markdown";
@@ -17,7 +19,7 @@ export class MonacoService {
   public snippetSuggestions = [];
   private editor: monaco.editor.IStandaloneCodeEditor = undefined;
 
-  constructor(private readonly hub: EventHubService) {
+  constructor(private readonly warehouseService: WarehouseService, private readonly glossaryService: GlossaryService, private readonly hub: EventHubService) {
 
     monaco.editor.setTheme("vs-dark");
 
@@ -35,38 +37,51 @@ export class MonacoService {
 
     this.registerCustomLanguage();
 
-    this.hub.currentGlossary.subscribe((g) => {
+    this.glossaryService.currentGlossary.subscribe((g) => {
       if (g) { this.updateSuggestions(g) }
     });
 
-    this.hub.currentWorkspace.subscribe((w) => {
+    this.warehouseService.currentWorkspace.subscribe((w) => {
       this.loadWorkspace(w);
     });
 
-    this.hub.currentResource.subscribe((r) => {
+    this.warehouseService.currentResource.subscribe((r) => {
       this.loadResource(r);
+    });
+
+    this.warehouseService.onResourceCreated.subscribe((r) => {
+      monaco.editor.createModel(r.content, this.getLanguage(r.type), monaco.Uri.file(r.name));
+    });
+
+    this.warehouseService.onResourceRenamed.subscribe((d) => {
+
+      const old = this.getModel(d.oldName);
+      if (old) {
+        old.dispose();
+      }
+      monaco.editor.createModel(d.target.content, this.getLanguage(d.target.type), monaco.Uri.file(d.target.name));
     });
   }
 
   public rehydrateWorkspace() {
-    if(this.hub.currentWorkspace.value){
-      for(let resource of this.hub.currentWorkspace.value.resources){
+    if (this.warehouseService.workspace) {
+      for (let resource of this.warehouseService.workspace.resources) {
         this.rehydrateResource(resource);
       }
-      this.hub.onWorkspaceUpdated.next(this.hub.currentWorkspace.value);
+      this.warehouseService.raiseWorkspaceUpdated(this.warehouseService.workspace);
     }
   }
 
-  private rehydrateResource(resource:IResource){
-    if(resource){
-      const model = this.getModel(resource);
-      if(model){
+  private rehydrateResource(resource: IResource) {
+    if (resource) {
+      const model = this.getModel(resource.name);
+      if (model) {
         resource.content = model.getValue();
-        this.hub.onResourceUpdated.next(resource);
+        this.warehouseService.raiseResourceUpdated(resource);
       }
-      else{
+      else {
         console.error("model not loaded for", resource);
-        this.hub.onError.next("internal error [press F12]");
+        this.hub.raiseError("internal error [press F12]");
       }
     }
   }
@@ -80,15 +95,15 @@ export class MonacoService {
       fontFamily: "game-icons, monospace"
     });
 
-    this.loadWorkspace(this.hub.currentWorkspace.value);
-    this.loadResource(this.hub.currentResource.value);
+    this.loadWorkspace(this.warehouseService.workspace);
+    this.loadResource(this.warehouseService.resource);
 
     return this.editor;
   }
 
-  private getModel(ressource: IResource){
-    const r = monaco.editor.getModels().filter(x=> x.uri.path== ressource.name);
-    if(r.length==1){
+  private getModel(name: string) {
+    const r = monaco.editor.getModels().filter(x => x.uri.path == name);
+    if (r.length == 1) {
       return r[0];
     }
     else {
@@ -96,16 +111,15 @@ export class MonacoService {
     }
   }
 
-  private loadResource(ressource: IResource){
-    if(this.editor && ressource){
-      const r = this.getModel(ressource);
-      if(r){
+  private loadResource(resource: IResource) {
+    if (this.editor && resource) {
+      const r = this.getModel(resource.name);
+      if (r) {
         this.editor.setModel(r);
-        console.debug("setModel", r.uri)
       }
-      else{
-        console.error("model not loaded for", ressource);
-        this.hub.onError.next("internal error [press F12]");
+      else {
+        console.error("model not loaded for", resource);
+        this.hub.raiseError("internal error [press F12]");
       }
     }
   }
@@ -120,9 +134,8 @@ export class MonacoService {
         model.dispose();
       }
 
-      for (let ressource of workspace.resources) {
-
-        const m = monaco.editor.createModel(ressource.content, this.getLanguage(ressource.type), monaco.Uri.file(ressource.name));
+      for (let resource of workspace.resources) {
+        const m = monaco.editor.createModel(resource.content, this.getLanguage(resource.type), monaco.Uri.file(resource.name));
         console.debug("loaded", m.uri.path, m);
       }
     }
@@ -135,7 +148,7 @@ export class MonacoService {
     else if (ext == 'glossary') {
       return customLanguage;
     }
-    else{
+    else {
       console.warn("undefined ext.", ext);
       return null;
     }
@@ -193,13 +206,11 @@ ${entry.description}
   }
 
   private registerCustomLanguage() {
-
     // this.monaco.languages.register({'id': customLanguage})
     monaco.languages.registerRenameProvider(customLanguage, {
-      provideRenameEdits: (model: monaco.editor.ITextModel, position: monaco.Position, newName: string) => {
-
+      provideRenameEdits: (target: monaco.editor.ITextModel, position: monaco.Position, newName: string) => {
         //custom range
-        const theWord = model.getWordAtPosition(position);
+        const theWord = target.getWordAtPosition(position);
         if (theWord) {
           const parsed = theWord.word.match(/([0-9]*)(.+)/);
 
@@ -207,28 +218,29 @@ ${entry.description}
           let lineNumber = 1;
 
           const edits = new Array<monaco.languages.WorkspaceTextEdit | monaco.languages.WorkspaceFileEdit>();
+          
+          console.debug(monaco.editor.getModels());
 
-          for (let line of model.getLinesContent()) {
-            for (let matched of [...line.matchAll(match)]) {
-
-              edits.push({
-                resource: model.uri,
-                edit: {
-                  range: {
-                    endColumn: matched.index + 1 + matched[0].length,
-                    endLineNumber: lineNumber,
-                    startColumn: matched.index + 1,
-                    startLineNumber: lineNumber,
-                  },
-                  text: newName
-                }
-              });
-
+          for (let model of monaco.editor.getModels()) {
+            for (let line of model.getLinesContent()) {
+              for (let matched of [...line.matchAll(match)]) {
+                edits.push({
+                  resource: model.uri,
+                  edit: {
+                    range: {
+                      endColumn: matched.index + 1 + matched[0].length,
+                      endLineNumber: lineNumber,
+                      startColumn: matched.index + 1,
+                      startLineNumber: lineNumber,
+                    },
+                    text: newName
+                  }
+                });
+              }
+              lineNumber++;
             }
-
-            lineNumber++;
           }
-
+          console.debug("rename", edits);
           const ret = {
             edits: edits
           }
@@ -305,9 +317,9 @@ ${entry.description}
 
         const { column, lineNumber } = position;
         const theWord = model.getWordAtPosition(position);
-        if (theWord && this.hub.currentGlossary.value) {
+        if (theWord && this.glossaryService.glossary) {
           const parsed = theWord.word.match(/([0-9]*)([^:]*)/);
-          const entry = this.hub.currentGlossary.value.getAsEntry(parsed[2]);
+          const entry = this.glossaryService.glossary.getAsEntry(parsed[2]);
           if (entry.isValid) {
             return {
               range: new monaco.Range(lineNumber, theWord.startColumn, lineNumber, theWord.endColumn),

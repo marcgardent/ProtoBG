@@ -3,6 +3,7 @@ import { EventHubService } from '../services/eventhub.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RenameComponent } from '../rename/rename.component';
 import { IWorkspace, IResource } from '../lib/editor/models';
+import { WarehouseService } from '../services/warehouse.service';
 
 @Component({
   selector: 'app-explorer',
@@ -11,33 +12,22 @@ import { IWorkspace, IResource } from '../lib/editor/models';
 })
 export class ExplorerComponent implements OnInit {
 
-  get warehouse() { return this.hub.currentWarehouse.value; }
-  get workspace() { return this.hub.currentWorkspace.value; }
-  get resource() { return this.hub.currentResource.value; }
+  get warehouse() { return this.warehouseService.current; }
+  get workspace() { return this.warehouseService.workspace; }
+  get resource() { return this.warehouseService.resource; }
 
-  constructor(private readonly hub: EventHubService, public dialog: MatDialog) { }
+  constructor(private readonly hub: EventHubService, private readonly warehouseService: WarehouseService,  public dialog: MatDialog) { }
 
   ngOnInit(): void {
 
   }
 
   selectWorkspace(workspace: IWorkspace) {
-    this.hub.currentWorkspace.next(workspace);
-    const resources = this.workspace.resources.filter(x => x.name == workspace.currentResource);
-    if (resources.length == 1) {
-      this.hub.currentResource.next(resources[0]);
-    }
-    else if (this.workspace.resources.length > 0) {
-      this.workspace.resources[0];
-    }
-    else {
-      this.hub.onError.next("No resource in this workspace");
-    }
+    this.warehouseService.selectWorkspace(workspace);
   }
 
   selectResource(resource: IResource) {
-    this.workspace.currentResource = resource.name;
-    this.hub.currentResource.next(resource);
+    this.warehouseService.selectResource(resource);
   }
 
   renameWorkspace(): void {
@@ -47,11 +37,7 @@ export class ExplorerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.debug("rename workspace", this.workspace, result)
-      this.workspace.name = result.name;
-      this.warehouse.currentWorkspace = this.workspace.name;
-      //this.hub.onWorkspaceUpdated.next(this.workspace);
-      //TODO notify rename workspace
+      this.warehouseService.renameWorkspace(result.name);
     });
   }
 
@@ -62,29 +48,29 @@ export class ExplorerComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //TODO rename resource
+      this.warehouseService.renameResource(result.name);
     });
   }
 
-  newWorkspace(): void {
+  createWorkspace(): void {
     const dialogRef = this.dialog.open(RenameComponent, {
       width: '250px',
       data: { name: this.workspace.name, action: 'Create Workspace' }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //TODO rename workspace
+      this.warehouseService.createWorkspace(result.name);
     });
   }
 
-  newResource(): void {
+  createResource(): void {
     const dialogRef = this.dialog.open(RenameComponent, {
       width: '250px',
       data: { name: this.resource.name, action: 'Create Resource' }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      //TODO rename resource
+      this.warehouseService.createResource(result.name);
     });
   }
 

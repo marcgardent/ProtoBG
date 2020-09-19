@@ -38,14 +38,12 @@ export class AppComponent implements OnInit {
   public updateCurrent: () => void = () => { this.selectCode() };
 
   get exports() { return this.printings.length + this.bundles.length + 1 }
-
-
-  private get glossary() { return this.hub.currentGlossary.value; }
+  private get glossary() { return this.glossaryService.glossary; }
 
   constructor(private snackBar: MatSnackBar,
     private readonly sanitizer: DomSanitizer,
     private readonly glossaryService: GlossaryService,
-    private readonly warehouse: WarehouseService,
+    private readonly warehouseService: WarehouseService,
     private readonly hub: EventHubService) {
 
     this.hub.onSuccess.subscribe((m) => {
@@ -56,7 +54,7 @@ export class AppComponent implements OnInit {
       this.snackBar.open(m, undefined, { duration: 4000 });
     });
 
-    this.hub.currentGlossary.subscribe((g) => {
+    this.glossaryService.currentGlossary.subscribe((g) => {
       this.onGlossaryUpdated();
     });
 
@@ -144,7 +142,7 @@ export class AppComponent implements OnInit {
   }
   
   private processAsCode() {
-    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.hub.currentWorkspace.value));
+    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.warehouseService.workspace));
     fixTagsDeclaration(data);
     this.code = exportAsTypescript(data);
   }

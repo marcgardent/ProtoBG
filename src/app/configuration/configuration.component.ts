@@ -13,7 +13,7 @@ import { MonacoService } from '../services/monaco.service';
 export class ConfigurationComponent implements OnInit {
 
   public endpoint: string;
-  constructor(private readonly monacoService:MonacoService, private readonly hub: EventHubService, private readonly http: HttpClient) { }
+  constructor(private readonly warehouse:WarehouseService, private readonly monacoService:MonacoService, private readonly hub: EventHubService, private readonly http: HttpClient) { }
 
   ngOnInit() {
     this.endpoint = localStorage.getItem("protoBG:endpoint");
@@ -22,14 +22,14 @@ export class ConfigurationComponent implements OnInit {
   public push() {
     this.monacoService.rehydrateWorkspace();
     
-    const w = this.hub.currentWarehouse.value;
+    const w = this.warehouse.current;
     if (w && w.workspaces.length > 0) {
       const payload = JSON.stringify(w);
       this.http.post(this.endpoint, payload).toPromise()
         .then(() => {
-          this.hub.onSuccess.next("pushed!");
+          this.hub.raiseSuccess("pushed!");
         }).catch(r => {
-          this.hub.onError.next("an error occurred when push: see logs");
+          this.hub.raiseError("an error occurred when push: see logs");
           console.error("an error occurred when push", r);
         });
       localStorage.setItem("protoBG:endpoint", this.endpoint);
@@ -39,15 +39,11 @@ export class ConfigurationComponent implements OnInit {
   public pull() {
     this.http.get(this.endpoint, { responseType: 'text' }).toPromise().then(x => {
       const warehouse = <IWarehouse>JSON.parse(x);
-      this.hub.onError.next("pulled!");
-      this.hub.currentWarehouse.next(warehouse);
-      const workspace = warehouse && warehouse.workspaces.length > 0 ? warehouse.workspaces[0] : undefined;
-      const resource = workspace && workspace.resources.length > 0 ? workspace.resources[0] : undefined;
-      this.hub.currentWorkspace.next(workspace);
-      this.hub.currentResource.next(resource);
+      this.hub.raiseSuccess("pulled!");
+      this.warehouse.loadWarehouse(warehouse);
     }).catch(r => {
       console.debug(r);
-      this.hub.onError.next("an error occurred when pull: see logs");
+      this.hub.raiseError("an error occurred when pull: see logs");
     });
     localStorage.setItem("protoBG:endpoint", this.endpoint);
   }
