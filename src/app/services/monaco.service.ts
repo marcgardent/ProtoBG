@@ -4,10 +4,11 @@ import { EventHubService } from './eventhub.service';
 import { Glossary } from '../lib/tags/Glossary';
 import { Entry } from '../lib/tags/Entry';
 import { IWorkspace, IResource } from '../lib/editor/models';
-import { GlossaryService } from './glossary.service';
+import { GlossaryService, IBlock, IReport } from './glossary.service';
 import { WarehouseService } from './warehouse.service';
 
 const customLanguage = "markdown";
+const YAML_OWNER = "YAML_PARSER";
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,24 @@ export class MonacoService {
       }
       monaco.editor.createModel(d.target.content, this.getLanguage(d.target.type), monaco.Uri.file(d.target.name));
     });
+
+    this.glossaryService.report.subscribe((reports: IReport[]) => {
+      for (let report of reports) {
+        const model = this.getModel(report.resource.name);
+        if (model) {
+          const markers = report.errors.map(x => ({
+            startLineNumber: x.startLineNumber,
+            startColumn: 1,
+            endLineNumber: x.endLineNumber,
+            endColumn: 1000,
+            severity: monaco.MarkerSeverity.Error,
+            message: x.message
+          }));
+          monaco.editor.setModelMarkers(model, YAML_OWNER, markers);
+        }
+      }
+    });
+
   }
 
   public rehydrateWorkspace() {
@@ -87,7 +106,7 @@ export class MonacoService {
 
   public createEditor(domElement: HTMLDivElement): monaco.editor.IStandaloneCodeEditor {
 
-    
+
 
     this.editor = monaco.editor.create(domElement, {
       //value: this.hub.resource.value ? this.hub.resource.value.content : "",
@@ -98,14 +117,17 @@ export class MonacoService {
     });
 
     const codeEditorService = (<any>this.editor)._codeEditorService;
-      codeEditorService.openCodeEditor = ({resource, options}) => {
+    codeEditorService.openCodeEditor = ({ resource, options }) => {
       const file = resource.path;
       const range = options.selection;
       this.goto(file, range);
-      }
+    }
 
     this.editor.onDidChangeModelContent((e) => {
-      console.debug("onDidChangeModelContent", e);
+      //reset markers
+      for(let model of monaco.editor.getModels()){
+        monaco.editor.setModelMarkers(model , YAML_OWNER, []);
+      }
     });
 
     this.loadWorkspace(this.warehouseService.workspace);
@@ -114,9 +136,9 @@ export class MonacoService {
     return this.editor;
   }
 
-  public goto(path: string, range: monaco.IRange){
+  public goto(path: string, range: monaco.IRange) {
     const model = this.getModel(path);
-    if(model){
+    if (model) {
       this.editor.setModel(model);
       //this.editor.revealLine(lineNumber);
       this.editor.revealRangeAtTop(range);
@@ -124,12 +146,12 @@ export class MonacoService {
         endColumn: range.endColumn,
         endLineNumber: range.endLineNumber,
         startColumn: range.startColumn,
-        startLineNumber:  range.startLineNumber,
+        startLineNumber: range.startLineNumber,
         severity: monaco.MarkerSeverity.Info,
         message: "definition"
       }])
     }
-    setTimeout(()=>{
+    setTimeout(() => {
       monaco.editor.setModelMarkers(model, "GOTO_FUNC", []);
     }, 2000);
   }

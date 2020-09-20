@@ -10,18 +10,23 @@ import { PaoTags } from '../lib/pao/pao.tags';
 import { BundleTags } from "../lib/bundle/Bundle.tags";
 import { WarehouseService } from './warehouse.service';
 import { BehaviorSubject } from 'rxjs';
+import { exception } from 'console';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlossaryService {
 
+  private _report = new BehaviorSubject<IReport[]>([]);
+  get report() { return this._report.asObservable(); }
+
   get glossary() { return this._currentGlossary.value; }
-  private _currentGlossary = new BehaviorSubject<Glossary>(undefined);
+  private _currentGlossary = new BehaviorSubject<Glossary>(new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata));
 
   constructor(private readonly hub: EventHubService, private readonly warehouse: WarehouseService) {
 
     this.currentGlossary.subscribe((w) => { console.debug("⚡currentGlossary", w) });
+    this.report.subscribe((w) => { console.debug("⚡report", w) });
 
     this.warehouse.currentWorkspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
@@ -30,12 +35,12 @@ export class GlossaryService {
     this.warehouse.onWorkspaceUpdated.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
     });
-
-    this.raiseNewGlossary(new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata));
   }
 
   public get currentGlossary() { return this._currentGlossary.asObservable(); }
-  raiseNewGlossary(glossary: Glossary) {
+
+
+  private raiseNewGlossary(glossary: Glossary) {
     this._currentGlossary.next(glossary);
   }
 
@@ -57,30 +62,56 @@ export class GlossaryService {
 
     } catch (exception) {
       this.hub.raiseError("fix the glossary");
-      console.error(exception);
-
-      this.parseErrors(workspace);
+      const report = this.getReport(workspace);
+      this._report.next(report);
     }
   }
 
-  private parseErrors(workspace: IWorkspace) {
+  private getReport(workspace: IWorkspace) {
+    const ret = [];
     for (let resource of workspace.resources) {
-      const block = new BlockReader(resource);
-      console.debug(block.blocks);
+
+      const report = {
+        resource: resource,
+        errors: new Array<IBlock>()
+      }
+
+      const reader = new BlockReader(resource);
+      for (let block of reader.blocks) {
+
+        try {
+          readGlossaryFromYaml(block.lines.join("\n"));
+        }
+        catch (error) {
+          block.message = `${error.name}: ${error.message}`;
+          report.errors.push(block);
+          console.debug(error.source.range.start, error.source.range.end);
+        }
+      }
+
+      ret.push(report);
     }
+    return ret;
   }
 }
 
 export interface IBlock {
-  resource: IResource;
   name: string;
   startLineNumber: number;
   endLineNumber: number;
+  lines: Array<string>;
+  message: string;
+}
+
+export interface IReport {
+  errors: Array<IBlock>;
+  resource: IResource;
 }
 
 class BlockReader {
   private readonly lines: string[];
   private currentLine = 0;
+  private buffer = [];
   public readonly blocks: Array<IBlock>;
 
   constructor(public readonly resource: IResource) {
@@ -97,10 +128,13 @@ class BlockReader {
         const block = {
           resource: this.resource,
           name: entry,
-          startLineNumber: blocks.length==0? 1: this.currentLine + 1,
-          endLineNumber: this.currentLine + 1
+          startLineNumber: blocks.length == 0 ? 1 : this.currentLine + 1,
+          endLineNumber: this.currentLine + 1,
+          lines: [],
+          message: ""
         }
-        block.endLineNumber+= this.readBlock();
+        block.endLineNumber += this.readBlock();
+        block.lines = this.buffer; this.buffer = [];
         blocks.push(block);
       }
     } while (this.next());
@@ -109,15 +143,15 @@ class BlockReader {
   }
 
   private readBlock() {
-    let ret =0;
+    let ret = 0;
     this.next();
     do {
       const line = this.peak();
       const parsed = line.match(/^([^#:\s][^:]*(\s*)):(\s*)$/);
       if (!parsed) {
-        ret+=1;
+        ret += 1;
       }
-      else{
+      else {
         return ret;
       }
     } while (this.next());
@@ -142,6 +176,7 @@ class BlockReader {
   }
 
   private next() {
+    this.buffer.push(this.peak());
     this.currentLine++;
     return this.currentLine < this.lines.length;
   }
