@@ -7,7 +7,6 @@ import { IWorkspace, IResource } from '../lib/editor/models';
 import { GlossaryService } from './glossary.service';
 import { WarehouseService } from './warehouse.service';
 
-
 const customLanguage = "markdown";
 
 @Injectable({
@@ -132,7 +131,7 @@ export class MonacoService {
     }
     setTimeout(()=>{
       monaco.editor.setModelMarkers(model, "GOTO_FUNC", []);
-    }, 1000);
+    }, 2000);
   }
 
   private getModel(name: string) {
@@ -348,13 +347,13 @@ ${entry.description}
     });
 
     monaco.languages.registerDefinitionProvider(customLanguage, {
-      provideDefinition: (model: monaco.editor.ITextModel, position: monaco.Position) => {
-        const theWord = model.getWordAtPosition(position);
+      provideDefinition: (target: monaco.editor.ITextModel, position: monaco.Position) => {
+        const theWord = target.getWordAtPosition(position).word.match(/[0-9]*(.*)/)[1];
         const result = [];
         for (let model of monaco.editor.getModels()) {
           let lineNumber = 1;
           for (let line of model.getLinesContent()) {
-            if (line.startsWith(theWord.word)) {
+            if (line.startsWith(theWord)) {
               result.push({
                 uri: model.uri,
                 range: {
@@ -367,8 +366,8 @@ ${entry.description}
             }
             lineNumber++;
           }
-          return result;
         }
+        return result;
       }
     }
     );
