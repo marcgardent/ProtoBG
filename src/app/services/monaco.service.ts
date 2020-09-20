@@ -87,6 +87,9 @@ export class MonacoService {
   }
 
   public createEditor(domElement: HTMLDivElement): monaco.editor.IStandaloneCodeEditor {
+
+    
+
     this.editor = monaco.editor.create(domElement, {
       //value: this.hub.resource.value ? this.hub.resource.value.content : "",
       //language: "markdown",
@@ -95,10 +98,41 @@ export class MonacoService {
       fontFamily: "game-icons, monospace"
     });
 
+    const codeEditorService = (<any>this.editor)._codeEditorService;
+      codeEditorService.openCodeEditor = ({resource, options}) => {
+      const file = resource.path;
+      const range = options.selection;
+      this.goto(file, range);
+      }
+
+    this.editor.onDidChangeModelContent((e) => {
+      console.debug("onDidChangeModelContent", e);
+    });
+
     this.loadWorkspace(this.warehouseService.workspace);
     this.loadResource(this.warehouseService.resource);
 
     return this.editor;
+  }
+
+  public goto(path: string, range: monaco.IRange){
+    const model = this.getModel(path);
+    if(model){
+      this.editor.setModel(model);
+      //this.editor.revealLine(lineNumber);
+      this.editor.revealRangeAtTop(range);
+      monaco.editor.setModelMarkers(model, "GOTO_FUNC", [{
+        endColumn: range.endColumn,
+        endLineNumber: range.endLineNumber,
+        startColumn: range.startColumn,
+        startLineNumber:  range.startLineNumber,
+        severity: monaco.MarkerSeverity.Info,
+        message: "definition"
+      }])
+    }
+    setTimeout(()=>{
+      monaco.editor.setModelMarkers(model, "GOTO_FUNC", []);
+    }, 1000);
   }
 
   private getModel(name: string) {
@@ -312,6 +346,32 @@ ${entry.description}
 
       }
     });
+
+    monaco.languages.registerDefinitionProvider(customLanguage, {
+      provideDefinition: (model: monaco.editor.ITextModel, position: monaco.Position) => {
+        const theWord = model.getWordAtPosition(position);
+        const result = [];
+        for (let model of monaco.editor.getModels()) {
+          let lineNumber = 1;
+          for (let line of model.getLinesContent()) {
+            if (line.startsWith(theWord.word)) {
+              result.push({
+                uri: model.uri,
+                range: {
+                  startLineNumber: lineNumber,
+                  startColumn: 1,
+                  endLineNumber: lineNumber,
+                  endColumn: line.length,
+                }
+              });
+            }
+            lineNumber++;
+          }
+          return result;
+        }
+      }
+    }
+    );
 
     monaco.languages.registerHoverProvider(customLanguage, {
       provideHover: (model: monaco.editor.ITextModel, position: monaco.Position) => {
