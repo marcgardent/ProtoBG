@@ -22,7 +22,7 @@ export class Printing implements IPrinting, IDocument {
         this.margins = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.MARGINS));
         this.density = this.reader.asQuantity(this.reader.mandatoryValueAt(printingEntry, PaoTags.DENSITY));
         this.mode = this.reader.mandatoryValueAt(printingEntry, PaoTags.MODE);
-        
+
         this.foreachEntries = this.reader.resolveRequestsAt(
             printingEntry,
             MetaTags.FOREACH
@@ -33,7 +33,7 @@ export class Printing implements IPrinting, IDocument {
 
         const ret = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = <IDocument>new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
+            const doc = <IDocument>new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
             ret.push(...doc.toRaw());
         }
         return ret;
@@ -43,7 +43,7 @@ export class Printing implements IPrinting, IDocument {
         const promises = [];
         const images = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value ); // TODO unit
+            const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
 
             for (let page of doc.toHTMLCanvasElement()) {
                 const copies = this.reader.coalesce(parseInt(page.context[PaoTags.COPIES]), 1);
@@ -95,7 +95,7 @@ export class Printing implements IPrinting, IDocument {
                 const width = item.layout.width + this.margins.value * 2;
                 const height = item.layout.height + this.margins.value * 2;
 
-                doc.addPage([width, height]);
+                doc.addPage([width, height], width > height ? "landscape" : "portrait");
                 const page = doc.getCurrentPageInfo();
 
                 const scale = 72 / 25.4; //mm TODO unit system
