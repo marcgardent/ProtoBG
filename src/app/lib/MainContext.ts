@@ -9,7 +9,7 @@ import { IDocument } from "./bundle/IDocument";
 import { Bundle } from "./bundle/Bundle";
 import { RawDocument } from './templating/RawDocument';
 import { Printing } from './pao/printing/Printing';
-import { BundleTags } from './bundle/Bundle.tags';
+import { IMessenger } from './report';
 
 export interface IResult {
     kind : string;
@@ -25,8 +25,8 @@ export class MainContext implements ITagContext {
 
     public readonly pao: PaoContext;
 
-    constructor(public readonly glossary: Glossary, public readonly reader: TagExpression) {
-        this.pao = new PaoContext(glossary, reader);
+    constructor(private readonly messenger : IMessenger, public readonly glossary: Glossary, public readonly reader: TagExpression) {
+        this.pao = new PaoContext(messenger, glossary, reader);
     }
 
     entryAsDocument(entry: any): IDocument {
@@ -39,7 +39,7 @@ export class MainContext implements ITagContext {
                 return new Printing(this.pao, entry);
             }
             else if (e.has(Templating.DOCUMENT)) {
-                return new RawDocument(this.glossary, this.reader, entry, {});
+                return new RawDocument(this.messenger, this.glossary, this.reader, entry, {});
             }
             else {
                 console.error("this entry is not a Document", entry)

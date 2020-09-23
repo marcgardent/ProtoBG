@@ -4,16 +4,17 @@ import { Templating } from './templating.tag';
 import { ITemplate } from './templateFactory';
 import * as nunjucks from "nunjucks";
 import { NunjucksTags } from './nunjucks.tag';
+import { IMessenger } from '../report';
 
 export class NunjucksTemplate implements ITemplate {
     private readonly template: string;
     private readonly pipelines: Glossary;
     public readonly extension: any;
 
-    constructor(private readonly glossary: Glossary, private readonly reader: TagExpression, private readonly nunjucksEntry: any) {
+    constructor(private readonly messenger: IMessenger, private readonly glossary: Glossary, private readonly reader: TagExpression, private readonly nunjucksEntry: any) {
         this.template = reader.mandatoryValueAt(nunjucksEntry, Templating.DEFINITION);
         this.extension = reader.mandatoryValueAt(nunjucksEntry, Templating.EXTENSION);
-        
+
         this.pipelines = new Glossary(NunjucksTags.metadata);
     }
 
@@ -30,11 +31,11 @@ export class NunjucksTemplate implements ITemplate {
         this.addFilter(env, NunjucksTags.REQUEST, function (request) {
             return self.reader.resolveRequests(request);
         });
-        
+
         this.addFilter(env, NunjucksTags.INCLUDEASTEXT, function (url, callback) {
 
             fetch(url).then((response: Response) => {
-                return  response.text();
+                return response.text();
             }, reason => {
                 console.error(NunjucksTags.INCLUDEASTEXT, url, reason);
                 callback(reason);
@@ -88,7 +89,7 @@ export class NunjucksTemplate implements ITemplate {
         });
 
         this.addFilter(env, NunjucksTags.ARRAYFROMGLOSSARY, function (keys) {
-            return self.reader.asArray(keys).map(x=> self.glossary.get(x));    
+            return self.reader.asArray(keys).map(x => self.glossary.get(x));
         });
 
         this.addFilter(env, NunjucksTags.QUANTITY, function (exp) {
@@ -114,6 +115,7 @@ export class NunjucksTemplate implements ITemplate {
         return new Promise<string>((resolve, reject) => {
             env.renderString(this.template, local, function (err, res) {
                 if (err) {
+                    self.messenger.error({ message: err.message, entry: self.nunjucksEntry, raw: err });
                     reject(err);
                 }
                 else {

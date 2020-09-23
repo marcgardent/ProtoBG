@@ -3,19 +3,21 @@ import { Glossary } from '../tags/Glossary';
 import { PaoTags } from '../pao/pao.tags';
 import { TagExpression } from '../tags/TagExpression';
 import { NunjucksTemplate } from './NunjucksTemplate';
+import { IMessenger } from '../report';
 
 export interface ITemplate {
 
-    apply(parameters: any, context: any, me: any, layout : any): Promise<string>;
-    extension : string;
+    apply(parameters: any, context: any, me: any, layout: any): Promise<string>;
+    extension: string;
 }
 
 export function templateFactory(
+    messenger: IMessenger,
     glossary: Glossary,
     reader: TagExpression,
     templateEntry: any
 ): ITemplate {
 
-    return new NunjucksTemplate(glossary, reader, templateEntry);
+    return new NunjucksTemplate(messenger, glossary, reader, templateEntry);
 }
 

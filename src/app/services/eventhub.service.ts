@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { IWarehouse, IWorkspace, IResource } from '../lib/editor/models';
-import { Glossary } from '../lib/tags/Glossary';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +18,7 @@ export class EventHubService {
   constructor() {
     this.registerConsole();
   }
+ 
 
   registerConsole() {    
     this.onError.subscribe((w) => { console.debug("⚡onError", w) });

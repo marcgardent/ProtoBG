@@ -7,9 +7,7 @@ export class SvgCollection extends RawDocument implements IDocument {
     public readonly layout: ILayout;
     constructor(context: PaoContext, documentEntry: any) {
         const layout = context.entryAsLayout(context.reader.mandatoryReferenceAt(documentEntry, PaoTags.LAYOUT));
-        super(context.glossary, context.reader, documentEntry, layout);
+        super(context.messenger, context.glossary, context.reader, documentEntry, layout);
         this.layout = layout;
     }
 }
-
-

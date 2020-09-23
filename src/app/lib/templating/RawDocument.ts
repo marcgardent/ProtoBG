@@ -4,6 +4,7 @@ import { Templating } from './templating.tag';
 import { Glossary } from '../tags/Glossary';
 import { TagExpression } from '../tags/TagExpression';
 import { IDocument } from "../bundle/IDocument";
+import { IMessenger } from '../report';
 
 export class RawDocument implements IDocument {
     private readonly template: ITemplate;
@@ -11,13 +12,14 @@ export class RawDocument implements IDocument {
     private readonly parameters: any;
 
     constructor(
+        private readonly messenger: IMessenger,
         private readonly glossary: Glossary,
         private readonly reader: TagExpression,
         private readonly documentEntry: any,
         private readonly locals: any) {
         this.parameters = this.reader.mandatoryValueAt(documentEntry, Templating.PARAMETERS);
         const templateEntry = this.reader.mandatoryReferenceAt(documentEntry, Templating.TEMPLATE);
-        this.template = templateFactory(this.glossary, this.reader, templateEntry);
+        this.template = templateFactory(this.messenger, this.glossary, this.reader, templateEntry);
         this.foreachEntries = this.reader.resolveRequestsAt(documentEntry, MetaTags.FOREACH);
     }
 

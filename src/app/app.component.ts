@@ -149,7 +149,7 @@ export class AppComponent implements OnInit {
 
   private processAsBundle() {
     if (this.glossary) {
-      const ctx = new MainContext(this.glossary, new TagExpression(this.glossary));
+      const ctx = new MainContext(this.glossaryService, this.glossary, new TagExpression(this.glossary));
       this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
       const zipper = ctx.entryAsBundle(this.currentExport);
       if (zipper) {
@@ -166,7 +166,7 @@ export class AppComponent implements OnInit {
   private processAsPDF() {
 
     if (this.glossary) {
-      const pao = new PaoContext(this.glossary, new TagExpression(this.glossary));
+      const pao = new PaoContext(this.glossaryService, this.glossary, new TagExpression(this.glossary));
       this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
       if (this.currentExport) {
         const p = pao.entryAsPrinting(this.currentExport);

@@ -10,12 +10,12 @@ import { PaoTags } from '../lib/pao/pao.tags';
 import { BundleTags } from "../lib/bundle/Bundle.tags";
 import { WarehouseService } from './warehouse.service';
 import { BehaviorSubject } from 'rxjs';
-import { exception } from 'console';
+import { IMessage, IMessenger } from '../lib/report';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GlossaryService {
+export class GlossaryService implements IMessenger {
 
   private _report = new BehaviorSubject<IReport[]>([]);
   get reports() { return this._report.asObservable(); }
@@ -39,9 +39,8 @@ export class GlossaryService {
 
   public get currentGlossary() { return this._currentGlossary.asObservable(); }
 
-
-  private raiseNewGlossary(glossary: Glossary) {
-    this._currentGlossary.next(glossary);
+  public error(m: IMessage) {
+    console.debug("🔥", m);
   }
 
   public mergeAll(workspace: IWorkspace): string {
@@ -53,6 +52,10 @@ export class GlossaryService {
     }
   }
 
+  private raiseNewGlossary(glossary: Glossary) {
+    this._currentGlossary.next(glossary);
+  }
+  
   private updateGlossary(workspace: IWorkspace) {
     try {
       const data = readGlossaryFromYaml(this.mergeAll(workspace));

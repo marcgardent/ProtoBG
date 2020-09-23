@@ -7,23 +7,24 @@ import { IDocument } from "../bundle/IDocument";
 import { SvgCollection } from './SvgCollection';
 import { ITagContext } from '../tags/ITagContext';
 import { CanvasCollection } from './CanvasCollection';
+import { IMessenger } from '../report';
 
 
 export interface IPrinting {
     toPdf(): Promise<string>;
 }
 
-export interface ILayout{
-    width : number;
+export interface ILayout {
+    width: number;
     height: number;
-    artbox : {x : number, y: number, width: number, height: number};
-    bleedbox : {x : number, y: number, width: number, height: number};
-    trimbox : {x : number, y: number, width: number, height: number, corners: number};
+    artbox: { x: number, y: number, width: number, height: number };
+    bleedbox: { x: number, y: number, width: number, height: number };
+    trimbox: { x: number, y: number, width: number, height: number, corners: number };
 }
 
-export class PaoContext implements ITagContext{
+export class PaoContext implements ITagContext {
 
-    constructor(public readonly glossary: Glossary, public readonly reader: TagExpression) {
+    constructor(public readonly messenger: IMessenger, public readonly glossary: Glossary, public readonly reader: TagExpression) {
 
     }
 
