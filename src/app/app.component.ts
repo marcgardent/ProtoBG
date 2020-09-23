@@ -31,9 +31,9 @@ export class AppComponent implements OnInit {
   public currentExport: any = this.defaultExports;
   public printings = [];
   public bundles = [];
+  public pdfSrc: string = undefined;
   public bundleResult: any = undefined;
   public download = undefined;
-  public pdfSrc: string = "";
   public code: string = "{}";
   public updateCurrent: () => void = () => { this.selectCode() };
 
@@ -109,16 +109,15 @@ export class AppComponent implements OnInit {
   resetSelection() {
     this.currentExport = this.defaultExports;
     this.download = undefined;
-    this.pdfSrc = undefined;
     this.code = undefined;
     this.bundleResult = undefined;
+    this.pdfSrc = undefined;
   }
 
   selectPrint(print: any) {
     this.resetSelection();
     this.currentExport = print;
     this.processAsPDF();
-    this.setDownload(this.currentExport.name + ".pdf", this.pdfSrc);
     this.updateCurrent = this.updatePdf;
   }
 
@@ -171,7 +170,8 @@ export class AppComponent implements OnInit {
       if (this.currentExport) {
         const p = pao.entryAsPrinting(this.currentExport);
         p.toPdf().then(x => {
-          this.pdfSrc = x;
+            this.pdfSrc = x;
+            this.setDownload(this.currentExport.name + ".pdf", x);
         });
       }
       else {
