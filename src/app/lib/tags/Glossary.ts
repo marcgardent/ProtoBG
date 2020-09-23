@@ -26,7 +26,7 @@ function mergeSources(...sources: any[]) {
         for (let key in glossary) {
             const item = glossary[key];
             if (key in ret) {
-                console.debug("ignore the conflict", key, ret[key], item)
+                //TODO REPORT console.debug("ignore the conflict", key, ret[key], item)
             }
             else {
                 ret[key] = item;

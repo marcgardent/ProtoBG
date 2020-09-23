@@ -37,6 +37,8 @@ export class AppComponent implements OnInit {
   public code: string = "{}";
   public updateCurrent: () => void = () => { this.selectCode() };
 
+  public get reports() { return this.glossaryService.reports; }
+
   get exports() { return this.printings.length + this.bundles.length + 1 }
   private get glossary() { return this.glossaryService.glossary; }
 
@@ -57,7 +59,6 @@ export class AppComponent implements OnInit {
     this.glossaryService.currentGlossary.subscribe((g) => {
       this.onGlossaryUpdated();
     });
-
   }
 
   ngOnInit(): void {
@@ -140,7 +141,7 @@ export class AppComponent implements OnInit {
   public setDownload(name: string, data: string) {
     this.download = { content: this.sanitizer.bypassSecurityTrustUrl(data), name: name };
   }
-  
+
   private processAsCode() {
     const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.warehouseService.workspace));
     fixTagsDeclaration(data);

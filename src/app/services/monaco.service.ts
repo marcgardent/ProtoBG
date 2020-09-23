@@ -62,7 +62,7 @@ export class MonacoService {
       monaco.editor.createModel(d.target.content, this.getLanguage(d.target.type), monaco.Uri.file(d.target.name));
     });
 
-    this.glossaryService.report.subscribe((reports: IReport[]) => {
+    this.glossaryService.reports.subscribe((reports: IReport[]) => {
       for (let report of reports) {
         const model = this.getModel(report.resource.name);
         if (model) {
@@ -78,7 +78,6 @@ export class MonacoService {
         }
       }
     });
-
   }
 
   public rehydrateWorkspace() {
@@ -191,7 +190,6 @@ export class MonacoService {
 
       for (let resource of workspace.resources) {
         const m = monaco.editor.createModel(resource.content, this.getLanguage(resource.type), monaco.Uri.file(resource.name));
-        console.debug("loaded", m.uri.path, m);
       }
     }
   }
@@ -233,8 +231,6 @@ ${entry.description}
 `}
       });
 
-      console.debug(tag.properties);
-
       {
         // snippets
         const props = entry.properties;
@@ -274,8 +270,6 @@ ${entry.description}
 
           const edits = new Array<monaco.languages.WorkspaceTextEdit | monaco.languages.WorkspaceFileEdit>();
 
-          console.debug(monaco.editor.getModels());
-
           for (let model of monaco.editor.getModels()) {
             let lineNumber = 1;
             for (let line of model.getLinesContent()) {
@@ -296,7 +290,6 @@ ${entry.description}
               lineNumber++;
             }
           }
-          console.debug("rename", edits);
           const ret = {
             edits: edits
           }
@@ -341,8 +334,6 @@ ${entry.description}
           // sort suggestions
           const tagContext = (<string>model.getLineContent(position.lineNumber)).match(/^\s+((\W+)(\w+)):/);
           if (tagContext) {
-            console.debug("context", tagContext[1]);
-
             this.tagSuggestions.forEach(suggestion => {
               suggestion.range = range;
               if (suggestion._entry.tags.indexOf(tagContext[1]) >= 0) {

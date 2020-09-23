@@ -35,8 +35,6 @@
             <li *ngFor="let f of bundleResult.files">{{f.filename}}</li>
           </ul>
         </div>
-        
-
         <mat-menu #Menu="matMenu">
           <a mat-menu-item *ngIf="download" [href]="download.content" [download]="download.name">📥
             <b>{{currentExport.icon}}{{download.name}}</b>
@@ -48,9 +46,9 @@
           <mat-divider *ngIf="printings"></mat-divider>
 
           <button mat-menu-item *ngFor="let theBundle of bundles"
-          (click)="selectBundle(theBundle)">{{theBundle.icon}}{{theBundle.name}}</button>
+            (click)="selectBundle(theBundle)">{{theBundle.icon}}{{theBundle.name}}</button>
           <mat-divider *ngIf="bundles"></mat-divider>
-
+          
           <button mat-menu-item (click)="selectCode()">{{codeExport.icon}}{{codeExport.name}}</button>
         </mat-menu>
       </mat-tab>
@@ -61,6 +59,29 @@
             <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
             <div>{{item.key}}</div>
           </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="⚙️Debug">
+        <div class="content">
+          <h2>Pipeline</h2>
+          <h3>YAML</h3>
+          <ul>
+            <li *ngIf="(reports| async)?.length == 0">✅pass</li>
+            <li *ngFor="let report of reports| async">🛑{{report.resource.name}} {{report.errors.length}} errors</li>
+          </ul>
+
+          <!--
+          <h3>Templates</h3>
+          <p>TODO</p>
+
+          <h3>Exports</h3>
+          <p>printings, assembling, ...</p>
+
+          <h3>SVGs</h3>
+          <p></p>
+          -->
+
         </div>
       </mat-tab>
 

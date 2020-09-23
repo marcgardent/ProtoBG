@@ -42,7 +42,7 @@ export class ConfigurationComponent implements OnInit {
       this.hub.raiseSuccess("pulled!");
       this.warehouse.loadWarehouse(warehouse);
     }).catch(r => {
-      console.debug(r);
+      console.error(r);
       this.hub.raiseError("an error occurred when pull: see logs");
     });
     localStorage.setItem("protoBG:endpoint", this.endpoint);

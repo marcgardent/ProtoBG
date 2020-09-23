@@ -18,7 +18,7 @@ import { exception } from 'console';
 export class GlossaryService {
 
   private _report = new BehaviorSubject<IReport[]>([]);
-  get report() { return this._report.asObservable(); }
+  get reports() { return this._report.asObservable(); }
 
   get glossary() { return this._currentGlossary.value; }
   private _currentGlossary = new BehaviorSubject<Glossary>(new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata));
@@ -26,7 +26,7 @@ export class GlossaryService {
   constructor(private readonly hub: EventHubService, private readonly warehouse: WarehouseService) {
 
     this.currentGlossary.subscribe((w) => { console.debug("⚡currentGlossary", w) });
-    this.report.subscribe((w) => { console.debug("⚡report", w) });
+    this.reports.subscribe((w) => { console.debug("⚡report", w) });
 
     this.warehouse.currentWorkspace.subscribe((w) => {
       if (w) { this.updateGlossary(w); }
@@ -59,7 +59,7 @@ export class GlossaryService {
       fixTagsDeclaration(data);
       const glossary = new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata, data);
       this.raiseNewGlossary(glossary);
-
+      this._report.next([]);
     } catch (exception) {
       this.hub.raiseError("fix the glossary");
       const report = this.getReport(workspace);
@@ -69,6 +69,7 @@ export class GlossaryService {
 
   private getReport(workspace: IWorkspace) {
     const ret = [];
+    const dict = new Map<string,IBlock>();
     for (let resource of workspace.resources) {
 
       const report = {
@@ -77,7 +78,21 @@ export class GlossaryService {
       }
 
       const reader = new BlockReader(resource);
+      
       for (let block of reader.blocks) {
+        
+        if(block.name){
+          if(dict[block.name]){
+            const def = dict[block.name];
+            const clone = JSON.parse(JSON.stringify(block));
+
+            clone.message = `'${block.name}' has already been defined at lines [${def.startLineNumber} - ${def.endLineNumber}], file '${def.resource.name}'.`;
+            report.errors.push(clone);
+          }
+          else{
+            dict[block.name] = block;
+          }
+        }
 
         try {
           readGlossaryFromYaml(block.lines.join("\n"));
@@ -85,7 +100,7 @@ export class GlossaryService {
         catch (error) {
           block.message = `${error.name}: ${error.message}`;
           report.errors.push(block);
-          console.debug(error.source.range.start, error.source.range.end);
+          //console.debug(error.source.range.start, error.source.range.end);
         }
       }
 
@@ -121,11 +136,11 @@ class BlockReader {
 
   private toBlock() {
     const blocks = new Array<IBlock>();
-
     do {
       const entry = this.whileEntry();
+      let block;
       if (entry) {
-        const block = {
+        block = {
           resource: this.resource,
           name: entry,
           startLineNumber: blocks.length == 0 ? 1 : this.currentLine + 1,
@@ -133,12 +148,23 @@ class BlockReader {
           lines: [],
           message: ""
         }
-        block.endLineNumber += this.readBlock();
-        block.lines = this.buffer; this.buffer = [];
-        blocks.push(block);
       }
-    } while (this.next());
+      else{
+        block = {
+          resource: this.resource,
+          name: undefined,
+          startLineNumber: blocks.length == 0 ? 1 : this.currentLine + 1,
+          endLineNumber: this.currentLine + 1,
+          lines: [],
+          message: ""
+        }
+      }
 
+      block.endLineNumber += this.readBlock();
+      block.lines = this.buffer; this.buffer = [];
+      blocks.push(block);
+
+    } while (this.continue());
     return blocks;
   }
 
@@ -147,7 +173,7 @@ class BlockReader {
     this.next();
     do {
       const line = this.peak();
-      const parsed = line.match(/^([^#:\s][^:]*(\s*)):(\s*)$/);
+      const parsed = line.match(/^([^#:\s][^:]*(\s*)):/);
       if (!parsed) {
         ret += 1;
       }
@@ -162,7 +188,7 @@ class BlockReader {
   private whileEntry() {
     do {
       const line = this.peak();
-      const parsed = line.match(/^([^#:\s][^:]*(\s*)):(\s*)$/);
+      const parsed = line.match(/^([^#:\s][^:]*(\s*)):/);
       if (parsed) {
         return parsed[1];
       }
@@ -173,6 +199,10 @@ class BlockReader {
 
   private peak() {
     return this.lines[this.currentLine];
+  }
+
+  private continue(){
+    return this.currentLine < this.lines.length;
   }
 
   private next() {

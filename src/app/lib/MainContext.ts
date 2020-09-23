@@ -9,6 +9,7 @@ import { IDocument } from "./bundle/IDocument";
 import { Bundle } from "./bundle/Bundle";
 import { RawDocument } from './templating/RawDocument';
 import { Printing } from './pao/printing/Printing';
+import { BundleTags } from './bundle/Bundle.tags';
 
 export interface IResult {
     kind : string;
@@ -49,5 +50,11 @@ export class MainContext implements ITagContext {
 
     entryAsBundle(entry: any) : Bundle {
         return new Bundle(this.glossary, this.reader, entry, (entry)=> this.entryAsDocument(entry));
+    }
+
+
+    allExports(){
+        const exports = this.glossary.search.atLeastOne(Templating.DOCUMENT, PaoTags.PRINTING, PaoTags.ASSEMBLING).toList();
+        return exports;
     }
 }

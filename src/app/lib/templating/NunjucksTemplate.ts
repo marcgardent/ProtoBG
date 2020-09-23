@@ -10,7 +10,7 @@ export class NunjucksTemplate implements ITemplate {
     private readonly pipelines: Glossary;
     public readonly extension: any;
 
-    constructor(private readonly glossary: Glossary, private readonly reader: TagExpression, private nunjucksEntry: any) {
+    constructor(private readonly glossary: Glossary, private readonly reader: TagExpression, private readonly nunjucksEntry: any) {
         this.template = reader.mandatoryValueAt(nunjucksEntry, Templating.DEFINITION);
         this.extension = reader.mandatoryValueAt(nunjucksEntry, Templating.EXTENSION);
         
@@ -57,7 +57,6 @@ export class NunjucksTemplate implements ITemplate {
             }).then((blob: Blob) => {
                 var reader = new FileReader();
                 reader.onload = function () {
-                    console.debug("dataUri done!", url, this);
                     callback(null, this.result);
                 };
                 reader.onerror = function (ev) {
@@ -89,10 +88,8 @@ export class NunjucksTemplate implements ITemplate {
         });
 
         this.addFilter(env, NunjucksTags.ARRAYFROMGLOSSARY, function (keys) {
-            return self.reader.asArray(keys).map(x=> self.glossary.get(x));
-            
+            return self.reader.asArray(keys).map(x=> self.glossary.get(x));    
         });
-
 
         this.addFilter(env, NunjucksTags.QUANTITY, function (exp) {
             return self.reader.asQuantity(exp);

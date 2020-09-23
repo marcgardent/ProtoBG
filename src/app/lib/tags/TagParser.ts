@@ -14,7 +14,7 @@ export function fixTagsDeclaration(data: any) {
 
         for (let t of tags) {
             if (!(t in data)) {
-                console.debug("unknown!", t);
+                //console.debug("unknown!", t);
                 const tag = t.match(TAG)
 
                 const unknown = {
