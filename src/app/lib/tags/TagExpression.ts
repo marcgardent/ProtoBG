@@ -1,6 +1,7 @@
 import { Glossary } from './Glossary';
 import { MetaTags } from './meta.tags';
 import { Entry } from './Entry';
+import { IMessenger } from '../report';
 export class TagExpression {
 
     entryHas(entry: any, tag: string) {
@@ -10,13 +11,13 @@ export class TagExpression {
         return entry.tags.indexOf(tag) > -1;
     }
 
-    constructor(private readonly glossary: Glossary) {
+    constructor(private readonly messenger: IMessenger, private readonly glossary: Glossary) {
 
     }
 
     public mandatoryValueAt(entry: any, tag: string) {
         if (entry[tag] == undefined) {
-            console.error("except the property:", tag, "in the entry:", entry);
+            this.messenger.error({message: `except the property: ${tag}`, entry: entry })
             throw Error("except the property:" + tag);
         }
         return entry[tag];
@@ -26,7 +27,7 @@ export class TagExpression {
         const ref = this.mandatoryValueAt(entry, tag);
         const val = this.glossary.get(ref);
         if (val == undefined) {
-            console.error("except the entry named:", tag, "in the glossary");
+            this.messenger.error({message: `except the property: ${tag}`, entry: entry })
             throw Error("except the entry named:" + tag);
         }
         return val;
@@ -148,38 +149,5 @@ export class TagExpression {
         }
 
         return ret;
-    }
-}
-
-
-/**
- * experimental
- * TODO delete
- */
-class Pipe {
-
-    private result = []
-
-    constructor(...values: any[]) {
-        this.result = [...values];
-    }
-
-    public t(self: any, f: any, ...kArgs: any[]) {
-        const next = [];
-        for (let v of this.result) {
-            const n = Reflect.apply(f, self, [v, ...kArgs]);
-            if (n) {
-                next.push(n);
-            }
-        }
-        return this;
-    }
-
-    static sample() {
-        new Pipe("coco", "toto").t(undefined, (x) => { x.toUpper() }).toResult();
-    }
-
-    public toResult() {
-        return this.result;
     }
 }
