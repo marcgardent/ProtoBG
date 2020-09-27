@@ -4,6 +4,7 @@ export interface IMessage {
     message: string;
     entry: any;
     raw?: any;
+    url?: string;
 }
 
 

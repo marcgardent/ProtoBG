@@ -52,16 +52,7 @@
           <button mat-menu-item (click)="selectCode()">{{codeExport.icon}}{{codeExport.name}}</button>
         </mat-menu>
       </mat-tab>
-      <mat-tab label="🔣Glyphs">
-        <div class="content" style="font-family: 'game-icons';">
-          <div *ngFor="let item of gameIcons | keyvalue"
-            style="display:inline-block;margin:0.1em;border:1px black solid;">
-            <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
-            <div>{{item.key}}</div>
-          </div>
-        </div>
-      </mat-tab>
-
+      
       <mat-tab label="⚙️Debug">
         <div class="content">
           <h2>Static Analysis</h2>
@@ -72,10 +63,22 @@
           <h3>Runtime errors</h3>
           <ul>
             <li *ngIf="runtimeErrors.length == 0">✅pass</li>
-            <li *ngFor="let error of runtimeErrors">{{error.entry.icon}}{{error.entry.name}}: 🔥 {{error.message}}</li>
+            <li *ngFor="let error of runtimeErrors">{{error.entry.icon}}{{error.entry.name}}: 🔥 {{error.message}} <a *ngIf="error.url" [href]="safe(error.url)">[Get data content]</a></li>
           </ul>
         </div>
       </mat-tab>
+
+      <mat-tab label="🔣Glyphs">
+        <div class="content" style="font-family: 'game-icons';">
+          <div *ngFor="let item of gameIcons | keyvalue"
+            style="display:inline-block;margin:0.1em;border:1px black solid;">
+            <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
+            <div>{{item.key}}</div>
+          </div>
+        </div>
+      </mat-tab>
+
+
       <mat-tab label="⚙️Config.">
         <div class="content">
           <app-configuration></app-configuration>

@@ -86,6 +86,6 @@ export class PaoContext implements ITagContext {
     }
 
     entryAsPngCollection(documentEntry): IDocument {
-        return new CanvasCollection(this.entryAsSvgCollection(documentEntry), 300);
+        return new CanvasCollection(this.messenger, documentEntry, this.entryAsSvgCollection(documentEntry), 300);
     }
 }

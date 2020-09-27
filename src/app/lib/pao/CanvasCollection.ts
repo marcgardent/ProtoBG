@@ -1,11 +1,13 @@
 import { IDocument } from "../bundle/IDocument";
 import { SvgCollection } from './SvgCollection';
 import { ILayout } from './PaoContext';
+import { IMessenger } from '../report';
 
 
 export class CanvasCollection implements IDocument {
 
-    constructor(private readonly svg: SvgCollection, private readonly dpi) {
+    constructor(private readonly messenger: IMessenger, private readonly entry: any, private readonly svg: SvgCollection, private readonly dpi) {
+
     }
 
     /**
@@ -48,13 +50,13 @@ export class CanvasCollection implements IDocument {
         return ret;
     }
 
-
     private loadImage(url) {
         return new Promise<HTMLImageElement>((resolve, reject) => {
             let img = new Image();
             img.addEventListener('load', e => resolve(img));
-            img.addEventListener('error', () => {
-                reject(new Error(`Failed to load image's URL: ${url}`));
+            img.addEventListener('error', (e) => {
+                this.messenger.error({ entry: this.entry, raw: e, message: `can't load the image '${url.substring(0, 30)}...'`, url: url });
+                reject(new Error(`Failed to load image's URL: ${url.substring(0, 30)}...`));
             });
             img.src = url;
         });

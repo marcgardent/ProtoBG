@@ -6,7 +6,7 @@ import { PaoTags } from '../pao.tags';
 import { PaoContext, IPrinting } from '../PaoContext';
 import { CanvasCollection } from '../CanvasCollection';
 import { IDocument } from "../../bundle/IDocument";
-
+import { IMessenger } from '../../report';
 
 export class Printing implements IPrinting, IDocument {
     private readonly foreachEntries: any[];
@@ -33,7 +33,7 @@ export class Printing implements IPrinting, IDocument {
 
         const ret = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = <IDocument>new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
+            const doc = <IDocument>new CanvasCollection(this.context.messenger, this.printingEntry, new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
             ret.push(...doc.toRaw());
         }
         return ret;
@@ -43,7 +43,7 @@ export class Printing implements IPrinting, IDocument {
         const promises = [];
         const images = [];
         for (let docEntry of this.foreachEntries) {
-            const doc = new CanvasCollection(new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
+            const doc = new CanvasCollection(this.context.messenger, this.printingEntry, new SvgCollection(this.context, docEntry.result), this.density.value); // TODO unit
 
             for (let page of doc.toHTMLCanvasElement()) {
                 const copies = this.reader.coalesce(parseInt(page.context[PaoTags.COPIES]), 1);
@@ -112,13 +112,14 @@ export class Printing implements IPrinting, IDocument {
         });
     }
 
-
+    //TODO obsolete
     loadImage(url) {
         return new Promise<HTMLImageElement>((resolve, reject) => {
             let img = new Image();
             img.addEventListener('load', e => resolve(img));
-            img.addEventListener('error', () => {
-                reject(new Error(`Failed to load image's URL: ${url}`));
+            img.addEventListener('error', (e) => {
+                this.context.messenger.error({ entry: this.printingEntry, raw: e, message: `can't load the image '${url.substring(0, 10)}...'`, url: url });
+                reject(new Error(`Failed to load image's URL: ${url.substring(0, 10)}`));
             });
             img.src = url;
         });

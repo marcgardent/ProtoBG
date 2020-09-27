@@ -62,12 +62,12 @@ export class AppComponent implements OnInit {
       this.onGlossaryUpdated();
     });
 
-    this.glossaryService.runtimeError.subscribe((e)=> {
-      this.selectedIndex = 2;
+    this.glossaryService.runtimeError.subscribe((e) => {
+      this.selectedIndex = 1;
     });
 
-    this.glossaryService.reports.subscribe((r)=> {
-      this.selectedIndex = 2;
+    this.glossaryService.reports.subscribe((r) => {
+      this.selectedIndex = 1;
     });
   }
 
@@ -89,7 +89,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  updateCurrentWrapper(){
+  updateCurrentWrapper() {
     this.glossaryService.clearRuntimeErrors();
     this.updateCurrent();
   }
@@ -154,6 +154,10 @@ export class AppComponent implements OnInit {
 
   public setDownload(name: string, data: string) {
     this.download = { content: this.sanitizer.bypassSecurityTrustUrl(data), name: name };
+  }
+
+  public safe(data: string) {
+    return this.sanitizer.bypassSecurityTrustUrl(data);
   }
 
   private processAsCode() {
