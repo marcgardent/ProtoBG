@@ -32,43 +32,50 @@ Let's me explain in details the full pipeline.
 append entries in your glossary like this:
 
 ```yaml
+🏠myCard:
+  title: my emoji
 
-💠name:
-    title: entry's title
-    description: |
-        this is an description of entry.
-    tags: 💠tag1 💠tag2 
-    
+myGlyph:
+    title: my game icon
 ```
 
 ## Your templates
 
 ```yaml
 
-📐debugTemplate:
-  tags: 📐nunjucks 
+📐myTemplate:
+  tags: 📐nunjucks
+  📐extension: svg
   📐definition: |
-    &lt;svg xmlns="http://www.w3.org/2000/svg" 
+    <svg xmlns="http://www.w3.org/2000/svg" 
     width="{{ width }}"
-    height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}">
-      &lt;g id="bleedLayer" transform="translate({{bleedbox.x}}, {{bleedbox.y}})">
-        &lt;rect id="bleedbox" x="0" y="0" width="{{bleedbox.width}}" height="{{bleedbox.height}}" fill="yellow"/>
-      &lt;/g>
-      &lt;g id="trimLayer" transform="translate({{trimbox.x}}, {{trimbox.y}})">
-        &lt;rect id="trimbox" x="0" y="0" width="{{trimbox.width}}" height="{{trimbox.height}}" stroke-width="0.1"
-            fill="lightgreen" rx="{{trimbox.corners}}" ry="{{trimbox.corners}}" stroke="red"/>
-        &lt;text text-anchor="left" alignment-baseline="hanging" x="{{trimbox.corners}}" y="0" font-size="4" fill="red">
-            trimbox
-        &lt;/text>
-      &lt;/g>
-      &lt;g id="artLayer" transform="translate({{artbox.x}}, {{artbox.y}})">
-        &lt;rect id="artbox" x="0" y="0" width="{{artbox.width}}" height="{{artbox.height}}" stroke-width="1" fill="green" />
-        &lt;text style="font-family: sans-serif;font-size:10" text-anchor="middle" x="{{artbox.width/2}}" y="{{artbox.height/2}}" fill="darkgreen">
-            artbox
-        &lt;/text>
-      &lt;/g>
-    &lt;/svg>
-
+    height="{{ height }}" viewBox="0 0 {{ width }} {{ height }}" >
+     <style>
+        /* <![CDATA[ */
+        @font-face {
+            font-family: "game-icons";
+            src: url('{{ './assets/game-icons.woff' | includeAsDataUri }}') format('woff');
+        }
+        /* ]]> */
+      </style>
+      <g id="bleedLayer" transform="translate({{bleedbox.x}}, {{bleedbox.y}})">
+        <rect fill="black" id="bleedbox" x="0" y="0" width="{{bleedbox.width}}" height="{{bleedbox.height}}"/>
+      </g>
+      <g id="trimLayer" transform="translate({{trimbox.x}}, {{trimbox.y}})">
+        <rect id="trimbox" x="0" y="0" width="{{trimbox.width}}" height="{{trimbox.height}}"
+            fill="black" rx="{{trimbox.corners}}" ry="{{trimbox.corners}}"/>
+      </g>
+      <g id="artLayer" transform="translate({{artbox.x}}, {{artbox.y}})">
+        <rect id="artbox" x="0" y="0" width="{{artbox.width}}" height="{{artbox.height}}"
+        rx="{{trimbox.corners}}" ry="{{trimbox.corners}}" fill="lightgray" />
+        <text style="font-family: game-icons;font-size:15" x="{{artbox.width/2}}" y="{{artbox.height/2}}" text-anchor="middle">
+            {{ 'icon' | fromModel }}
+        </text>
+        <text style="font: small-caps bold 8px sans-serif" x="{{artbox.width/2}}" y="{{artbox.height/2+12}}" text-anchor="middle" fill="black">
+            {{ 'title' | fromModel }}
+        </text>
+      </g>
+    </svg>
 ```
 
 ## Your printing constraints
@@ -77,12 +84,12 @@ This is an example for Poker cards describe on https://printeurope.fr:
 
 ```yaml
 
-⏹myLayout:
+⏹myLayout: 
   tags: ⏹layout
   📄format: 🃏poker 
   🔄orientation: 🔄portrait
   📏paddings: 4📏mm
-  📏bleeds: 2📏mm
+  📏bleeds: 0📏mm
   📏corners: 4📏mm
 
 ```
@@ -92,43 +99,26 @@ This is an example for Poker cards describe on https://printeurope.fr:
 bind data and the template and the layout:
 
 ```yaml
-📘myDeck:
-    tags: 🖼️artworks
-    📑foreach:
-        - { 📑is: 🏭factory, 🖨️copies: 10}
-        - { 📑is: 🧰goods, 🖨️copies: 1}
-    ⏹layout: ⏹myLayout
-    📐template: 📐debugTemplate
-    📐parameters:
-      ⬛left: 📉consume
-      ⬛right: 📈produce
-      ⬛bottom: ⚒️build
+🖼️myCollection:
+  tags: 🖼️collection
+  ⏹layout: ⏹myLayout
+  📐template: 📐myTemplate
+  📐parameters: {}
+  📑foreach:
+    - { 📑is: 🏠myCard, 🖨️copies: 1}
+    - { 📑is: myGlyph, 🖨️copies: 3}
 
 ```
 
 and export in PDF:
 
 ```yaml
-🖨️myPrinting: 
+🖨️myPrinting:
   tags: 🖨️printing
-  📑foreach: { 📑is: 📘myDeck }
-  🖨️mode: 🛑review
-  📏density: 300📏dpi
-  📏margins: 10📏mm  
-  
-```
-
-Or assemble your artworks togethers:
-
-```
-🖨️myAssembly:
-  tags: 🖨️assembly
-  📑foreach: { 📑is: 📘myDeck }
+  📑foreach:
+    - { 📑is: 🖼️myCollection}
   🖨️mode: 🚀production
-  📄format: 📄A4
-  ➕marks: ➕lines
-  🔄orientation: 🔄landscape
-  📏margins: 10📏mm 
-  📏gutters: 5📏mm 
-  📏density: 300📏dpi 
+  📏margins: 0📏mm
+  📏density: 300📏dpi
+  
 ```
