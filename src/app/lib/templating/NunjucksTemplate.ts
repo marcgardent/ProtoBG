@@ -5,6 +5,7 @@ import { ITemplate } from './templateFactory';
 import * as nunjucks from "nunjucks";
 import { NunjucksTags } from './nunjucks.tag';
 import { IMessenger } from '../report';
+import { exception } from 'console';
 
 export class NunjucksTemplate implements ITemplate {
     private readonly template: string;
@@ -29,7 +30,12 @@ export class NunjucksTemplate implements ITemplate {
 
 
         this.addFilter(env, NunjucksTags.REQUEST, function (request) {
-            return self.reader.resolveRequests(request);
+            try {
+                return self.reader.resolveRequests(request);
+            } catch (e) {
+                self.messenger.error({ raw: e, message: `${JSON.stringify(request)} | ${NunjucksTags.REQUEST} raise an error`, entry: self.nunjucksEntry });
+                throw e;
+            }
         });
 
         this.addFilter(env, NunjucksTags.INCLUDEASTEXT, function (url, callback) {
@@ -37,13 +43,12 @@ export class NunjucksTemplate implements ITemplate {
             fetch(url).then((response: Response) => {
                 return response.text();
             }, reason => {
-                console.error(NunjucksTags.INCLUDEASTEXT, url, reason);
+                self.messenger.error({ raw: reason, message: ` '${url}' | ${NunjucksTags.INCLUDEASTEXT} raise an error`, entry: self.nunjucksEntry });
                 callback(reason);
             }).then((text: string) => {
                 callback(null, text);
             }).catch(reason => {
-
-                console.error(NunjucksTags.INCLUDEASTEXT, url, reason);
+                self.messenger.error({ raw: reason, message: ` '${url}' | ${NunjucksTags.INCLUDEASTEXT} raise an error`, entry: self.nunjucksEntry });
                 callback(reason)
             });
         }, true);
@@ -53,6 +58,7 @@ export class NunjucksTemplate implements ITemplate {
             fetch(url).then((response) => {
                 return response.blob();
             }, reason => {
+                self.messenger.error({ raw: reason, message: ` '${url}' | ${NunjucksTags.INCLUDEASDATAURI} raise an error`, entry: self.nunjucksEntry });
                 console.error(NunjucksTags.INCLUDEASDATAURI, url, reason);
                 callback(reason);
             }).then((blob: Blob) => {
@@ -61,55 +67,104 @@ export class NunjucksTemplate implements ITemplate {
                     callback(null, this.result);
                 };
                 reader.onerror = function (ev) {
-                    console.error(NunjucksTags.INCLUDEASDATAURI, url, ev);
+                    self.messenger.error({ raw: ev, message: ` '${url}' | ${NunjucksTags.INCLUDEASDATAURI} raise an error`, entry: self.nunjucksEntry });
                     callback(ev);
                 }
                 reader.readAsDataURL(blob);
             }).catch(reason => {
-
-                console.error(NunjucksTags.INCLUDEASDATAURI, url, reason);
+                self.messenger.error({ raw: reason, message: ` '${url}' | ${NunjucksTags.INCLUDEASDATAURI} raise an error`, entry: self.nunjucksEntry });
                 callback(reason)
             });
         }, true);
 
         this.addFilter(env, NunjucksTags.FROMCONTEXT, function (key, defaultVal) {
-            return self.reader.fallback(defaultVal, context, ...self.reader.asArray(key));
+            try {
+                return self.reader.fallback(defaultVal, context, ...self.reader.asArray(key));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(key)} | ${NunjucksTags.FROMCONTEXT}(${JSON.stringify(defaultVal)}) raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.FROMPARAMETERS, function (key, defaultVal) {
-            return self.reader.fallback(defaultVal, parameters, ...self.reader.asArray(key));
+            try {
+                return self.reader.fallback(defaultVal, parameters, ...self.reader.asArray(key));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(key)} | ${NunjucksTags.FROMPARAMETERS}(${JSON.stringify(defaultVal)}) raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.FROMMODEL, function (key, defaultVal) {
-            return self.reader.fallback(defaultVal, me, ...self.reader.asArray(key));
+            try {
+                return self.reader.fallback(defaultVal, me, ...self.reader.asArray(key));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(key)} | ${NunjucksTags.FROMMODEL}(${JSON.stringify(defaultVal)}) raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.FROMGLOSSARY, function (key, defaultVal) {
-            return self.reader.fallback(defaultVal, self.glossary.glossary, ...self.reader.asArray(key));
+            try {
+                return self.reader.fallback(defaultVal, self.glossary.glossary, ...self.reader.asArray(key));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(key)} | ${NunjucksTags.FROMGLOSSARY}(${JSON.stringify(defaultVal)}) raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.ARRAYFROMGLOSSARY, function (keys) {
-            return self.reader.asArray(keys).map(x => self.glossary.get(x));
+            try {
+                return self.reader.asArray(keys).map(x => self.glossary.get(x));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(keys)} | ${NunjucksTags.ARRAYFROMGLOSSARY} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.QUANTITY, function (exp) {
-            return self.reader.asQuantity(exp);
+            try {
+                return self.reader.asQuantity(exp);
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(exp)} | ${NunjucksTags.QUANTITY} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.ARRAYOFQUANTITIES, function (exp) {
-            return self.reader.asArrayOfQuantities(exp);
+            try {
+                return self.reader.asArrayOfQuantities(exp);
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(exp)} | ${NunjucksTags.ARRAYOFQUANTITIES} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.ARRAYOFDISPLAYNAME, function (exp) {
-            return self.reader.asArray(exp).map(x => self.reader.asDisplayName(x));
+            try {
+                return self.reader.asArray(exp).map(x => self.reader.asDisplayName(x));
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(exp)} | ${NunjucksTags.ARRAYOFDISPLAYNAME} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.DISPLAYNAME, function (exp) {
-            self.reader.asDisplayName(exp);
+            try {
+                self.reader.asDisplayName(exp);
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(exp)} | ${NunjucksTags.DISPLAYNAME} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         this.addFilter(env, NunjucksTags.MILLIMETER, function (exp) {
-            return self.reader.asQuantity(exp).value;
+            try {
+                return self.reader.asQuantity(exp).value;
+            }
+            catch (e) {
+                self.messenger.error({ raw: e, message: ` ${JSON.stringify(exp)} | ${NunjucksTags.MILLIMETER} raise an error`, entry: self.nunjucksEntry });
+            }
         });
 
         return new Promise<string>((resolve, reject) => {

@@ -39,6 +39,8 @@ export class AppComponent implements OnInit {
 
   public get reports() { return this.glossaryService.reports; }
 
+  public get runtimeErrors() { return this.glossaryService.runtimeErrors; }
+
   get exports() { return this.printings.length + this.bundles.length + 1 }
   private get glossary() { return this.glossaryService.glossary; }
 
@@ -59,6 +61,14 @@ export class AppComponent implements OnInit {
     this.glossaryService.currentGlossary.subscribe((g) => {
       this.onGlossaryUpdated();
     });
+
+    this.glossaryService.runtimeError.subscribe((e)=> {
+      this.selectedIndex = 2;
+    });
+
+    this.glossaryService.reports.subscribe((r)=> {
+      this.selectedIndex = 2;
+    });
   }
 
   ngOnInit(): void {
@@ -67,7 +77,7 @@ export class AppComponent implements OnInit {
 
   animationDone() {
     if (this.selectedIndex == 0) {
-      this.updateCurrent();
+      this.updateCurrentWrapper();
     }
   }
 
@@ -75,8 +85,13 @@ export class AppComponent implements OnInit {
     if (this.glossary) {
       this.printings = [...this.glossary.search.atLeastOne(PaoTags.ASSEMBLING, PaoTags.PRINTING).toList()];
       this.bundles = [...this.glossary.search.atLeastOne(BundleTags.BUNDLE).toList()];
-      this.updateCurrent();
+      this.updateCurrentWrapper();
     }
+  }
+
+  updateCurrentWrapper(){
+    this.glossaryService.clearRuntimeErrors();
+    this.updateCurrent();
   }
 
   updatePdf() {
@@ -171,8 +186,8 @@ export class AppComponent implements OnInit {
       if (this.currentExport) {
         const p = pao.entryAsPrinting(this.currentExport);
         p.toPdf().then(x => {
-            this.pdfSrc = x;
-            this.setDownload(this.currentExport.name + ".pdf", x);
+          this.pdfSrc = x;
+          this.setDownload(this.currentExport.name + ".pdf", x);
         });
       }
       else {

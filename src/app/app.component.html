@@ -48,7 +48,7 @@
           <button mat-menu-item *ngFor="let theBundle of bundles"
             (click)="selectBundle(theBundle)">{{theBundle.icon}}{{theBundle.name}}</button>
           <mat-divider *ngIf="bundles"></mat-divider>
-          
+
           <button mat-menu-item (click)="selectCode()">{{codeExport.icon}}{{codeExport.name}}</button>
         </mat-menu>
       </mat-tab>
@@ -64,27 +64,18 @@
 
       <mat-tab label="⚙️Debug">
         <div class="content">
-          <h2>Pipeline</h2>
-          <h3>YAML</h3>
+          <h2>Static Analysis</h2>
           <ul>
             <li *ngIf="(reports| async)?.length == 0">✅pass</li>
             <li *ngFor="let report of reports| async">🛑{{report.resource.name}} {{report.errors.length}} errors</li>
           </ul>
-
-          <!--
-          <h3>Templates</h3>
-          <p>TODO</p>
-
-          <h3>Exports</h3>
-          <p>printings, assembling, ...</p>
-
-          <h3>SVGs</h3>
-          <p></p>
-          -->
-
+          <h3>Runtime errors</h3>
+          <ul>
+            <li *ngIf="runtimeErrors.length == 0">✅pass</li>
+            <li *ngFor="let error of runtimeErrors">{{error.entry.icon}}{{error.entry.name}}: 🔥 {{error.message}}</li>
+          </ul>
         </div>
       </mat-tab>
-
       <mat-tab label="⚙️Config.">
         <div class="content">
           <app-configuration></app-configuration>

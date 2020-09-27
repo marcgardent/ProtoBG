@@ -9,7 +9,7 @@ import { Templating } from '../lib/templating/templating.tag';
 import { PaoTags } from '../lib/pao/pao.tags';
 import { BundleTags } from "../lib/bundle/Bundle.tags";
 import { WarehouseService } from './warehouse.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { IMessage, IMessenger } from '../lib/report';
 
 @Injectable({
@@ -17,8 +17,14 @@ import { IMessage, IMessenger } from '../lib/report';
 })
 export class GlossaryService implements IMessenger {
 
+
   private _report = new BehaviorSubject<IReport[]>([]);
   get reports() { return this._report.asObservable(); }
+
+  public runtimeErrors = new Array<IMessage>();
+
+  public _runtimeError = new Subject<IMessage>();
+  get runtimeError() { return this._runtimeError.asObservable(); }
 
   get glossary() { return this._currentGlossary.value; }
   private _currentGlossary = new BehaviorSubject<Glossary>(new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata));
@@ -41,6 +47,8 @@ export class GlossaryService implements IMessenger {
 
   public error(m: IMessage) {
     console.debug("🔥", m);
+    this._runtimeError.next(m);
+    this.runtimeErrors.push(m);
   }
 
   public mergeAll(workspace: IWorkspace): string {
@@ -52,27 +60,46 @@ export class GlossaryService implements IMessenger {
     }
   }
 
+  clearRuntimeErrors() {
+    this.runtimeErrors = [];
+  }
+
   private raiseNewGlossary(glossary: Glossary) {
     this._currentGlossary.next(glossary);
   }
-  
+
   private updateGlossary(workspace: IWorkspace) {
     try {
       const data = readGlossaryFromYaml(this.mergeAll(workspace));
       fixTagsDeclaration(data);
       const glossary = new Glossary(MetaTags.metadata, Templating.metadata, PaoTags.metadata, BundleTags.metadata, data);
       this.raiseNewGlossary(glossary);
-      this._report.next([]);
+      this._report.next(this.getReportTags(workspace));
     } catch (exception) {
       this.hub.raiseError("fix the glossary");
-      const report = this.getReport(workspace);
+      const report = this.getReportYaml(workspace);
       this._report.next(report);
     }
   }
 
-  private getReport(workspace: IWorkspace) {
+  private getReportTags(workspace: IWorkspace) {
+    const ret: IReport[] = [];
+    for (let resource of workspace.resources) {
+      const tags = new TagReader(resource, this.glossary);
+      if (tags.undefinedCases.length > 0) {
+        ret.push({
+          resource: resource,
+          errors: tags.undefinedCases
+        });
+      }
+    }
+
+    return ret;
+  }
+
+  private getReportYaml(workspace: IWorkspace) {
     const ret = [];
-    const dict = new Map<string,IBlock>();
+    const dict = new Map<string, IBlock>();
     for (let resource of workspace.resources) {
 
       const report = {
@@ -81,18 +108,18 @@ export class GlossaryService implements IMessenger {
       }
 
       const reader = new BlockReader(resource);
-      
+
       for (let block of reader.blocks) {
-        
-        if(block.name){
-          if(dict[block.name]){
+
+        if (block.name) {
+          if (dict[block.name]) {
             const def = dict[block.name];
             const clone = JSON.parse(JSON.stringify(block));
 
             clone.message = `'${block.name}' has already been defined at lines [${def.startLineNumber} - ${def.endLineNumber}], file '${def.resource.name}'.`;
             report.errors.push(clone);
           }
-          else{
+          else {
             dict[block.name] = block;
           }
         }
@@ -106,8 +133,9 @@ export class GlossaryService implements IMessenger {
           //console.debug(error.source.range.start, error.source.range.end);
         }
       }
-
-      ret.push(report);
+      if (report.errors.length > 0) {
+        ret.push(report);
+      }
     }
     return ret;
   }
@@ -117,13 +145,50 @@ export interface IBlock {
   name: string;
   startLineNumber: number;
   endLineNumber: number;
-  lines: Array<string>;
+  startColumn: number;
+  endColumn: number;
   message: string;
+  lines: Array<string>;
 }
 
 export interface IReport {
   errors: Array<IBlock>;
   resource: IResource;
+}
+
+const a = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/
+
+class TagReader {
+  
+
+  private readonly TAG = /([^0-9a-zA-Z\s!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+)([a-zA-Z]+\w*)/g
+  public readonly undefinedCases = new Array<IBlock>();
+  constructor(private readonly resource: IResource, private readonly glossary: Glossary) {
+
+    let lineNumber = 1;
+    for (let line of this.resource.content.split("\n")) {
+
+      const matches = line.matchAll(this.TAG);
+      for (let match of matches) {
+        const tag = match[1] + match[2];
+        if (!this.glossary.get(tag)) {
+
+          const msg: IBlock = {
+            startLineNumber: lineNumber,
+            startColumn: match.index + 1,
+            endLineNumber: lineNumber,
+            endColumn: match.index + 1 + tag.length,
+            lines: [line],
+            name: tag,
+            message: `tag '${tag}' is undefined`
+          }
+          this.undefinedCases.push(msg);
+        }
+      }
+      lineNumber++;
+    }
+
+  }
 }
 
 class BlockReader {
@@ -148,17 +213,21 @@ class BlockReader {
           name: entry,
           startLineNumber: blocks.length == 0 ? 1 : this.currentLine + 1,
           endLineNumber: this.currentLine + 1,
+          startColumn: 0,
+          endColumn: 1000,
           lines: [],
           message: ""
         }
       }
-      else{
+      else {
         block = {
           resource: this.resource,
           name: undefined,
           startLineNumber: blocks.length == 0 ? 1 : this.currentLine + 1,
           endLineNumber: this.currentLine + 1,
           lines: [],
+          startColumn: 0,
+          endColumn: 1000,
           message: ""
         }
       }
@@ -204,7 +273,7 @@ class BlockReader {
     return this.lines[this.currentLine];
   }
 
-  private continue(){
+  private continue() {
     return this.currentLine < this.lines.length;
   }
 

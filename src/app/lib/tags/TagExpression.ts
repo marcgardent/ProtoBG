@@ -129,20 +129,22 @@ export class TagExpression {
 
     public resolveRequest(exp: any): { result: any, request: any }[] {
         const ret = [];
-        if (MetaTags.IS in exp) {
-            ret.push({
-                result: this.glossary.get(exp[MetaTags.IS]),
-                request: exp
-            });
-        }
-
-        else if (MetaTags.AMONG in exp) {
-
-            const request = this.glossary.search.atLeastOne(...this.asArray(exp[MetaTags.AMONG]));
-            if (MetaTags.WITH in exp) {
-                request.with(...this.asArray(exp[MetaTags.WITH]))
+        if (exp) {
+            if (MetaTags.IS in exp) {
+                ret.push({
+                    result: this.glossary.get(exp[MetaTags.IS]),
+                    request: exp
+                });
             }
-            ret.push(...[...request.toList()].map(e => { return { result: e, request: exp }; }));
+
+            else if (MetaTags.AMONG in exp) {
+
+                const request = this.glossary.search.atLeastOne(...this.asArray(exp[MetaTags.AMONG]));
+                if (MetaTags.WITH in exp) {
+                    request.with(...this.asArray(exp[MetaTags.WITH]))
+                }
+                ret.push(...[...request.toList()].map(e => { return { result: e, request: exp }; }));
+            }
         }
 
         return ret;

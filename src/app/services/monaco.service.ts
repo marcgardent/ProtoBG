@@ -68,9 +68,9 @@ export class MonacoService {
         if (model) {
           const markers = report.errors.map(x => ({
             startLineNumber: x.startLineNumber,
-            startColumn: 1,
+            startColumn: x.startColumn,
             endLineNumber: x.endLineNumber,
-            endColumn: 1000,
+            endColumn: x.endColumn,
             severity: monaco.MarkerSeverity.Error,
             message: x.message
           }));
