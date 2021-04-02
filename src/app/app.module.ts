@@ -19,6 +19,7 @@ import { GlossaryService } from './services/glossary.service';
 import { EventHubService } from './services/eventhub.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { RenameComponent } from './rename/rename.component';
+import { LayoutComponent } from './layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { RenameComponent } from './rename/rename.component';
     EditorComponent,
     ExplorerComponent,
     ConfigurationComponent,
-    RenameComponent
+    RenameComponent,
+    LayoutComponent
   ],
   imports: [
     PdfViewerModule,

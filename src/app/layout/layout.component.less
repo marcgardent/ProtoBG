@@ -1,0 +1,55 @@
+
+@height-header: 2em;
+@height-tabs: 49px;
+@width-right: 40em;
+
+.header {
+  height: @height-header;
+  width : 100%;
+  background:#c2185b;
+  color:white;
+  text-align: center;
+  font-size: @height-header / 2;
+  line-height: @height-header; 
+}
+
+.body {
+  width : 100%;
+  height: calc(100% - @height-header);
+}
+
+.left {
+
+  width         : calc(100vw - @width-right);
+  height        : 100%;
+  display       : inline-block;
+  vertical-align: top;
+}
+
+.right {
+  width         : @width-right;
+  height        : 100%;
+  display       : inline-block;
+  vertical-align: top;
+}
+
+.content {
+  height  : calc(100vh - @height-tabs - @height-header);
+  width   : 100%;
+  overflow: auto;
+  padding : 1em;
+  
+  // box-sizing: border-box;
+  // border: solid 2px red;
+}
+
+
+.editor-content {
+  height: calc(100% - @height-tabs);
+  // box-sizing: border-box;
+  // border: solid 2px green;
+}
+
+.explorer {
+  height: @height-tabs;
+}
