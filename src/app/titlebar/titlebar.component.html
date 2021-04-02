@@ -1,0 +1,17 @@
+<header id="titlebar" [ngClass]="{'maximized':isMaximized}">
+  <div id="content">
+    <!-- <span>
+        <img src="assets/blueprint-icon.svg" class="icon" >
+      </span> -->
+
+  </div>
+  <div id="title">
+    Blueprint
+  </div>
+  <div id="window-controls">
+    <button class="default" (click)="minimize()" tabindex="-1">🗕</button>
+    <button class="default" (click)="maximize()" *ngIf="!isMaximized" tabindex="-1">🗖</button>
+    <button class="default" (click)="unmaximize()" *ngIf="isMaximized" tabindex="-1">🗗</button>
+    <button class="important" (click)="close()" tabindex="-1">🗙</button>
+  </div>
+</header>

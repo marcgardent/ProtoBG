@@ -20,6 +20,8 @@ import { EventHubService } from './services/eventhub.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { RenameComponent } from './rename/rename.component';
 import { LayoutComponent } from './layout/layout.component';
+import { TitlebarComponent } from './titlebar/titlebar.component';
+import { NgxElectronModule } from 'ngx-electron';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import { LayoutComponent } from './layout/layout.component';
     ExplorerComponent,
     ConfigurationComponent,
     RenameComponent,
-    LayoutComponent
+    LayoutComponent,
+    TitlebarComponent
   ],
   imports: [
     PdfViewerModule,
@@ -37,6 +40,7 @@ import { LayoutComponent } from './layout/layout.component';
     HttpClientModule,
     BrowserModule,
     FormsModule,
+    NgxElectronModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MyMaterialModule,
