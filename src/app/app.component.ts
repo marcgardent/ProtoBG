@@ -4,20 +4,16 @@ import { ElectronService } from 'ngx-electron';
 
 
 @Component({
-  selector: 'my-app',
+  selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: [ './app.component.less' ]
 })
 export class AppComponent implements OnInit  {
 
-  private readonly electronWindow: Electron.BrowserWindow;
   private readonly fs: any;
   
-  constructor(private readonly electronService: ElectronService, private httpClient: HttpClient) {
-    this.electronWindow = this.electronService.remote.getCurrentWindow();
-
-    this.fs = this.electronService.remote.require("fs").promises;
-    
+  constructor(private readonly electronService: ElectronService) {
+    //this.fs = this.electronService.remote.require("fs").promises;
   }
 
   ngOnInit(): void {

@@ -10,7 +10,7 @@ export class TitlebarComponent implements OnInit {
   private readonly electronWindow: Electron.BrowserWindow;
 
   constructor(private readonly electronService: ElectronService) {
-    this.electronWindow = this.electronService.remote.getCurrentWindow();
+    this.electronWindow = this.electronService?.remote?.getCurrentWindow();
   }
 
   ngOnInit() {
@@ -22,19 +22,19 @@ export class TitlebarComponent implements OnInit {
   }
 
   public minimize(){
-    this.electronWindow.minimize();
+    this.electronWindow?.minimize();
   }
     
   public maximize(){
-    this.electronWindow.maximize();
+    this.electronWindow?.maximize();
   }
 
   public unmaximize(){
-    this.electronWindow.unmaximize();
+    this.electronWindow?.unmaximize();
   }
 
   public close(){
-    this.electronWindow.close();
+    this.electronWindow?.close();
   }
 
 }
