@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-titlebar',
@@ -7,34 +6,34 @@ import { ElectronService } from 'ngx-electron';
   styleUrls: ['./titlebar.component.scss']
 })
 export class TitlebarComponent implements OnInit {
-  private readonly electronWindow: Electron.BrowserWindow;
+  private readonly windowManager: any;
 
-  constructor(private readonly electronService: ElectronService) {
-    this.electronWindow = this.electronService?.remote?.getCurrentWindow();
+  constructor() {
+    this.windowManager = (window as any).windowManager;
   }
 
   ngOnInit() {
-    
+
   }
 
   public get isMaximized() : boolean{
-    return this.electronWindow ? this.electronWindow.isMaximized() : false;
+    return this.windowManager ? this.windowManager.isMaximized() : false;
   }
 
   public minimize(){
-    this.electronWindow?.minimize();
+    this.windowManager?.minimize();
   }
     
   public maximize(){
-    this.electronWindow?.maximize();
+    this.windowManager?.maximize();
   }
 
   public unmaximize(){
-    this.electronWindow?.unmaximize();
+    this.windowManager?.unmaximize();
   }
 
   public close(){
-    this.electronWindow?.close();
+    this.windowManager?.close();
   }
 
 }
