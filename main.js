@@ -7,8 +7,8 @@ let mainWindow
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1920,
-    height: 1080,
+    width: 800,
+    height: 600,
     frame: false,
     webPreferences: {
       nodeIntegration: false,
@@ -34,7 +34,11 @@ function createWindow() {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
-  mainWindow.removeMenu()
+  mainWindow.removeMenu() 
+  
+  mainWindow.maximize()
+  mainWindow.on("maximize",  () => { mainWindow.webContents.send("isMaximized", true) });
+  mainWindow.on("unmaximize",() => { mainWindow.webContents.send("isMaximized", false) });
 }
 
 app.on('ready', createWindow)
@@ -50,7 +54,7 @@ app.on('activate', function () {
 ipcMain.on("minimize", (event, args) => { BrowserWindow?.getFocusedWindow()?.minimize();})
 ipcMain.on("maximize", (event, args) => { BrowserWindow?.getFocusedWindow()?.maximize();})
 ipcMain.on("unmaximize", (event, args) => { BrowserWindow?.getFocusedWindow()?.unmaximize();})
-ipcMain.on("close", (event, args) => {
-  console.log("close");
-   BrowserWindow?.getFocusedWindow()?.close();
-   BrowserWindow?.getFocusedWindow()?.destroy();})
+ipcMain.on("close", (event, args) => { BrowserWindow?.getFocusedWindow()?.close(); BrowserWindow?.getFocusedWindow()?.destroy();})
+
+
+

@@ -7,17 +7,15 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class TitlebarComponent implements OnInit {
   private readonly windowManager: any;
+  public isMaximized: boolean = true;
 
   constructor() {
     this.windowManager = (window as any).windowManager;
+    this.windowManager.isMaximized((value)=>{this.isMaximized = value})
   }
 
   ngOnInit() {
 
-  }
-
-  public get isMaximized() : boolean{
-    return this.windowManager ? this.windowManager.isMaximized() : false;
   }
 
   public minimize(){
@@ -35,5 +33,4 @@ export class TitlebarComponent implements OnInit {
   public close(){
     this.windowManager?.close();
   }
-
 }

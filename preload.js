@@ -7,3 +7,8 @@ contextBridge.exposeInMainWorld('windowManager', {
     unmaximize: () => { ipcRenderer.send("unmaximize");},
     close: () => { ipcRenderer.send("close");},
 })
+
+contextBridge.exposeInMainWorld('fileManager', {
+    isSaved: (setter) => { ipcRenderer.on("isSaved", (event, value) => setter(value));},
+    saveAs: (textplain) => { ipcRenderer.send("saveAs", textplain)}
+})
