@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "protobg": {
+    "blueprint": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
             "customWebpackConfig": {
               "path": "extra-webpack.config.js"
             },
-            "outputPath": "dist/",
+            "outputPath": "dist/angular/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -72,18 +72,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "protobg:build"
+            "browserTarget": "blueprint:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "protobg:build:production"
+              "browserTarget": "blueprint:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "protobg:build"
+            "browserTarget": "blueprint:build"
           }
         },
         "test": {
@@ -122,16 +122,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "protobg:serve"
+            "devServerTarget": "blueprint:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "protobg:serve:production"
+              "devServerTarget": "blueprint:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "protobg"
+  "defaultProject": "blueprint"
 }

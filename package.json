@@ -2,14 +2,19 @@
   "name": "blueprint",
   "version": "0.0.0",
   "main": "main.js",
+  "author": "Ludopant Creative Studio",
+  "description": "alpha version",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
+    "postbuild": "electron-builder build --win --publish never --dir  --prepackaged ./dist/electron",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "start:electron": "electron ."
+    "start:electron": "electron .",
+    "prerelease": "ng build --prod",
+    "release": "electron-builder build --win --publish always"
   },
   "private": true,
   "dependencies": {
@@ -64,11 +69,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/marcgardent/ProtoBG.git"
-  },
-  "build": {
-    "win": {
-      "build": "electron-builder build --win --publish never",
-      "deploy": "electron-builder build --win --publish always"
-    }
   }
 }
