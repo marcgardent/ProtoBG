@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const url = require("url");
 const path = require("path");
 const fs = require('fs').promises;
+const { autoUpdater } = require('electron-updater');
 
 let mainWindow
 function createWindow() {
@@ -15,17 +16,17 @@ function createWindow() {
     }
   })
 
-  // mainWindow.loadURL(
-  //   url.format({
-  //     pathname: path.join(__dirname, `/dist/index.html`),
-  //     protocol: "file:",
-  //     slashes: true
-  //   })
-  // );
-
   mainWindow.loadURL(
-    "http://localhost:4200" //[DEBUG WITH VSCODE] use angular's endpoint
+    url.format({
+      pathname: path.join(__dirname, `/dist/index.html`),
+      protocol: "file:",
+      slashes: true
+    })
   );
+
+  // mainWindow.loadURL(
+  //   "http://localhost:4200" //[DEBUG WITH VSCODE] use angular's endpoint
+  // );
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools() //[DEBUG WITH VSCODE] the VS debugger attach to devtools and not to the page!
@@ -38,6 +39,7 @@ function createWindow() {
   mainWindow.maximize()
   mainWindow.on("maximize", () => { mainWindow.webContents.send("isMaximized", true) });
   mainWindow.on("unmaximize", () => { mainWindow.webContents.send("isMaximized", false) });
+  mainWindow.once('ready-to-show', () => { autoUpdater.checkForUpdatesAndNotify(); });
 }
 
 app.on('ready', createWindow)
@@ -55,6 +57,11 @@ ipcMain.on("maximize", (event, args) => { BrowserWindow?.getFocusedWindow()?.max
 ipcMain.on("unmaximize", (event, args) => { BrowserWindow?.getFocusedWindow()?.unmaximize(); })
 ipcMain.on("close", (event, args) => { BrowserWindow?.getFocusedWindow()?.close(); BrowserWindow?.getFocusedWindow()?.destroy(); })
 
+autoUpdater.on('updateAvailable', () => { mainWindow.webContents.send('updateAvailable'); });
+autoUpdater.on('updateDownloaded', () => { mainWindow.webContents.send('updateDownloaded'); });
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 let folderPath;
@@ -122,3 +129,4 @@ ipcMain.on("loadDump", (event, args) => {
 ipcMain.on("reloadDump", (event, args) => {
   reloadDump();
 });
+

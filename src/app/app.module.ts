@@ -21,7 +21,6 @@ import { ConfigurationComponent } from './configuration/configuration.component'
 import { RenameComponent } from './rename/rename.component';
 import { LayoutComponent } from './layout/layout.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
-import { NgxElectronModule } from 'ngx-electron';
 import { FileSystemService } from './services/file-system.service';
 
 @NgModule({
@@ -41,7 +40,6 @@ import { FileSystemService } from './services/file-system.service';
     HttpClientModule,
     BrowserModule,
     FormsModule,
-    NgxElectronModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MyMaterialModule,
