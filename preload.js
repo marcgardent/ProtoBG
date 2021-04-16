@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('windowManager', {
 })
 
 contextBridge.exposeInMainWorld('fileManager', {
-    isSaved: (setter) => { ipcRenderer.on("isSaved", (event, value) => setter(value));},
-    saveAs: (textplain) => { ipcRenderer.send("saveAs", textplain)}
-})
+    folderChanged: (setter) => { ipcRenderer.on("folderChanged", (event, value) => setter(value)); },
+    dumpLoaded: (setter) => { ipcRenderer.on("dumpLoaded", (event, value) => setter(value)); },
+    loadDump: () => { ipcRenderer.send("loadDump");},
+    reloadDump: () => { ipcRenderer.send("reloadDump");},
+    saveDump: (value) => { ipcRenderer.send("saveDump", value);},
+});

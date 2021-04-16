@@ -1,12 +1,12 @@
 <header id="titlebar" [ngClass]="{'maximized':isMaximized}">
   <div id="content">
     <span>
-        <img src="assets/blueprint-icon.svg" class="icon" >
+        <img src="assets/blueprint-icon.svg" class="icon" (click)="fs.load()">
     </span>
 
   </div>
   <div id="title">
-    Blueprint 
+    <span *ngIf="fs.opened">{{fs.folder}} - </span><span>Blueprint</span> 
   </div>
   <div id="window-controls">
     <button class="default" (click)="minimize()" tabindex="-1">🗕</button>

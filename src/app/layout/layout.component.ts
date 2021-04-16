@@ -15,6 +15,7 @@ import { WarehouseService } from '../services/warehouse.service';
 import { GlossaryService } from '../services/glossary.service';
 import { BundleTags } from '../lib/bundle/Bundle.tags';
 import { MainContext } from '../lib/MainContext';
+import { FileSystemService } from '../services/file-system.service';
 
 @Component({
   selector: 'app-layout',
@@ -48,8 +49,9 @@ export class LayoutComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly glossaryService: GlossaryService,
     private readonly warehouseService: WarehouseService,
-    private readonly hub: EventHubService) {
-
+    private readonly hub: EventHubService,
+    public readonly fs: FileSystemService) {
+      
     this.hub.onSuccess.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 1000 });
     });

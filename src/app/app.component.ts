@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { ElectronService } from 'ngx-electron';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,20 +9,11 @@ import { ElectronService } from 'ngx-electron';
 })
 export class AppComponent implements OnInit  {
 
-  private readonly fs: any;
-  
-  constructor(private readonly electronService: ElectronService) {
-    //this.fs = this.electronService.remote.require("fs").promises;
+  constructor() {
+    
   }
 
   ngOnInit(): void {
 
   }
-
-  // async FileSystemLoader(ref:string): Promise<any>{
-  //   const data = await this.fs.readFile("D:/tmp/blueprint/samples/py-protogame/"+ ref, "utf8");
-  //   const json = YAML.parse(data);
-  //   json.__file__ = ref;
-  //   return json;
-  // }
 }

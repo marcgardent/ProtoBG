@@ -22,6 +22,7 @@ import { RenameComponent } from './rename/rename.component';
 import { LayoutComponent } from './layout/layout.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 import { NgxElectronModule } from 'ngx-electron';
+import { FileSystemService } from './services/file-system.service';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,7 @@ import { NgxElectronModule } from 'ngx-electron';
       },
    }),
   ],
-  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService],
+  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService, FileSystemService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
