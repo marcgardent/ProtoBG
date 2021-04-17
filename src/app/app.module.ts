@@ -19,6 +19,9 @@ import { GlossaryService } from './services/glossary.service';
 import { EventHubService } from './services/eventhub.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { RenameComponent } from './rename/rename.component';
+import { LayoutComponent } from './layout/layout.component';
+import { TitlebarComponent } from './titlebar/titlebar.component';
+import { FileSystemService } from './services/file-system.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,9 @@ import { RenameComponent } from './rename/rename.component';
     EditorComponent,
     ExplorerComponent,
     ConfigurationComponent,
-    RenameComponent
+    RenameComponent,
+    LayoutComponent,
+    TitlebarComponent
   ],
   imports: [
     PdfViewerModule,
@@ -47,7 +52,7 @@ import { RenameComponent } from './rename/rename.component';
       },
    }),
   ],
-  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService],
+  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService, FileSystemService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

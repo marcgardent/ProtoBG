@@ -4,9 +4,13 @@
         "bleedbox",
         "cardsheet",
         "datauristring",
+        "eventhub",
+        "gameicons",
         "mediabox",
+        "postbuild",
         "templating",
         "trimbox",
+        "unmaximize",
         "xmin",
         "xstep",
         "ystep"

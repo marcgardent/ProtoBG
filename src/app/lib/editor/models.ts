@@ -6,13 +6,7 @@ export interface IResource {
   }
   
   export interface IWorkspace {
-    name: string;
+    saved : string;
     currentResource: string;
     resources: Array<IResource>;
-  }
-  
-  export interface IWarehouse {
-    saved : string;
-    currentWorkspace: string;
-    workspaces: Array<IWorkspace>;
   }

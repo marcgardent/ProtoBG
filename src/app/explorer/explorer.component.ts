@@ -12,7 +12,6 @@ import { WarehouseService } from '../services/warehouse.service';
 })
 export class ExplorerComponent implements OnInit {
 
-  get warehouse() { return this.warehouseService.current; }
   get workspace() { return this.warehouseService.workspace; }
   get resource() { return this.warehouseService.resource; }
 
@@ -29,18 +28,7 @@ export class ExplorerComponent implements OnInit {
   selectResource(resource: IResource) {
     this.warehouseService.selectResource(resource);
   }
-
-  renameWorkspace(): void {
-    const dialogRef = this.dialog.open(RenameComponent, {
-      width: '250px',
-      data: { name: this.workspace.name, action: 'Rename workspace' }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.warehouseService.renameWorkspace(result.name);
-    });
-  }
-
+  
   renameResource(): void {
     const dialogRef = this.dialog.open(RenameComponent, {
       width: '250px',
@@ -49,17 +37,6 @@ export class ExplorerComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.warehouseService.renameResource(result.name);
-    });
-  }
-
-  createWorkspace(): void {
-    const dialogRef = this.dialog.open(RenameComponent, {
-      width: '250px',
-      data: { name: this.workspace.name, action: 'Create Workspace' }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.warehouseService.createWorkspace(result.name);
     });
   }
 
