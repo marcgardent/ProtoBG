@@ -9,32 +9,32 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceRoot}",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceRoot}/electron/node_modules/.bin/electron",
             "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+                "runtimeExecutable": "${workspaceRoot}/electron/node_modules/.bin/electron.cmd"
             },
-            "program": "${workspaceRoot}/main.js",
+            "program": "${workspaceRoot}/electron/src/main.js",
             "protocol": "inspector"
         },
         {
             "name": "Debug Renderer Process",
             "type": "chrome",
             "request": "launch",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeExecutable": "${workspaceRoot}/electron/node_modules/.bin/electron",
             "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+                "runtimeExecutable": "${workspaceRoot}/electron/node_modules/.bin/electron.cmd"
             },
             "runtimeArgs": [
-                "${workspaceRoot}/main.js",
+                "${workspaceRoot}/electron/src/main.js",
                 "--remote-debugging-port=9222"
             ],
             // "trace": "verbose", // to debug the debugger
-            "webRoot": "${workspaceRoot}/dist/angular/",    // [DEBUG WITH VSCODE] debugger detects the electron's main.js rather than the angular's main.js!
+            "webRoot": "${workspaceRoot}/webapp/dist/",    // [DEBUG WITH VSCODE] debugger detects the electron's main.js rather than the angular's main.js!
             "sourceMapPathOverrides": {             // [DEBUG WITH VSCODE] And so replace webRoot with workspaceRoot to find *.ts files
-                "webpack:///./*": "${workspaceRoot}/*", 
-                "webpack:///src/*": "${workspaceRoot}/*",
-                "webpack:///*": "*",
-                "webpack:///./~/*": "${workspaceRoot}/node_modules/*",
+                "webpack:///./*": "${workspaceRoot}/webapp/*", 
+                "webpack:///src/*": "${workspaceRoot}/webapp/*",
+                "webpack:///*": "webapp/*",
+                "webpack:///./~/*": "${workspaceRoot}/webapp/node_modules/*",
                 "meteor://💻app/*": "${workspaceRoot}/*"
             }
         }

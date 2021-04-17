@@ -1,0 +1,8 @@
+appId: com.ludupant.blueprint
+win:
+  target: msi
+  icon: ..\webapp\src\assets\blueprint_icon.ico
+publish:
+  provider: github
+  
+  
