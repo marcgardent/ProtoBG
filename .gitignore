@@ -50,3 +50,4 @@ electron-builder.env
 node_modules
 dist
 release
+sample

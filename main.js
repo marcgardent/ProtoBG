@@ -5,7 +5,7 @@ const fs = require('fs').promises;
 const { autoUpdater } = require('electron-updater');
 
 //const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
-const serve = false;
+const serve = true;
 
 let mainWindow
 function createWindow() {
@@ -19,11 +19,11 @@ function createWindow() {
     }
   })
   if(serve){
-    win.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
-    win.loadURL('http://localhost:4200');
+    mainWindow.loadURL('http://localhost:4200');
   }
   else{
     mainWindow.loadURL(
@@ -34,9 +34,6 @@ function createWindow() {
     }));
   }
   
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools() //[DEBUG WITH VSCODE] the VS debugger attach to devtools and not to the page!
-
   mainWindow.on('closed', function () {
     mainWindow = null
   })

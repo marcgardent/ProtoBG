@@ -6,6 +6,10 @@ import { Subject } from 'rxjs';
 })
 export class EventHubService {
   
+    
+  public resizingArea = new Subject<void>();
+  public resizeArea = new Subject<void>();
+
   private _onError = new Subject<string>();
   private _onSuccess = new Subject<string>();
 
@@ -18,7 +22,6 @@ export class EventHubService {
   constructor() {
     this.registerConsole();
   }
- 
 
   registerConsole() {    
     this.onError.subscribe((w) => { console.debug("⚡onError", w) });

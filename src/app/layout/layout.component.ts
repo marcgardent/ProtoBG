@@ -77,6 +77,14 @@ export class LayoutComponent implements OnInit {
 
   }
 
+  resize(){
+    this.hub.resizeArea.next();
+  }
+
+  resizing(){
+    this.hub.resizingArea.next();
+  }
+
   animationDone() {
     if (this.selectedIndex == 0) {
       this.updateCurrentWrapper();

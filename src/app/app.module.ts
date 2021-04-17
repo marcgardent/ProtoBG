@@ -22,7 +22,7 @@ import { RenameComponent } from './rename/rename.component';
 import { LayoutComponent } from './layout/layout.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 import { FileSystemService } from './services/file-system.service';
-
+import { AngularSplitModule } from 'angular-split';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,6 +35,7 @@ import { FileSystemService } from './services/file-system.service';
     TitlebarComponent
   ],
   imports: [
+    AngularSplitModule,
     PdfViewerModule,
     CommonModule,
     HttpClientModule,
