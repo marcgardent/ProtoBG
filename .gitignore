@@ -46,3 +46,7 @@ testem.log
 .DS_Store
 Thumbs.db
 electron-builder.env
+
+node_modules
+dist
+release

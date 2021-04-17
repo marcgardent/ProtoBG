@@ -4,6 +4,9 @@ const path = require("path");
 const fs = require('fs').promises;
 const { autoUpdater } = require('electron-updater');
 
+//const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
+const serve = false;
+
 let mainWindow
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -15,19 +18,22 @@ function createWindow() {
       preload: path.join(__dirname, `/preload.js`)
     }
   })
-
-  // mainWindow.loadURL(
-  //   url.format({
-  //     pathname: path.join(__dirname, `/www/index.html`),
-  //     protocol: "file:",
-  //     slashes: true
-  //   })
-  // );
-
-  mainWindow.loadURL(
-    "http://localhost:4200" //[DEBUG WITH VSCODE] use angular's endpoint
-  );
-
+  if(serve){
+    win.webContents.openDevTools();
+    require('electron-reload')(__dirname, {
+      electron: require(`${__dirname}/node_modules/electron`)
+    });
+    win.loadURL('http://localhost:4200');
+  }
+  else{
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, 'dist/index.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+  }
+  
   // Open the DevTools.
   mainWindow.webContents.openDevTools() //[DEBUG WITH VSCODE] the VS debugger attach to devtools and not to the page!
 
