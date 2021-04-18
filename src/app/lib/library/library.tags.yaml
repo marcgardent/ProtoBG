@@ -1,0 +1,41 @@
+#📗book: 🏫library
+
+🏷️tag:
+  alias: tags
+  description: |
+    A 🏷️tag is a concept define by anothers 🏷️tags and a description and custom metadata.
+    A 🏷️tag have to be unique in a 📜glossary.
+
+📜glossary:
+  alias: glossaries
+  description: |
+     📜glossary is set of 🏷️tags
+
+📗book:
+  alias: books
+  description: |
+    a 📗book contains a glossary defined in several files on your disk.
+
+    ## How to define a book
+
+    Add a the header in each file to assign it.
+
+    ```yml
+    📗book:📗mybook
+    ```
+
+    ## extends your glossary
+
+    Add 📗books in the 📗book's 📚bibliography in order to use existing glossaries.
+    By design: you can't override an entry from the 📚bibliography : one concept have to define by a dedicated word.
+
+  properties: 📚bibliography
+
+📚bibliography:    
+  description: | 
+    define the glossaries from others 📗books used by your 📗book
+
+🏫library:
+    tag: 📗book
+    description: |
+      library is the magic 📗book that contains the definition of others 📗books
