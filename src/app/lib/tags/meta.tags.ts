@@ -3,11 +3,6 @@
 /** auto generated */
 export class MetaTags {
 
-
-    public static GLOSSARY = "💠glossary";
-    public static ENTRY = "💠entry";
-    public static ABSTRACT = "💠abstract";
-    public static PROPERTY = "💠property";
     public static REQUEST = "📑request";
     public static FOREACH = "📑foreach";
     public static IS = "📑is";

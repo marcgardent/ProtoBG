@@ -1,13 +1,11 @@
-
 /** auto generated */
-export class Library{
+export class LibraryTags{
 
     public static TAG = "🏷️tag";
     public static GLOSSARY = "📜glossary";
     public static BOOK = "📗book";
     public static BIBLIOGRAPHY = "📚bibliography";
     public static LIBRARY = "🏫library";
-  
   
     public static metadata = {
      "🏷️tag" : {"alias":"tags","description":"A 🏷️tag is a concept define by anothers 🏷️tags and  metadata.\nThe important point, a 🏷️tag have to be unique in the 📜glossary.\n\n## Syntax\n\n```yaml\n\n<emoji><name>:\n    title: <optionnal: friendly name (usefull if the name is written in camel case)>\n    alias: <optionnal: list of declinaison>\n    description: <optionnal: description>\n    tags: <optionnal: list of 🏷️tags (indexation)>\n    properties: <optionnal: list of 🏷️tags (define the 🏷️tag like a spinnet for the blueprint's editor)>\n```\n## Usages\n\n## basic 🏷️tag\n## spinnet 🏷️tag\n","name":"tag","icon":"🏷️","codeName":"TAG","tags":[]},

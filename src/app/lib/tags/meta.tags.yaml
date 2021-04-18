@@ -1,31 +1,5 @@
-# meta concepts
+#📗book: 📗requestEngine
 
-💠glossary:
-  description: is collection of 💠entry
-
-💠entry:
-  description: |
-    is a concept identified by <emoji><name> and described with some metadata.
-    entries are linked with tag system.
-
-    usage:
-
-    ```yaml
-
-    💠name:
-        title: entry's title
-        description: |
-            this is an description of entry.
-        tags: 💠tag1 💠tag2 
-
-    ```
-        
-💠abstract:
-  description: do not use directly
-
-💠property:
-  description: do not use directly
-    
 📑request:
   description: is request
 
