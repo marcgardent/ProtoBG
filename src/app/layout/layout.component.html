@@ -2,12 +2,14 @@
 <div class="body">
   <as-split direction="horizontal" (dragEnd)="resize()" (dragStart)="resizing()" [gutterSize]="5">
     <as-split-area [size]="40">
-      <div class="explorer">
-        <app-explorer></app-explorer>
-      </div>
-      <div class="editor-content">
+      <app-window>
+        <app-explorer header ></app-explorer>  
+      <div body class="editor-content">
         <app-editor></app-editor>
       </div>
+
+      </app-window>
+
     </as-split-area>
     <as-split-area [size]="60">
       <mat-tab-group (animationDone)="animationDone()" [(selectedIndex)]="selectedIndex">
