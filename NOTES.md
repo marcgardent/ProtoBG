@@ -2,4 +2,8 @@
 
 ## TODO
 
-* implement a splitter: https://ej2.syncfusion.com/angular/documentation/splitter/getting-started/
+* implements BOOK concept
+* implements ALIAS concept
+* implements Blender's LAYOUT concept
+* implements VIEWER concept
+* implements PACK/UNPACK blueprint concept

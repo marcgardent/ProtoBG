@@ -16,8 +16,7 @@ import { IMessage, IMessenger } from '../lib/report';
   providedIn: 'root'
 })
 export class GlossaryService implements IMessenger {
-
-
+  
   private _report = new BehaviorSubject<IReport[]>([]);
   get reports() { return this._report.asObservable(); }
 

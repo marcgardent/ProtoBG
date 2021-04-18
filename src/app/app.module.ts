@@ -23,6 +23,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { TitlebarComponent } from './titlebar/titlebar.component';
 import { FileSystemService } from './services/file-system.service';
 import { AngularSplitModule } from 'angular-split';
+import { LibraryService } from './services/library.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -53,7 +54,7 @@ import { AngularSplitModule } from 'angular-split';
       },
    }),
   ],
-  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService, FileSystemService],
+  providers: [EventHubService, WarehouseService, GlossaryService, MonacoService, FileSystemService, LibraryService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+@background-color: rgb(48, 48, 48);
+@ui-color: rgb(0, 158, 206);
+
 html,
 body {
     height: 100%;
@@ -16,7 +19,7 @@ body {
     height     : 100vh;
     width      : 100%;
     overflow   : hidden;
-    background-color: rgb(48, 48, 48);
+    background-color: @background-color;
     color: white;
 }
 
@@ -30,4 +33,32 @@ pre {
     box-sizing      : border-box;
     border: solid 1px lightgray;
     padding: 0.5em;
+}
+
+
+@radius-header-group: 5px;
+
+.header-group {
+    height: 2.5em;
+    display: flex; 
+    align-items: stretch;
+    margin: 0.25em;
+}
+
+.header-group > button {
+    border-radius: 0px;
+    background: @ui-color;
+    border-radius: 0px;
+    height: 100%;
+    border: solid 2px @background-color;
+}
+
+.header-group :first-child{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.header-group :last-child{
+    border-top-right-radius: @radius-header-group;
+    border-bottom-right-radius: @radius-header-group;
 }

@@ -3,7 +3,9 @@
     <span>
         <img src="assets/blueprint-icon.svg" class="icon" (click)="fs.load()">
     </span>
-
+  </div>
+  <div>
+    <ng-content></ng-content>
   </div>
   <div id="title">
     <span *ngIf="fs.opened">{{fs.folder}} - </span><span>Blueprint</span> 

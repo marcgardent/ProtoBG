@@ -1,12 +1,14 @@
 <div *ngIf="workspace && resource">
-  {{resource.name}}
-  <button mat-icon-button [matMenuTriggerFor]="MenuResource" class="cloneIcon">
-    <mat-icon>unfold_more</mat-icon>
-  </button>
-  <mat-menu #MenuResource="matMenu">
-    <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)">{{resource.name}}</button>
-    <mat-divider></mat-divider>
-    <button mat-menu-item (click)="renameResource()">rename '{{resource.name}}'</button>
-    <button mat-menu-item (click)="createResource()">create new file</button>
-  </mat-menu>
+  <div class="header-group">
+    <button mat-button (click)="renameResource()">
+      {{resource.name}} 
+    </button>
+    <button mat-icon-button [matMenuTriggerFor]="MenuResource">
+      <mat-icon>unfold_more</mat-icon>
+    </button>
+    <mat-menu #MenuResource="matMenu">
+      <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)"></button>
+    </mat-menu>
+    <button mat-icon-button (click)="createResource()"> <mat-icon>note_add</mat-icon></button>
+  </div>
 </div>
