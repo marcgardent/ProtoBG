@@ -2,10 +2,12 @@
     "cSpell.words": [
         "artbox",
         "bleedbox",
+        "bluegrey",
         "cardsheet",
         "datauristring",
         "eventhub",
         "gameicons",
+        "hyperparams",
         "mediabox",
         "postbuild",
         "templating",

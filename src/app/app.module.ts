@@ -24,6 +24,7 @@ import { TitlebarComponent } from './titlebar/titlebar.component';
 import { FileSystemService } from './services/file-system.service';
 import { AngularSplitModule } from 'angular-split';
 import { LibraryService } from './services/library.service';
+import { WindowComponent } from './layout/window/window.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +34,8 @@ import { LibraryService } from './services/library.service';
     ConfigurationComponent,
     RenameComponent,
     LayoutComponent,
-    TitlebarComponent
+    TitlebarComponent,
+    WindowComponent
   ],
   imports: [
     AngularSplitModule,

@@ -1,6 +1,6 @@
 <app-titlebar></app-titlebar>
 <div class="body">
-  <as-split direction="horizontal" (dragEnd)="resize()" (dragStart)="resizing()">
+  <as-split direction="horizontal" (dragEnd)="resize()" (dragStart)="resizing()" [gutterSize]="5">
     <as-split-area [size]="40">
       <div class="explorer">
         <app-explorer></app-explorer>
