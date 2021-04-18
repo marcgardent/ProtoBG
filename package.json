@@ -5,7 +5,7 @@
   "author": "Ludopant Creative Studio",
   "description": "alpha version",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && ngcc",
     "ng": "ng",
     "start": "ng serve",
     "test": "ng test",
