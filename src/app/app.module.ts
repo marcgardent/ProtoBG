@@ -25,6 +25,9 @@ import { FileSystemService } from './services/file-system.service';
 import { AngularSplitModule } from 'angular-split';
 import { LibraryService } from './services/library.service';
 import { WindowComponent } from './core/window/window.component';
+import { PdfViewerComponent } from './bodies/pdf-viewer/pdf-viewer.component';
+import { TextViewerComponent } from './bodies/text-viewer/text-viewer.component';
+import { SvgViewerComponent } from './bodies/svg-viewer/svg-viewer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,7 +38,10 @@ import { WindowComponent } from './core/window/window.component';
     RenameComponent,
     LayoutComponent,
     TitlebarComponent,
-    WindowComponent
+    WindowComponent,
+    PdfViewerComponent,
+    TextViewerComponent,
+    SvgViewerComponent
   ],
   imports: [
     AngularSplitModule,

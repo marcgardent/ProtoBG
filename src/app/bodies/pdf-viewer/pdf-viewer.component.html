@@ -1,0 +1,6 @@
+<!-- <button mat-menu-item *ngFor="let print of printings" (click)="selectPrint(print)">{{print.icon}}{{print.name}}</button>
+<mat-divider *ngIf="printings"></mat-divider> -->
+
+<div *ngIf="pdfSrc" class="content">
+  <pdf-viewer [src]="pdfSrc" [original-size]="false" [show-borders]="true"></pdf-viewer>
+</div>

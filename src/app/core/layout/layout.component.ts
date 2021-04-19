@@ -26,13 +26,10 @@ export class LayoutComponent implements OnInit {
 
   public gameIcons = gameIcons;
   public selectedIndex: number = 0;
-
   public readonly codeExport = { icon: '👨‍💻', name: 'Code Typescript' };
   private readonly defaultExports = { icon: '🖨️', name: 'Exports' };
   public currentExport: any = this.defaultExports;
-  public printings = [];
   public bundles = [];
-  public pdfSrc: string = undefined;
   public bundleResult: any = undefined;
   public download = undefined;
   public code: string = "{}";
@@ -42,7 +39,7 @@ export class LayoutComponent implements OnInit {
 
   public get runtimeErrors() { return this.glossaryService.runtimeErrors; }
 
-  get exports() { return this.printings.length + this.bundles.length + 1 }
+  get exports() { return this.bundles.length + 1 }
   private get glossary() { return this.glossaryService.glossary; }
 
   constructor(private snackBar: MatSnackBar,
@@ -93,7 +90,6 @@ export class LayoutComponent implements OnInit {
 
   onGlossaryUpdated() {
     if (this.glossary) {
-      this.printings = [...this.glossary.search.atLeastOne(PaoTags.ASSEMBLING, PaoTags.PRINTING).toList()];
       this.bundles = [...this.glossary.search.atLeastOne(BundleTags.BUNDLE).toList()];
       this.updateCurrentWrapper();
     }
@@ -104,19 +100,7 @@ export class LayoutComponent implements OnInit {
     this.updateCurrent();
   }
 
-  updatePdf() {
-    if (-1 == this.printings.findIndex(x => x.name == this.currentExport.name && x.icon == this.currentExport.icon)) {
-      if (this.printings.length > 0) {
-        this.selectPrint(this.printings[0]);
-      }
-      else {
-        this.selectCode();
-      }
-    }
-    else {
-      this.selectPrint(this.currentExport);
-    }
-  }
+
 
   updateBundle() {
     if (-1 == this.bundles.findIndex(x => x.name == this.currentExport.name && x.icon == this.currentExport.icon)) {
@@ -137,15 +121,8 @@ export class LayoutComponent implements OnInit {
     this.download = undefined;
     this.code = undefined;
     this.bundleResult = undefined;
-    this.pdfSrc = undefined;
   }
-
-  selectPrint(print: any) {
-    this.resetSelection();
-    this.currentExport = print;
-    this.processAsPDF();
-    this.updateCurrent = this.updatePdf;
-  }
+ 
 
   selectCode() {
     this.resetSelection();
@@ -192,23 +169,6 @@ export class LayoutComponent implements OnInit {
     }
   }
 
-  private processAsPDF() {
-
-    if (this.glossary) {
-      const pao = new PaoContext(this.glossaryService, this.glossary, new TagExpression(this.glossaryService, this.glossary));
-      this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
-      if (this.currentExport) {
-        const p = pao.entryAsPrinting(this.currentExport);
-        p.toPdf().then(x => {
-          this.pdfSrc = x;
-          this.setDownload(this.currentExport.name + ".pdf", x);
-        });
-      }
-      else {
-        this.currentExport = this.defaultExports;
-      }
-    }
-  }
 
   public content: string = `
 📐myTemplate:
