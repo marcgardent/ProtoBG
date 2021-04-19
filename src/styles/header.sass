@@ -1,25 +1,29 @@
-$radius-header-group: 5px
+@import hyperparams
 
 .header
   height: 3em
+  line-height: 2.5em
+  display: flex
+  flex-direction: row
+  background: $fill-focus
 
 .header-group
   height: 2.5em
   display: flex
   align-items: stretch
   margin: 0.25em
-
+  
 .header-group > button
   border-radius: 0px
-  background: $light-color
+  background: $fill-nested
   border-radius: 0px
   height: 100%
-  border: solid 2px $background-color
+  border: solid 2px  $fill-focus
   
 .header-group :first-child
-  border-top-left-radius: 5px
-  border-bottom-left-radius: 5px
+  border-top-left-radius: $radius-size
+  border-bottom-left-radius: $radius-size
 
 .header-group :last-child
-  border-top-right-radius: $radius-header-group
-  border-bottom-right-radius: $radius-header-group
+  border-top-right-radius: $radius-size
+  border-bottom-right-radius: $radius-size

@@ -4,7 +4,7 @@ import { FileSystemService } from '../services/file-system.service';
 @Component({
   selector: 'app-titlebar',
   templateUrl: './titlebar.component.html',
-  styleUrls: ['./titlebar.component.scss']
+  styleUrls: ['./titlebar.component.sass']
 })
 export class TitlebarComponent implements OnInit {
   private readonly windowManager: any;

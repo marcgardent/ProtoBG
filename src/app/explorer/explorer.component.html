@@ -7,7 +7,7 @@
       <mat-icon>unfold_more</mat-icon>
     </button>
     <mat-menu #MenuResource="matMenu">
-      <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)"></button>
+      <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)">{{resource.name}}</button>
     </mat-menu>
     <button mat-icon-button (click)="createResource()"> <mat-icon>note_add</mat-icon></button>
   </div>

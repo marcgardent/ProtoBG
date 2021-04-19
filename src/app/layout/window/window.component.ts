@@ -11,5 +11,4 @@ export class WindowComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }

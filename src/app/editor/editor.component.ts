@@ -6,7 +6,7 @@ import { MonacoService } from '../services/monaco.service';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.less']
+  styleUrls: ['./editor.component.sass']
 })
 export class EditorComponent implements OnInit {
 

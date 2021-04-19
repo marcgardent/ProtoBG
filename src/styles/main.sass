@@ -1,8 +1,7 @@
 @import hyperparams
-@import header
 
-html, body
-  height: 100%
+div
+  box-sizing: border-box
 
 @font-face
   font-family: "game-icons"
@@ -10,15 +9,14 @@ html, body
 
 body
   margin: 0
+  pagging: 0
   font-family: game-icons, Roboto, "Helvetica Neue", sans-serif
-  height: 100vh
-  width: 100%
+  background-color: red
+  color: $text-color
   overflow: hidden
-  background-color: $background-color
-  color: white
 
 a
-  color: #c2185b
+  color: $hyperlink-color
 
 pre
   width: 40em
@@ -28,4 +26,7 @@ pre
   padding: 0.5em
 
 .as-split-gutter-icon
-  background-color: $light-color
+  background-color: $fill-back
+
+.gap-flex
+  flex-grow: 1

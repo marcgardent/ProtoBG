@@ -8,7 +8,7 @@ import { WarehouseService } from '../services/warehouse.service';
 @Component({
   selector: 'app-explorer',
   templateUrl: './explorer.component.html',
-  styleUrls: ['./explorer.component.less']
+  styleUrls: ['./explorer.component.sass']
 })
 export class ExplorerComponent implements OnInit {
 

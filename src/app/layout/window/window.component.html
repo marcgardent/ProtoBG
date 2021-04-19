@@ -1,4 +1,18 @@
-<div class="header">
-    <ng-content select="[header]"></ng-content>
+<div class="stroke-window">
+  <div class="window">
+    <div class="header">
+      <div class="header-group"><button mat-icon-button [matMenuTriggerFor]="MenuResource">💥</button></div>
+      <ng-content select="[header]"></ng-content>
+      <div class="gap-flex"></div>
+    </div>
+    <div class="body">
+      <ng-content select="[body]"></ng-content>
+    </div>
+  </div>
 </div>
-<ng-content select="[body]"></ng-content>
+
+<mat-menu #MenuResource="matMenu">
+  <button mat-menu-item>💥 Exemple</button>
+  <button mat-menu-item>💥 Exemple</button>
+  <!-- <button mat-menu-item *ngFor="let resource of workspace.resources" (click)="selectResource(resource)">💥 Exemple</button> -->
+</mat-menu>

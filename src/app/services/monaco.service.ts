@@ -21,7 +21,16 @@ export class MonacoService {
 
   constructor(private readonly warehouseService: WarehouseService, private readonly glossaryService: GlossaryService, private readonly hub: EventHubService) {
 
-    monaco.editor.setTheme("vs-dark");
+    const theme :  monaco.editor.IStandaloneThemeData = {
+      base: 'hc-black', 
+      inherit: true,
+      rules: [],
+      colors : {
+        'editor.background': '#323030', // $fill-content sass
+      }
+    }
+    monaco.editor.defineTheme('blueprint', theme);
+    monaco.editor.setTheme("blueprint");
 
     window["MonacoEnvironment"] = {
       getWorker: (moduleId, label) => {
@@ -104,8 +113,6 @@ export class MonacoService {
   }
 
   public createEditor(domElement: HTMLDivElement): monaco.editor.IStandaloneCodeEditor {
-
-
 
     this.editor = monaco.editor.create(domElement, {
       //value: this.hub.resource.value ? this.hub.resource.value.content : "",
