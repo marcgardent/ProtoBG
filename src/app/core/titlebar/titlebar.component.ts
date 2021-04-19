@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FileSystemService } from '../services/file-system.service';
+import { FileSystemService } from '../../services/file-system.service';
 
 @Component({
   selector: 'app-titlebar',

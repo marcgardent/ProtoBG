@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { EventHubService } from '../services/eventhub.service';
+import { EventHubService } from '../../services/eventhub.service';
 import { MatDialog } from '@angular/material/dialog';
-import { RenameComponent } from '../rename/rename.component';
-import { IWorkspace, IResource } from '../lib/editor/models';
-import { WarehouseService } from '../services/warehouse.service';
+import { RenameComponent } from '../../modals/rename/rename.component';
+import { IWorkspace, IResource } from '../../lib/editor/models';
+import { WarehouseService } from '../../services/warehouse.service';
 
 @Component({
   selector: 'app-explorer',

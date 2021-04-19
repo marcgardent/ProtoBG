@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import * as monaco from 'monaco-editor';
-import { EventHubService } from '../services/eventhub.service';
-import { MonacoService } from '../services/monaco.service';
+import { EventHubService } from '../../services/eventhub.service';
+import { MonacoService } from '../../services/monaco.service';
 
 @Component({
   selector: 'app-editor',

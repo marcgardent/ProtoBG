@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { EventHubService } from '../services/eventhub.service';
+import { EventHubService } from '../../services/eventhub.service';
 import { HttpClient } from '@angular/common/http';
-import { WarehouseService } from '../services/warehouse.service';
-import { MonacoService } from '../services/monaco.service';
+import { WarehouseService } from '../../services/warehouse.service';
+import { MonacoService } from '../../services/monaco.service';
 
 @Component({
   selector: 'app-configuration',

@@ -9,22 +9,22 @@ import { markedOptionsFactory } from './markedOptionFactory';
 import { MyMaterialModule } from './material/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DefinitionComponent } from './definition/definition.component';
+import { DefinitionComponent } from './bodies/definition/definition.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { EditorComponent } from './editor/editor.component';
-import { ExplorerComponent } from './explorer/explorer.component';
+import { EditorComponent } from './bodies/editor/editor.component';
+import { ExplorerComponent } from './headers/explorer/explorer.component';
 import { MonacoService } from './services/monaco.service';
 import { WarehouseService } from './services/warehouse.service';
 import { GlossaryService } from './services/glossary.service';
 import { EventHubService } from './services/eventhub.service';
-import { ConfigurationComponent } from './configuration/configuration.component';
-import { RenameComponent } from './rename/rename.component';
-import { LayoutComponent } from './layout/layout.component';
-import { TitlebarComponent } from './titlebar/titlebar.component';
+import { ConfigurationComponent } from './bodies/configuration/configuration.component';
+import { RenameComponent } from './modals/rename/rename.component';
+import { LayoutComponent } from './core/layout/layout.component';
+import { TitlebarComponent } from './core/titlebar/titlebar.component';
 import { FileSystemService } from './services/file-system.service';
 import { AngularSplitModule } from 'angular-split';
 import { LibraryService } from './services/library.service';
-import { WindowComponent } from './layout/window/window.component';
+import { WindowComponent } from './core/window/window.component';
 @NgModule({
   declarations: [
     AppComponent,

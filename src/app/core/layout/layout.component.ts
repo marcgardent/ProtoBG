@@ -1,21 +1,21 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { readGlossaryFromYaml } from '../lib/tags/YamlTagLexer';
-import { exportAsTypescript } from '../lib/tags/TypescriptExporter';
-import { fixTagsDeclaration } from '../lib/tags/TagParser';
-import { PaoTags } from '../lib/pao/pao.tags';
-import { TagExpression } from '../lib/tags/TagExpression';
-import { PaoContext } from '../lib/pao/PaoContext';
+import { readGlossaryFromYaml } from '../../lib/tags/YamlTagLexer';
+import { exportAsTypescript } from '../../lib/tags/TypescriptExporter';
+import { fixTagsDeclaration } from '../../lib/tags/TagParser';
+import { PaoTags } from '../../lib/pao/pao.tags';
+import { TagExpression } from '../../lib/tags/TagExpression';
+import { PaoContext } from '../../lib/pao/PaoContext';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { gameIcons } from '../lib/gameicons/gameicons';
+import { gameIcons } from '../../lib/gameicons/gameicons';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { EventHubService } from '../services/eventhub.service';
-import { WarehouseService } from '../services/warehouse.service';
-import { GlossaryService } from '../services/glossary.service';
-import { BundleTags } from '../lib/bundle/Bundle.tags';
-import { MainContext } from '../lib/MainContext';
-import { FileSystemService } from '../services/file-system.service';
+import { EventHubService } from '../../services/eventhub.service';
+import { WarehouseService } from '../../services/warehouse.service';
+import { GlossaryService } from '../../services/glossary.service';
+import { BundleTags } from '../../lib/bundle/Bundle.tags';
+import { MainContext } from '../../lib/MainContext';
+import { FileSystemService } from '../../services/file-system.service';
 
 @Component({
   selector: 'app-layout',
