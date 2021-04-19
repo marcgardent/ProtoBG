@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import * as monaco from 'monaco-editor';
+import { BodyComponent } from 'src/app/core/contracts';
 import { EventHubService } from '../../services/eventhub.service';
 import { MonacoService } from '../../services/monaco.service';
 
@@ -8,7 +9,7 @@ import { MonacoService } from '../../services/monaco.service';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.sass']
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, BodyComponent {
 
   @ViewChild('editor', { static: true })
   editorContent: ElementRef<HTMLDivElement>;
@@ -18,6 +19,10 @@ export class EditorComponent implements OnInit {
   constructor(private readonly monacoService: MonacoService, private readonly hub: EventHubService) {
     //this.hub.resizingArea.subscribe(()=>{ this.visible = false;});
     this.hub.resizeArea.subscribe(()=>{ this.visible = true;this.onResize()});
+  }
+
+  link(header: any) {
+    
   }
 
   ngOnInit(): void {

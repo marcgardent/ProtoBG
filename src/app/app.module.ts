@@ -28,20 +28,32 @@ import { WindowComponent } from './core/window/window.component';
 import { PdfViewerComponent } from './bodies/pdf-viewer/pdf-viewer.component';
 import { TextViewerComponent } from './bodies/text-viewer/text-viewer.component';
 import { SvgViewerComponent } from './bodies/svg-viewer/svg-viewer.component';
+import { DefaultHeaderComponent } from './headers/default-header/default-header.component';
 @NgModule({
   declarations: [
     AppComponent,
     DefinitionComponent,
-    EditorComponent,
-    ExplorerComponent,
     ConfigurationComponent,
     RenameComponent,
     LayoutComponent,
     TitlebarComponent,
     WindowComponent,
+    EditorComponent,
+    ExplorerComponent,
     PdfViewerComponent,
     TextViewerComponent,
-    SvgViewerComponent
+    SvgViewerComponent,
+    DefaultHeaderComponent
+  ],
+  entryComponents : [
+    TitlebarComponent,
+    WindowComponent,
+    EditorComponent,
+    ExplorerComponent,
+    PdfViewerComponent,
+    TextViewerComponent,
+    SvgViewerComponent,
+    DefaultHeaderComponent
   ],
   imports: [
     AngularSplitModule,
@@ -63,7 +75,8 @@ import { SvgViewerComponent } from './bodies/svg-viewer/svg-viewer.component';
    }),
   ],
   providers: [EventHubService, WarehouseService, GlossaryService, MonacoService, FileSystemService, LibraryService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  
 })
 export class AppModule { }
 

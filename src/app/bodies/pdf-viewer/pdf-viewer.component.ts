@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BodyComponent } from 'src/app/core/contracts';
 import { PaoTags } from 'src/app/lib/pao/pao.tags';
 import { PaoContext } from 'src/app/lib/pao/PaoContext';
 import { TagExpression } from 'src/app/lib/tags/TagExpression';
@@ -9,10 +10,7 @@ import { GlossaryService } from 'src/app/services/glossary.service';
   templateUrl: './pdf-viewer.component.html',
   styleUrls: ['./pdf-viewer.component.sass']
 })
-export class PdfViewerComponent implements OnInit {
-
-  public static Icon = '🖨️';
-  public static Name = 'PDF Viewer';
+export class PdfViewerComponent implements OnInit, BodyComponent {
 
   private get glossary() { return this.glossaryService.glossary; }
   constructor(readonly glossaryService : GlossaryService) {
@@ -20,6 +18,10 @@ export class PdfViewerComponent implements OnInit {
       this.onGlossaryUpdated();
     });
    }
+
+  link(header: any) {
+
+  }
 
   ngOnInit(): void {
 

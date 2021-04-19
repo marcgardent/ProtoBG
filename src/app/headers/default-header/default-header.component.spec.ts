@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SvgViewerComponent } from './svg-viewer.component';
+import { DefaultHeaderComponent } from './default-header.component';
 
-describe('SvgViewerComponent', () => {
-  let component: SvgViewerComponent;
-  let fixture: ComponentFixture<SvgViewerComponent>;
+describe('DefaultHeaderComponent', () => {
+  let component: DefaultHeaderComponent;
+  let fixture: ComponentFixture<DefaultHeaderComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SvgViewerComponent ]
+      declarations: [ DefaultHeaderComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SvgViewerComponent);
+    fixture = TestBed.createComponent(DefaultHeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
