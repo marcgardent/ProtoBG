@@ -22,7 +22,7 @@ export class MonacoService {
   constructor(private readonly warehouseService: WarehouseService, private readonly glossaryService: GlossaryService, private readonly hub: EventHubService) {
 
     const theme :  monaco.editor.IStandaloneThemeData = {
-      base: 'hc-black', 
+      base: 'vs-dark', 
       inherit: true,
       rules: [],
       colors : {

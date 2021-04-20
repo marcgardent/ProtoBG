@@ -11,5 +11,5 @@
   </div>
 </div>
 <mat-menu #MenuResource="matMenu">
-  <button mat-menu-item *ngFor="let body of windows| keyvalue">{{body.value.icon}} {{body.value.name}}</button>
+  <button mat-menu-item *ngFor="let body of windows| keyvalue" (click)="switch(body.key)">{{body.value.icon}} {{body.value.name}}</button>
 </mat-menu>

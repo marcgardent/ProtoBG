@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { BodyComponent } from 'src/app/core/contracts';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BodyComponent, ComponentBase } from 'src/app/core/contracts';
 import { PaoTags } from 'src/app/lib/pao/pao.tags';
 import { PaoContext } from 'src/app/lib/pao/PaoContext';
 import { TagExpression } from 'src/app/lib/tags/TagExpression';
@@ -10,11 +10,12 @@ import { GlossaryService } from 'src/app/services/glossary.service';
   templateUrl: './pdf-viewer.component.html',
   styleUrls: ['./pdf-viewer.component.sass']
 })
-export class PdfViewerComponent implements OnInit, BodyComponent {
+export class PdfViewerComponent extends ComponentBase implements OnInit, OnDestroy, BodyComponent {
 
   private get glossary() { return this.glossaryService.glossary; }
   constructor(readonly glossaryService : GlossaryService) {
-    this.glossaryService.currentGlossary.subscribe((g) => {
+    super();
+    this.subUntilOnDestroy(this.glossaryService.currentGlossary, (g) => {
       this.onGlossaryUpdated();
     });
    }

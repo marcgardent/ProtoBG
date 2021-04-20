@@ -1,14 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { BodyComponent } from 'src/app/core/contracts';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { BodyComponent, ComponentBase } from 'src/app/core/contracts';
 
 @Component({
   selector: 'app-definition',
   templateUrl: './definition.component.html',
   styleUrls: ['./definition.component.less']
 })
-export class DefinitionComponent implements OnInit, BodyComponent {
+export class DefinitionComponent extends ComponentBase implements OnInit, OnDestroy, BodyComponent {
 
-  constructor() { }
+  constructor() { super();}
   link(header: any) {
     
   }

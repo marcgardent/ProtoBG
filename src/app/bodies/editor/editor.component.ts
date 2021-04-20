@@ -1,24 +1,27 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener, OnDestroy } from '@angular/core';
 import * as monaco from 'monaco-editor';
-import { BodyComponent } from 'src/app/core/contracts';
+import { BodyComponent, ComponentBase } from 'src/app/core/contracts';
 import { EventHubService } from '../../services/eventhub.service';
 import { MonacoService } from '../../services/monaco.service';
-
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.sass']
 })
-export class EditorComponent implements OnInit, BodyComponent {
-
+export class EditorComponent extends ComponentBase implements OnInit, OnDestroy, BodyComponent {
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  
   @ViewChild('editor', { static: true })
   editorContent: ElementRef<HTMLDivElement>;
   editor : monaco.editor.IStandaloneCodeEditor;
   public visible = true;
 
   constructor(private readonly monacoService: MonacoService, private readonly hub: EventHubService) {
-    //this.hub.resizingArea.subscribe(()=>{ this.visible = false;});
-    this.hub.resizeArea.subscribe(()=>{ this.visible = true;this.onResize()});
+    super();
+    this.subUntilOnDestroy(this.hub.resizeArea, ()=>{ this.visible = true;this.onResize()});
+    
   }
 
   link(header: any) {
