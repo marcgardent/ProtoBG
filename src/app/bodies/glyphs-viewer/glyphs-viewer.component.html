@@ -1,0 +1,6 @@
+<div class="content" style="font-family: 'game-icons';">
+  <div *ngFor="let item of gameIcons | keyvalue" style="display:inline-block;margin:0.1em;border:1px black solid;">
+    <div style="font-size:3em;text-align:center" [innerHTML]="item.value + ' '"></div>
+    <div>{{item.key}}</div>
+  </div>
+</div>

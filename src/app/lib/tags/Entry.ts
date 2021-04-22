@@ -18,7 +18,6 @@ export class Entry {
         return this.data.title;
     }
     
-
     get icon() {
         return this.data.icon;
     }

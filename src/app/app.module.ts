@@ -29,6 +29,11 @@ import { PdfViewerComponent } from './bodies/pdf-viewer/pdf-viewer.component';
 import { TextViewerComponent } from './bodies/text-viewer/text-viewer.component';
 import { SvgViewerComponent } from './bodies/svg-viewer/svg-viewer.component';
 import { DefaultHeaderComponent } from './headers/default-header/default-header.component';
+import { TagSelectorComponent } from './headers/tag-selector/tag-selector.component';
+import { DebugViewerComponent } from './bodies/debug-viewer/debug-viewer.component';
+import { BundleViewerComponent } from './bodies/bundle-viewer/bundle-viewer.component';
+import { GlyphsViewerComponent } from './bodies/glyphs-viewer/glyphs-viewer.component';
+import { LearningViewerComponent } from './bodies/learning-viewer/learning-viewer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,17 +48,25 @@ import { DefaultHeaderComponent } from './headers/default-header/default-header.
     PdfViewerComponent,
     TextViewerComponent,
     SvgViewerComponent,
-    DefaultHeaderComponent
-  ],
+    DefaultHeaderComponent,
+    TagSelectorComponent,
+    DebugViewerComponent,
+    BundleViewerComponent,
+    GlyphsViewerComponent,
+    LearningViewerComponent
+    ],
   entryComponents : [
-    TitlebarComponent,
-    WindowComponent,
     EditorComponent,
     ExplorerComponent,
     PdfViewerComponent,
     TextViewerComponent,
     SvgViewerComponent,
-    DefaultHeaderComponent
+    DefaultHeaderComponent,
+    TagSelectorComponent,
+    DebugViewerComponent,
+    BundleViewerComponent,
+    GlyphsViewerComponent,
+    LearningViewerComponent
   ],
   imports: [
     AngularSplitModule,

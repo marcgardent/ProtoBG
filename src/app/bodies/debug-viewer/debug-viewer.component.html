@@ -1,0 +1,12 @@
+<h2>Static Analysis</h2>
+<ul>
+  <li *ngIf="(reports| async)?.length == 0">✅pass</li>
+  <li *ngFor="let report of reports| async">🛑{{report.resource.name}} {{report.errors.length}} errors
+  </li>
+</ul>
+<h3>Runtime errors</h3>
+<ul>
+  <li *ngIf="runtimeErrors.length == 0">✅pass</li>
+  <li *ngFor="let error of runtimeErrors">{{error.entry.icon}}{{error.entry.name}}: 🔥
+    {{error.message}}
+</ul>

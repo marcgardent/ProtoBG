@@ -1,13 +1,9 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { readGlossaryFromYaml } from '../../lib/tags/YamlTagLexer';
-import { exportAsTypescript } from '../../lib/tags/TypescriptExporter';
-import { fixTagsDeclaration } from '../../lib/tags/TagParser';
-import { PaoTags } from '../../lib/pao/pao.tags';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { TagExpression } from '../../lib/tags/TagExpression';
-import { PaoContext } from '../../lib/pao/PaoContext';
+
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { gameIcons } from '../../lib/gameicons/gameicons';
+
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { EventHubService } from '../../services/eventhub.service';
@@ -24,7 +20,7 @@ import { FileSystemService } from '../../services/file-system.service';
 })
 export class LayoutComponent implements OnInit {
 
-  public gameIcons = gameIcons;
+  
   public selectedIndex: number = 0;
   public readonly codeExport = { icon: '👨‍💻', name: 'Code Typescript' };
   private readonly defaultExports = { icon: '🖨️', name: 'Exports' };
@@ -33,11 +29,6 @@ export class LayoutComponent implements OnInit {
   public bundleResult: any = undefined;
   public download = undefined;
   public code: string = "{}";
-  public updateCurrent: () => void = () => { this.selectCode() };
-
-  public get reports() { return this.glossaryService.reports; }
-
-  public get runtimeErrors() { return this.glossaryService.runtimeErrors; }
 
   get exports() { return this.bundles.length + 1 }
   private get glossary() { return this.glossaryService.glossary; }
@@ -48,7 +39,7 @@ export class LayoutComponent implements OnInit {
     private readonly warehouseService: WarehouseService,
     private readonly hub: EventHubService,
     public readonly fs: FileSystemService) {
-      
+
     this.hub.onSuccess.subscribe((m) => {
       this.snackBar.open(m, undefined, { duration: 1000 });
     });
@@ -58,15 +49,12 @@ export class LayoutComponent implements OnInit {
     });
 
     this.glossaryService.currentGlossary.subscribe((g) => {
-      this.onGlossaryUpdated();
     });
 
     this.glossaryService.runtimeError.subscribe((e) => {
-      this.selectedIndex = 1;
     });
 
     this.glossaryService.reports.subscribe((r) => {
-      this.selectedIndex = 1;
     });
   }
 
@@ -74,101 +62,20 @@ export class LayoutComponent implements OnInit {
 
   }
 
-  resize(){
+  resize() {
     this.hub.resizeArea.next();
   }
 
-  resizing(){
+  resizing() {
     this.hub.resizingArea.next();
   }
 
-  animationDone() {
-    if (this.selectedIndex == 0) {
-      this.updateCurrentWrapper();
-    }
+  @HostListener('window:keydown.control.r', ['$event'])
+  refresh($event: KeyboardEvent) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    window.location.reload();  
   }
-
-  onGlossaryUpdated() {
-    if (this.glossary) {
-      this.bundles = [...this.glossary.search.atLeastOne(BundleTags.BUNDLE).toList()];
-      this.updateCurrentWrapper();
-    }
-  }
-
-  updateCurrentWrapper() {
-    this.glossaryService.clearRuntimeErrors();
-    this.updateCurrent();
-  }
-
-
-
-  updateBundle() {
-    if (-1 == this.bundles.findIndex(x => x.name == this.currentExport.name && x.icon == this.currentExport.icon)) {
-      if (this.bundles.length > 0) {
-        this.selectBundle(this.bundles[0]);
-      }
-      else {
-        this.selectCode();
-      }
-    }
-    else {
-      this.selectBundle(this.currentExport);
-    }
-  }
-
-  resetSelection() {
-    this.currentExport = this.defaultExports;
-    this.download = undefined;
-    this.code = undefined;
-    this.bundleResult = undefined;
-  }
- 
-
-  selectCode() {
-    this.resetSelection();
-    this.currentExport = this.codeExport;
-    this.processAsCode();
-    this.setDownload("tags.ts", 'data:text/plain;charset=utf-8;base64,' + btoa(unescape(encodeURIComponent(this.code))));
-    this.updateCurrent = this.selectCode;
-  }
-
-  selectBundle(bundle: any) {
-    this.resetSelection();
-    this.currentExport = bundle;
-    this.updateCurrent = this.updateBundle;
-    this.processAsBundle();
-  }
-
-  public setDownload(name: string, data: string) {
-    this.download = { content: this.sanitizer.bypassSecurityTrustUrl(data), name: name };
-  }
-
-  public safe(data: string) {
-    return this.sanitizer.bypassSecurityTrustUrl(data);
-  }
-
-  private processAsCode() {
-    const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.warehouseService.workspace));
-    fixTagsDeclaration(data);
-    this.code = exportAsTypescript(data);
-  }
-
-  private processAsBundle() {
-    if (this.glossary) {
-      const ctx = new MainContext(this.glossaryService, this.glossary, new TagExpression(this.glossaryService, this.glossary));
-      this.currentExport = this.glossary.get(this.currentExport.icon + this.currentExport.name);
-      const zipper = ctx.entryAsBundle(this.currentExport);
-      if (zipper) {
-        zipper.toZip().then((r) => {
-          this.bundleResult = { files: r.files, filename: r.filename };
-          r.content.then((x) => {
-            this.setDownload(r.filename, x);
-          });
-        });
-      }
-    }
-  }
-
 
   public content: string = `
 📐myTemplate:
