@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { EventHubService } from './eventhub.service';
-import { IWorkspace, IResource } from '../lib/editor/models';
-import { fixTagsDeclaration } from '../lib/tags/TagParser';
-import { readGlossaryFromYaml } from '../lib/tags/YamlTagLexer';
-import { Glossary } from '../lib/tags/Glossary';
-import { MetaTags } from '../lib/tags/meta.tags';
-import { Templating } from '../lib/templating/templating.tag';
-import { PaoTags } from '../lib/pao/pao.tags';
-import { BundleTags } from "../lib/bundle/Bundle.tags";
-import { WarehouseService } from './warehouse.service';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { IMessage, IMessenger } from '../lib/report';
+import { EventHubService } from 'src/app/services/eventhub.service';
+import { WarehouseService } from 'src/app/services/warehouse.service';
+import { BundleTags } from 'src/core/bundle/Bundle.tags';
+import { IWorkspace, IResource } from 'src/core/editor/models';
+import { PaoTags } from 'src/core/pao/pao.tags';
+import { IMessenger, IMessage } from 'src/core/report';
+import { Glossary } from 'src/core/tags/Glossary';
+import { MetaTags } from 'src/core/tags/meta.tags';
+import { fixTagsDeclaration } from 'src/core/tags/TagParser';
+import { readGlossaryFromYaml } from 'src/core/tags/YamlTagLexer';
+import { Templating } from 'src/core/templating/templating.tag';
 
 @Injectable({
   providedIn: 'root'

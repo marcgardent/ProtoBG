@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EventHubService } from './eventhub.service';
-import { IWorkspace, IResource } from '../lib/editor/models';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { FileSystemService } from './file-system.service';
+import { EventHubService } from 'src/app/services/eventhub.service';
+import { FileSystemService } from 'src/app/services/file-system.service';
+import { IResource, IWorkspace } from 'src/core/editor/models';
 
 const localStorageKey = "WAREHOUSE-R1";
 

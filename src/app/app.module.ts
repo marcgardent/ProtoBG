@@ -1,39 +1,39 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, SecurityContext } from '@angular/core';
-
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { markedOptionsFactory } from './markedOptionFactory';
-import { MyMaterialModule } from './material/material.module';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DefinitionComponent } from './bodies/definition/definition.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { EditorComponent } from './bodies/editor/editor.component';
-import { ExplorerComponent } from './headers/explorer/explorer.component';
-import { MonacoService } from './services/monaco.service';
-import { WarehouseService } from './services/warehouse.service';
-import { GlossaryService } from './services/glossary.service';
-import { EventHubService } from './services/eventhub.service';
-import { ConfigurationComponent } from './bodies/configuration/configuration.component';
-import { RenameComponent } from './modals/rename/rename.component';
-import { LayoutComponent } from './core/layout/layout.component';
-import { TitlebarComponent } from './core/titlebar/titlebar.component';
-import { FileSystemService } from './services/file-system.service';
+import { AppComponent } from 'src/app/app.component';
+import { DefinitionComponent } from 'src/app/modules/definition/definition.component';
+import { ConfigurationComponent } from 'src/app/modules/configuration/configuration.component';
+import { RenameComponent } from 'src/app/modals/rename/rename.component';
+import { LayoutComponent } from 'src/app/layout/layout/layout.component';
+import { TitlebarComponent } from 'src/app/layout/titlebar/titlebar.component';
+import { WindowComponent } from 'src/app/layout/window/window.component';
 import { AngularSplitModule } from 'angular-split';
-import { LibraryService } from './services/library.service';
-import { WindowComponent } from './core/window/window.component';
-import { PdfViewerComponent } from './bodies/pdf-viewer/pdf-viewer.component';
-import { TextViewerComponent } from './bodies/text-viewer/text-viewer.component';
-import { SvgViewerComponent } from './bodies/svg-viewer/svg-viewer.component';
-import { DefaultHeaderComponent } from './headers/default-header/default-header.component';
-import { TagSelectorComponent } from './headers/tag-selector/tag-selector.component';
-import { DebugViewerComponent } from './bodies/debug-viewer/debug-viewer.component';
-import { BundleViewerComponent } from './bodies/bundle-viewer/bundle-viewer.component';
-import { GlyphsViewerComponent } from './bodies/glyphs-viewer/glyphs-viewer.component';
-import { LearningViewerComponent } from './bodies/learning-viewer/learning-viewer.component';
+import { DefaultHeaderComponent } from 'src/app/headers/default-header/default-header.component';
+import { ExplorerComponent } from 'src/app/headers/explorer/explorer.component';
+import { TagSelectorComponent } from 'src/app/headers/tag-selector/tag-selector.component';
+import { markedOptionsFactory } from 'src/app/markedOptionFactory';
+import { MyMaterialModule } from 'src/app/material/material.module';
+import { BundleViewerComponent } from 'src/app/modules/bundle-viewer/bundle-viewer.component';
+import { DebugViewerComponent } from 'src/app/modules/debug-viewer/debug-viewer.component';
+import { EditorComponent } from 'src/app/modules/editor/editor.component';
+import { GlyphsViewerComponent } from 'src/app/modules/glyphs-viewer/glyphs-viewer.component';
+import { LearningViewerComponent } from 'src/app/modules/learning-viewer/learning-viewer.component';
+import { SvgViewerComponent } from 'src/app/modules/svg-viewer/svg-viewer.component';
+import { TextViewerComponent } from 'src/app/modules/text-viewer/text-viewer.component';
+import { EventHubService } from 'src/app/services/eventhub.service';
+import { FileSystemService } from 'src/app/services/file-system.service';
+import { GlossaryService } from 'src/app/services/glossary.service';
+import { LibraryService } from 'src/app/services/library.service';
+import { MonacoService } from 'src/app/services/monaco.service';
+import { WarehouseService } from 'src/app/services/warehouse.service';
+import { PrintableViewerComponent } from 'src/app/modules/pdf-viewer/printable-viewer.component';
+ 
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +45,7 @@ import { LearningViewerComponent } from './bodies/learning-viewer/learning-viewe
     WindowComponent,
     EditorComponent,
     ExplorerComponent,
-    PdfViewerComponent,
+    PrintableViewerComponent,
     TextViewerComponent,
     SvgViewerComponent,
     DefaultHeaderComponent,
@@ -58,7 +58,7 @@ import { LearningViewerComponent } from './bodies/learning-viewer/learning-viewe
   entryComponents : [
     EditorComponent,
     ExplorerComponent,
-    PdfViewerComponent,
+    PrintableViewerComponent,
     TextViewerComponent,
     SvgViewerComponent,
     DefaultHeaderComponent,
@@ -92,15 +92,3 @@ import { LearningViewerComponent } from './bodies/learning-viewer/learning-viewe
   
 })
 export class AppModule { }
-
-// if (typeof Worker !== 'undefined') {
-//   // Create a new
-//   const worker = new Worker('./app.worker', { type: 'module' });
-//   worker.onmessage = ({ data }) => {
-//     console.log(`page got message: ${data}`);
-//   };
-//   worker.postMessage('hello');
-// } else {
-//   // Web Workers are not supported in this environment.
-//   // You should add a fallback so that your program still executes correctly.
-// }

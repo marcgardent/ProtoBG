@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import * as monaco from 'monaco-editor';
-import { EventHubService } from './eventhub.service';
-import { Glossary } from '../lib/tags/Glossary';
-import { Entry } from '../lib/tags/Entry';
-import { IWorkspace, IResource } from '../lib/editor/models';
-import { GlossaryService, IBlock, IReport } from './glossary.service';
-import { WarehouseService } from './warehouse.service';
+import { EventHubService } from 'src/app/services/eventhub.service';
+import { GlossaryService, IReport } from 'src/app/services/glossary.service';
+import { WarehouseService } from 'src/app/services/warehouse.service';
+import { IResource, IWorkspace } from 'src/core/editor/models';
+import { Entry } from 'src/core/tags/Entry';
+import { Glossary } from 'src/core/tags/Glossary';
 
 const customLanguage = "markdown";
 const YAML_OWNER = "YAML_PARSER";
