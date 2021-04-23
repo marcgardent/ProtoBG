@@ -8,6 +8,7 @@ import { gameIcons } from '../../lib/gameicons/gameicons';
   styleUrls: ['./glyphs-viewer.component.sass']
 })
 export class GlyphsViewerComponent extends ComponentBase implements OnInit, OnDestroy, BodyComponent  {
+  gameIcons = gameIcons;
 
   constructor() {
     super();
