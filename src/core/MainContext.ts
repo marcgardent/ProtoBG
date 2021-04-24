@@ -1,14 +1,14 @@
-import { TagExpression } from './tags/TagExpression';
-import { Glossary } from './tags/Glossary';
-import { PaoContext } from './pao/PaoContext';
-import { ITagContext } from './tags/ITagContext';
-import { Entry } from './tags/Entry';
-import { PaoTags } from './pao/pao.tags';
-import { Templating } from './templating/templating.tag';
+import { TagExpression } from '../workers/tags/TagExpression';
+import { Glossary } from '../workers/tags/Glossary';
+import { PaoContext } from '../workers/pao/PaoContext';
+import { ITagContext } from '../workers/tags/ITagContext';
+import { Entry } from '../workers/tags/Entry';
+import { PaoTags } from '../workers/pao/pao.tags';
+import { Templating } from '../workers/templating/templating.tag';
 import { IDocument } from "./bundle/IDocument";
 import { Bundle } from "./bundle/Bundle";
-import { RawDocument } from './templating/RawDocument';
-import { Printing } from './pao/printing/Printing';
+import { RawDocument } from '../workers/templating/RawDocument';
+import { Printing } from '../workers/pao/printing/Printing';
 import { IMessenger } from './report';
 
 export interface IResult {

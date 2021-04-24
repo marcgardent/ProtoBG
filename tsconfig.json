@@ -1,14 +1,14 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "",
     "paths": {
       "@core/*" : ["src/core"],
-      "@services/*" : ["src/app/service"],
-      "@layout/*" : ["src/app/layout"],
-      "@headers/*" : ["src/app/headers"],
-      "@modules/*" : ["src/app/modules"],
-      "@app/*" : ["src/app/"]
+      "@services/*" : ["src/frontend/app/service"],
+      "@layout/*" : ["src/frontend/app/layout"],
+      "@headers/*" : ["src/frontend/app/headers"],
+      "@modules/*" : ["src/frontend/app/modules"],
+      "@app/*" : ["src/frontend/app"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

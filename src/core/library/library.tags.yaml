@@ -1,4 +1,4 @@
-#📗book: 🏫library
+#📗book: 📙registry
 
 🏷️tag:
   alias: tags
@@ -31,11 +31,29 @@
 
   properties: 📚bibliography
 
+📗default:
+  tags: 📗book
+    description: |
+      It's the default 📗book for files without declaration
+
 📚bibliography:    
   description: | 
     define the glossaries from others 📗books used by your 📗book
 
-🏫library:
+📙registry:
     tag: 📗book
     description: |
-      library is the magic 📗book that contains the definition of others 📗books
+      registry is the magic 📗book to define the 📜glossary that contains the 📗books' definitions.
+
+      By convention add a file registry.yml in your project, for instance:
+      ```yml
+
+      📗book: 📙registry
+
+      📗mybook:
+        tags: 📗book
+        📚bibliography: 📗otherbook
+
+      📗otherbook:
+        tags: 📗book
+      ```
