@@ -1,25 +1,36 @@
 <div class="viewport">
   <div class="header">
-    <app-titlebar></app-titlebar>
+    <app-titlebar>
+      <ng-content></ng-content>
+    </app-titlebar>
   </div>
   <div class="body">
     <as-split direction="horizontal" (dragEnd)="resize()" (dragStart)="resizing()" [gutterSize]="5">
       <as-split-area [size]="60">
-        <app-window src="txt-editor"></app-window>
+        <as-split direction="vertical" (dragEnd)="resize()" (dragStart)="resizing()" [gutterSize]="5">
+          <as-split-area [size]="50">
+            <app-window src="txt-editor"></app-window>
+          </as-split-area>
+          <as-split-area [size]="50">
+            <app-window src="console-viewer"></app-window>
+          </as-split-area>
+        </as-split>
+
+
       </as-split-area>
       <as-split-area [size]="40">
         <as-split direction="vertical" (dragEnd)="resize()" (dragStart)="resizing()" [gutterSize]="5">
           <as-split-area [size]="50">
-            <app-window src="pdf-viewer"></app-window>
+            <app-window src="txt-viewer"></app-window>
           </as-split-area>
           <as-split-area [size]="50">
             <app-window src="debug-viewer"></app-window>
           </as-split-area>
         </as-split>
-
-
-
       </as-split-area>
     </as-split>
+  </div>
+  <div class="footer">
+    blueprint version 0.0.2
   </div>
 </div>

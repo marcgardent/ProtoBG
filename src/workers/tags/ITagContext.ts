@@ -1,5 +1,5 @@
 import { TagExpression } from './TagExpression';
-import { Glossary } from './Glossary';
+import { Glossary } from '../../core/glossary/Glossary';
 
 export interface ITagContext {
     glossary: Glossary;

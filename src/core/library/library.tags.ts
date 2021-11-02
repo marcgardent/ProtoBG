@@ -8,8 +8,6 @@ export class LibraryTags{
   public static BIBLIOGRAPHY = "📚bibliography";
   public static REGISTRY = "📙registry";
   
-
-
   public static metadata = {
    "🏷️tag" : {"alias":"tags","description":"A 🏷️tag is a concept define by anothers 🏷️tags and a description and custom metadata.\nA 🏷️tag have to be unique in a 📜glossary.\n","name":"tag","icon":"🏷️","codeName":"TAG","tags":[]},
    "📜glossary" : {"alias":"glossaries","description":"📜glossary is set of 🏷️tags\n","name":"glossary","icon":"📜","codeName":"GLOSSARY","tags":[]},

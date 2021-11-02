@@ -1,6 +1,6 @@
 import * as nunjucks from "nunjucks";
 import { IMessenger } from "src/core/report";
-import { Glossary } from "src/workers/tags/Glossary";
+import { Glossary } from "src/core/glossary/Glossary";
 import { TagExpression } from "src/workers/tags/TagExpression";
 import { NunjucksTags } from "src/workers/templating/nunjucks.tag";
 import { ITemplate } from "src/workers/templating/templateFactory";

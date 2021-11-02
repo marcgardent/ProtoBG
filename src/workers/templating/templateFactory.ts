@@ -1,5 +1,5 @@
 import * as nunjucks from 'nunjucks';
-import { Glossary } from '../tags/Glossary';
+import { Glossary } from '../../core/glossary/Glossary';
 import { PaoTags } from '../pao/pao.tags';
 import { TagExpression } from '../tags/TagExpression';
 import { NunjucksTemplate } from './NunjucksTemplate';

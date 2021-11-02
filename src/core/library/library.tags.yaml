@@ -1,9 +1,9 @@
-#📗book: 📙registry
+#>📗book: 📙registry
 
 🏷️tag:
   alias: tags
   description: |
-    A 🏷️tag is a concept define by anothers 🏷️tags and a description and custom metadata.
+    A 🏷️tag is a concept define by others 🏷️tags and a description and custom metadata.
     A 🏷️tag have to be unique in a 📜glossary.
 
 📜glossary:

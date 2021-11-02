@@ -1,10 +1,12 @@
-import { MetaTags } from '../tags/meta.tags';
-import { templateFactory, ITemplate } from './templateFactory';
-import { Templating } from './templating.tag';
-import { Glossary } from '../tags/Glossary';
-import { TagExpression } from '../tags/TagExpression';
-import { IDocument } from "../../core/bundle/IDocument";
-import { IMessenger } from '../../core/report';
+import { IMessenger } from "src/core/report";
+import { IDocument } from "src/workers/bundle/IDocument";
+import { Glossary } from "src/core/glossary/Glossary";
+import { SearchTags } from "src/workers/tags/search.tags";
+import { TagExpression } from "src/workers/tags/TagExpression";
+import { ITemplate, templateFactory } from "src/workers/templating/templateFactory";
+import { Templating } from "src/workers/templating/templating.tag";
+
+ 
 
 export class RawDocument implements IDocument {
     private readonly template: ITemplate;
@@ -20,7 +22,7 @@ export class RawDocument implements IDocument {
         this.parameters = this.reader.mandatoryValueAt(documentEntry, Templating.PARAMETERS);
         const templateEntry = this.reader.mandatoryReferenceAt(documentEntry, Templating.TEMPLATE);
         this.template = templateFactory(this.messenger, this.glossary, this.reader, templateEntry);
-        this.foreachEntries = this.reader.resolveRequestsAt(documentEntry, MetaTags.FOREACH);
+        this.foreachEntries = this.reader.resolveRequestsAt(documentEntry, SearchTags.FOREACH);
     }
 
     public toRaw() {

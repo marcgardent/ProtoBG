@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BodyComponent, ComponentBase } from 'src/frontend/app/layout/contracts';
-import { gameIcons } from 'src/core/gameicons/gameicons';
+import { gameIcons } from 'src/workers/gameicons/gameicons';
 
 @Component({
   selector: 'app-glyphs-viewer',

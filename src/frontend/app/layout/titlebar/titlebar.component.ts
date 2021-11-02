@@ -36,6 +36,6 @@ export class TitlebarComponent implements OnInit {
   }
 
   public openFolder() {
-    this.fs.load(); // TODO DESIGN replace public event
+    this.fs.load(); // TODO DESIGN replace  by @Output()
   }
 }

@@ -1,11 +1,11 @@
-import { IDocument } from "src/core/bundle/IDocument";
+import { IDocument } from "src/workers/bundle/IDocument";
 import { IMessenger } from "src/core/report";
 import { CanvasCollection } from "src/workers/pao/CanvasCollection";
 import { PaoTags } from "src/workers/pao/pao.tags";
 import { Assembling } from "src/workers/pao/printing/Assembling";
 import { Printing } from "src/workers/pao/printing/Printing";
 import { SvgCollection } from "src/workers/pao/SvgCollection";
-import { Glossary } from "src/workers/tags/Glossary";
+import { Glossary } from "src/core/glossary/Glossary";
 import { ITagContext } from "src/workers/tags/ITagContext";
 import { TagExpression } from "src/workers/tags/TagExpression";
 

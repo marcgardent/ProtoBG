@@ -1,15 +1,15 @@
-import { TagExpression } from '../workers/tags/TagExpression';
-import { Glossary } from '../workers/tags/Glossary';
-import { PaoContext } from '../workers/pao/PaoContext';
-import { ITagContext } from '../workers/tags/ITagContext';
-import { Entry } from '../workers/tags/Entry';
-import { PaoTags } from '../workers/pao/pao.tags';
-import { Templating } from '../workers/templating/templating.tag';
-import { IDocument } from "./bundle/IDocument";
-import { Bundle } from "./bundle/Bundle";
-import { RawDocument } from '../workers/templating/RawDocument';
-import { Printing } from '../workers/pao/printing/Printing';
-import { IMessenger } from './report';
+import { IMessenger } from "src/core/report";
+import { Bundle } from "src/workers/bundle/Bundle";
+import { IDocument } from "src/workers/bundle/IDocument";
+import { PaoTags } from "src/workers/pao/pao.tags";
+import { PaoContext } from "src/workers/pao/PaoContext";
+import { Printing } from "src/workers/pao/printing/Printing";
+import { Entry } from "src/core/glossary/Entry";
+import { Glossary } from "src/core/glossary/Glossary";
+import { ITagContext } from "src/workers/tags/ITagContext";
+import { TagExpression } from "src/workers/tags/TagExpression";
+import { RawDocument } from "src/workers/templating/RawDocument";
+import { Templating } from "src/workers/templating/templating.tag";
 
 export interface IResult {
     kind : string;

@@ -1,4 +1,7 @@
-#📗book: 📗requestEngine
+#>📗book: 📗search
+
+📗search:
+  description: builtin module to navigate in the tag graph
 
 📑request:
   description: is request

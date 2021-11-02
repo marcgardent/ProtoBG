@@ -1,7 +1,13 @@
-<div *ngIf="tags.length!=0">
-    <div class="header-group">
-      <mat-menu #MenuResource="matMenu">
-        <button mat-menu-item *ngFor="let tag of tags" (click)="selectTag(tag)">{{tag.icon}}{{tag.name}}</button>
-      </mat-menu>
-    </div>
+<div *ngIf="tag">
+  <div class="header-group">
+    <button mat-icon-button [matMenuTriggerFor]="MenuResource" *ngIf="tags && tags.length>0">
+      🏷️
+    </button>
+    <button mat-button *ngIf="tag">
+      {{tag.icon}}{{tag.name}}
+    </button>
   </div>
+</div>
+<mat-menu #MenuResource="matMenu">
+  <button mat-menu-item *ngFor="let tag of tags" (click)="selectTag(tag)">{{tag.icon}}{{tag.name}}</button>
+</mat-menu>

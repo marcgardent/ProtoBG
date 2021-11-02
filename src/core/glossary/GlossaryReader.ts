@@ -1,6 +1,16 @@
+import {parse } from 'yaml'
+
 const TAG = /^(\W+)(\w+)?$/
 
-export function fixTagsDeclaration(data: any) {
+export function readDataFromYaml(block: string) {
+    return parse(block);
+}
+
+export function readGlossaryFromYaml(block: string) {
+    return fixTagsDeclaration(readDataFromYaml(block));
+}
+
+function fixTagsDeclaration(data: any) {
 
     for (let fullName in data) {
         const item = data[fullName];

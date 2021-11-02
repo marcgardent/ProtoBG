@@ -33,6 +33,7 @@ import { LibraryService } from 'src/frontend/app/services/library.service';
 import { MonacoService } from 'src/frontend/app/services/monaco.service';
 import { WarehouseService } from 'src/frontend/app/services/warehouse.service';
 import { PrintableViewerComponent } from 'src/frontend/app/modules/pdf-viewer/printable-viewer.component';
+import { ConsoleComponent } from './modules/console/console.component';
  
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { PrintableViewerComponent } from 'src/frontend/app/modules/pdf-viewer/pr
     DebugViewerComponent,
     BundleViewerComponent,
     GlyphsViewerComponent,
-    LearningViewerComponent
+    LearningViewerComponent,
+    ConsoleComponent
     ],
   entryComponents : [
     EditorComponent,
@@ -66,7 +68,8 @@ import { PrintableViewerComponent } from 'src/frontend/app/modules/pdf-viewer/pr
     DebugViewerComponent,
     BundleViewerComponent,
     GlyphsViewerComponent,
-    LearningViewerComponent
+    LearningViewerComponent,
+    ConsoleComponent
   ],
   imports: [
     AngularSplitModule,

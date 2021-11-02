@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import * as monaco from 'monaco-editor';
 import { EventHubService } from 'src/frontend/app/services/eventhub.service';
-import { GlossaryService, IReport } from 'src/frontend/app/services/glossary.service';
+import { GlossaryService } from 'src/frontend/app/services/glossary.service';
 import { WarehouseService } from 'src/frontend/app/services/warehouse.service';
-import { IResource, IWorkspace } from 'src/core/editor/models';
-import { Entry } from 'src/workers/tags/Entry';
-import { Glossary } from 'src/workers/tags/Glossary';
+import { IResource, IWorkspace } from 'src/core/models';
+import { Entry } from 'src/core/glossary/Entry';
+import { Glossary } from 'src/core/glossary/Glossary';
+import { IReport } from 'src/core/linter/models';
 
 const customLanguage = "markdown";
 const YAML_OWNER = "YAML_PARSER";
@@ -179,8 +180,8 @@ export class MonacoService {
         this.editor.setModel(r);
       }
       else {
-        console.error("model not loaded for", resource);
-        this.hub.raiseError("internal error [press F12]");
+        this.hub.snack("internal error! see the console");
+        this.hub.fatal("Frontend.MonacoService.loadResource", `the resource '${resource.name}' haven't been found in the internal data of monaco editor : report the incident`);
       }
     }
   }
@@ -209,7 +210,7 @@ export class MonacoService {
       return customLanguage;
     }
     else {
-      console.warn("undefined ext.", ext);
+      this.hub.warning("Frontend.MonacoService.getLanguage", `the undefined type '${ext}' have been found: report the incident`);
       return null;
     }
   }

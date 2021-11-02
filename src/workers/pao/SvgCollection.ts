@@ -1,4 +1,4 @@
-import { IDocument } from "src/core/bundle/IDocument";
+import { IDocument } from "src/workers/bundle/IDocument";
 import { PaoTags } from "src/workers/pao/pao.tags";
 import { ILayout, PaoContext } from "src/workers/pao/PaoContext";
 import { RawDocument } from "src/workers/templating/RawDocument";

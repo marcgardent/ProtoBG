@@ -3,9 +3,8 @@ import { BodyComponent, ComponentBase } from 'src/frontend/app/layout/contracts'
 
 import { GlossaryService } from 'src/frontend/app/services/glossary.service';
 import { WarehouseService } from 'src/frontend/app/services/warehouse.service';
-import { fixTagsDeclaration } from 'src/workers/tags/TagParser';
-import { exportAsTypescript } from 'src/workers/tags/TypescriptExporter';
-import { readGlossaryFromYaml } from 'src/workers/tags/YamlTagLexer';
+import { exportAsTypescript } from 'src/workers/typescript/TypescriptExporter';
+import { readGlossaryFromYaml } from 'src/core/glossary/GlossaryReader';
 
 @Component({
   selector: 'app-text-viewer',
@@ -32,7 +31,6 @@ export class TextViewerComponent  extends ComponentBase implements OnInit, OnDes
   private processAsCode() {
     //TODO DESIGN move to PROCESSING  -> WITH TXT OUTPUT
     const data = readGlossaryFromYaml(this.glossaryService.mergeAll(this.warehouseService.workspace));
-    fixTagsDeclaration(data);
     this.code = exportAsTypescript(data);
   }
 }

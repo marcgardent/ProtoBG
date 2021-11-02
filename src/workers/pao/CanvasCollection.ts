@@ -1,4 +1,4 @@
-import { IDocument } from "src/core/bundle/IDocument";
+import { IDocument } from "src/workers/bundle/IDocument";
 import { IMessenger } from "src/core/report";
 import { ILayout } from "src/workers/pao/PaoContext";
 import { SvgCollection } from "src/workers/pao/SvgCollection";

@@ -1,7 +1,7 @@
 
 
 /** auto generated */
-export class MetaTags {
+export class SearchTags {
 
     public static REQUEST = "📑request";
     public static FOREACH = "📑foreach";

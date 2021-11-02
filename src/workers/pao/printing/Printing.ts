@@ -1,11 +1,11 @@
 
 import { jsPDF } from "jspdf";
-import { IDocument } from "src/core/bundle/IDocument";
+import { IDocument } from "src/workers/bundle/IDocument";
 import { CanvasCollection } from "src/workers/pao/CanvasCollection";
 import { PaoTags } from "src/workers/pao/pao.tags";
 import { IPrinting, PaoContext } from "src/workers/pao/PaoContext";
 import { SvgCollection } from "src/workers/pao/SvgCollection";
-import { MetaTags } from "src/workers/tags/meta.tags";
+import { SearchTags } from "src/workers/tags/search.tags";
 
 export class Printing implements IPrinting, IDocument {
     private readonly foreachEntries: any[];
@@ -24,7 +24,7 @@ export class Printing implements IPrinting, IDocument {
 
         this.foreachEntries = this.reader.resolveRequestsAt(
             printingEntry,
-            MetaTags.FOREACH
+            SearchTags.FOREACH
         );
     }
 

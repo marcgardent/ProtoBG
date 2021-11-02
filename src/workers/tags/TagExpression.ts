@@ -1,6 +1,6 @@
-import { Glossary } from './Glossary';
-import { MetaTags } from './meta.tags';
-import { Entry } from './Entry';
+import { Glossary } from '../../core/glossary/Glossary';
+import { SearchTags } from './search.tags';
+import { Entry } from '../../core/glossary/Entry';
 import { IMessenger } from '../../core/report';
 export class TagExpression {
 
@@ -131,18 +131,18 @@ export class TagExpression {
     public resolveRequest(exp: any): { result: any, request: any }[] {
         const ret = [];
         if (exp) {
-            if (MetaTags.IS in exp) {
+            if (SearchTags.IS in exp) {
                 ret.push({
-                    result: this.glossary.get(exp[MetaTags.IS]),
+                    result: this.glossary.get(exp[SearchTags.IS]),
                     request: exp
                 });
             }
 
-            else if (MetaTags.AMONG in exp) {
+            else if (SearchTags.AMONG in exp) {
 
-                const request = this.glossary.search.atLeastOne(...this.asArray(exp[MetaTags.AMONG]));
-                if (MetaTags.WITH in exp) {
-                    request.with(...this.asArray(exp[MetaTags.WITH]))
+                const request = this.glossary.search.atLeastOne(...this.asArray(exp[SearchTags.AMONG]));
+                if (SearchTags.WITH in exp) {
+                    request.with(...this.asArray(exp[SearchTags.WITH]))
                 }
                 ret.push(...[...request.toList()].map(e => { return { result: e, request: exp }; }));
             }

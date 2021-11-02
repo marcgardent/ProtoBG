@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RenameComponent } from 'src/frontend/app/modals/rename/rename.component';
 import { EventHubService } from 'src/frontend/app/services/eventhub.service';
 import { WarehouseService } from 'src/frontend/app/services/warehouse.service';
-import { IWorkspace, IResource } from 'src/core/editor/models';
+import { IWorkspace, IResource } from 'src/core/models';
 
 
 @Component({

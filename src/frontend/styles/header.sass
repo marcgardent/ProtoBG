@@ -1,8 +1,8 @@
 @import hyperparams
 
 .header
-  height: 3em
-  line-height: 2.5em
+  height: $header-height
+  line-height: $header-line-height
   display: flex
   flex-direction: row
   background: $fill-focus
@@ -12,14 +12,14 @@
   display: flex
   align-items: stretch
   margin: 0.25em
-  
+
 .header-group > button
   border-radius: 0px
   background: $fill-nested
   border-radius: 0px
   height: 100%
-  border: solid 2px  $fill-focus
-  
+  border: solid 2px $fill-focus
+
 .header-group :first-child
   border-top-left-radius: $radius-size
   border-bottom-left-radius: $radius-size

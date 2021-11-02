@@ -1,4 +1,4 @@
-import { Search } from './Search';
+import { Search } from '../../workers/tags/Request';
 import { Entry } from './Entry';
 
 export class Glossary {

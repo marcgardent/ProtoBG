@@ -1,59 +1,58 @@
 @import hyperparams
 
-$unit: 32px
-$padding: 6px
-
-#titlebar 
+#titlebar
   display: flex
   flex-direction: row
   justify-content: space-between
-  height: $unit
+  
+  height: $header-height
+  line-height: $header-line-height
   font-family: Verdana, Geneva, Tahoma, sans-serif
   user-select: none
   color: $text-color
   background: $fill-back
 
-img.icon 
-  width: $unit - $padding * 2
-  height: $unit - $padding * 2
-  padding: $padding
+img.icon
+  width: $header-line-height/1.5
+  height:$header-line-height/1.5
+  display: block
+  margin:
+    right: 0.5em 
+    left: 0.5em 
 
-#content 
+#content
   flex-basis: auto
   display: flex
   align-items: center
 
-#title 
+#title
   flex-grow: 1
   -webkit-app-region: drag
   text-align: center
-  font-size: $unit / 2.5
-  padding: $padding
+  font-size: $header-height / 3
 
-#window-controls 
+#window-controls
   flex-grow: 0
-  flex-basis: $unit * 3
+  flex-basis: $header-height * 3
   display: flex
   flex-direction: row
 
-  > button 
-    width: $unit
-    height: $unit
+  > button
+    width: $header-height
+    height: $header-height
     background: inherit
     border: 0px
     color: $text-color
-    line-height: $unit/2
-    font-size: $unit/2
+    line-height: $header-height/3
+    font-size: $header-height/3
     vertical-align: middle
     text-align: center
 
     & .default:active,
-    &.default:hover 
+    &.default:hover
       background: $fill-focus
-    
+
     & .important:active,
-    &.important:hover 
+    &.important:hover
       background: $fill-important
       color: white
-    
-  
