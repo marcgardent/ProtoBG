@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { EventHubService } from 'src/frontend/app/services/eventhub.service';
 import { FileSystemService } from 'src/frontend/app/services/file-system.service';
-import { IResource, IWorkspace } from 'src/core/editor/models';
-
-const localStorageKey = "WAREHOUSE-R1";
+import { IResource, IWorkspace } from 'src/core/models';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +25,6 @@ export class WarehouseService {
 
   get workspace() { return this._currentWorkspace.value; }
   get resource() { return this._currentResource.value; }
-
   constructor(private readonly hub: EventHubService, private readonly fs : FileSystemService) {
     this.currentWorkspace.subscribe((w) => { console.debug("⚡currentWorkspace", w) });
     this.currentResource.subscribe((w) => { console.debug("⚡currentResource", w) });
@@ -63,7 +60,7 @@ export class WarehouseService {
       this.selectResource(workspace.resources[0]);
     }
     else {
-      this.hub.raiseError("No resource in this workspace");
+      this.hub.error("Frontend.WarehouseService.selectWorkspace", "No resource in this workspace");
     }
   }
 
@@ -74,7 +71,7 @@ export class WarehouseService {
       this._currentResource.next(resource);
     }
     else {
-      console.error('The user have selected an unknown resource in the current workspace.', resource, this.workspace);
+      this.hub.error("Frontend.WarehouseService.selectResource", `The user have selected an unknown resource '${resource.name}' in the current workspace`);      
     }
   }
 
@@ -110,8 +107,8 @@ export class WarehouseService {
         this.selectWorkspace(ret);
       }
       catch (msg) {
-        console.error("data corrupted: you loose your data if you save now, check your local-storage and report the incident!", msg);
-        this.hub.raiseError("data corrupted!");
+        this.hub.snack("data corrupted!");
+        this.hub.error("Frontend.WarehouseService.loadWorkspaceFromBackend", "data corrupted: you loose your data if you save now, check your local-storage and report the incident!");
       }
     }
   }
@@ -120,6 +117,6 @@ export class WarehouseService {
     this.workspace.saved = new Date().toUTCString();
     const dump = JSON.stringify(this.workspace);
     this.fs.save(dump);
-    this.hub.raiseSuccess("Workspaces saved!");
+    this.hub.snack("Workspaces saved!");
   }
 }
