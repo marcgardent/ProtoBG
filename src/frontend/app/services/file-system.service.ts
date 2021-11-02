@@ -1,23 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { IWorkspace } from 'src/core/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileSystemService {
 
-  private _onLoaded = new Subject<string>();
+  private _onLoaded = new Subject<IWorkspace>();
   public get onLoaded() { return this._onLoaded.asObservable(); }
 
   private readonly context = (window as any).fileManager;
   public folder: string = undefined;
   public get opened() { return this.folder !== undefined; }
   constructor() {
-    this.context.folderChanged((x)=>{
+    this.context.folderChanged((x) => {
     this.folder = x;
     });
 
-    this.context.dumpLoaded((payload)=>{
+    this.context.dumpLoaded((payload) => {
       this._onLoaded.next(payload);
     })
   }

@@ -3,6 +3,7 @@ const url = require("url");
 const path = require("path");
 const fs = require('fs').promises;
 const { autoUpdater } = require('electron-updater');
+const glob = require("glob");
 
 //const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
 const serve = true;
@@ -18,22 +19,22 @@ function createWindow() {
       preload: path.join(__dirname, `/preload.js`)
     }
   })
-  if(serve){
+  if (serve) {
     mainWindow.webContents.openDevTools();
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
     mainWindow.loadURL('http://localhost:4200');
   }
-  else{
+  else {
     mainWindow.loadURL(
       url.format({
         pathname: path.join(__dirname, 'dist/index.html'),
         protocol: 'file:',
         slashes: true
-    }));
+      }));
   }
-  
+
   mainWindow.on('closed', function () {
     mainWindow = null
   })
@@ -67,7 +68,7 @@ ipcMain.on('restart_app', () => {
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-let folderPath;
+let TheFolderPath;
 
 function openFolder() {
   return dialog.showOpenDialog({
@@ -76,9 +77,9 @@ function openFolder() {
     if (!result.canceled) {
       console.debug("folders selected", result.filePaths);
       if (result.filePaths.length == 1) {
-        folderPath = result.filePaths[0];
-        mainWindow.webContents.send("folderChanged", folderPath);
-        return folderPath;
+        TheFolderPath = result.filePaths[0];
+        mainWindow.webContents.send("folderChanged", TheFolderPath);
+        return TheFolderPath;
       }
       else {
         console.warn("select only on folder", result.filePaths);
@@ -89,8 +90,8 @@ function openFolder() {
 }
 
 function saveDump(payload) {
-  if (folderPath !== undefined) {
-    const filePath = path.join(folderPath, ".blueprint");
+  if (TheFolderPath !== undefined) {
+    const filePath = path.join(TheFolderPath, ".blueprint");
     fs.writeFile(filePath, payload, 'utf-8').catch((e) => {
       console.error("Can't save the file", e);
     });
@@ -100,9 +101,24 @@ function saveDump(payload) {
   }
 }
 
+function getAllFiles(dirPath, arrayOfFiles) {
+  files = fs.readdirSync(dirPath)
+
+  arrayOfFiles = arrayOfFiles || []
+
+  files.forEach(function (file) {
+    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
+    } else {
+      arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+    }
+  })
+  return arrayOfFiles
+}
+
 function loadDump() {
-  if (folderPath !== undefined) {
-    const filePath = path.join(folderPath, ".blueprint");
+  if (TheFolderPath !== undefined) {
+    const filePath = path.join(TheFolderPath, ".blueprint");
     fs.readFile(filePath, 'utf-8').then((payload) => {
       mainWindow.webContents.send("dumpLoaded", payload);
     }).catch((e) => {
@@ -114,8 +130,42 @@ function loadDump() {
   }
 }
 
+function loadFromTheFolder() {
+  if (TheFolderPath !== undefined) {
+
+    glob(TheFolderPath + "/**/*.yml", function (er, files) {
+      const promises = [];
+      for (let file_path of files) {
+        promises.push(
+          fs.readFile(file_path, 'utf8').then(payload=> {
+            return {
+              name: path.relative(TheFolderPath, file_path).replace("\\", "/"),
+              content: payload,
+              type: "glossary"
+            }
+        }));
+      }
+      Promise.all(promises).then(resources=> {
+        if (resources.length > 0) {
+          const workspace = {
+            saved: new Date().toUTCString(),
+            currentResource: resources[0].name,
+            resources: resources
+          }
+          mainWindow.webContents.send("dumpLoaded", workspace);
+        } else {
+          console.error("Can't load the folder", "Folder is empty");
+        }
+      });
+
+    });
+  } else {
+    console.error("Can't load the folder", "Folder not selected");
+  }
+}
+
 ipcMain.on("saveDump", (event, payload) => {
-  if (folderPath !== undefined) {
+  if (TheFolderPath !== undefined) {
     saveDump(payload);
   }
   else {
@@ -126,10 +176,9 @@ ipcMain.on("saveDump", (event, payload) => {
 });
 
 ipcMain.on("loadDump", (event, args) => {
-  openFolder().then(() => { loadDump() });
+  openFolder().then(() => { loadFromTheFolder() });
 });
 
 ipcMain.on("reloadDump", (event, args) => {
-  reloadDump();
+  loadFromTheFolder();
 });
-

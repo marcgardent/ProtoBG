@@ -100,11 +100,10 @@ export class WarehouseService {
     return { name: name, content: "#Your glossary", type: "glossary" }
   }
 
-  private loadWorkspaceFromBackend(payload: string): void {
+  private loadWorkspaceFromBackend(payload: IWorkspace): void {
     if (payload) {
       try {
-        let ret = <IWorkspace>JSON.parse(payload);
-        this.selectWorkspace(ret);
+        this.selectWorkspace(payload);
       }
       catch (msg) {
         this.hub.snack("data corrupted!");
