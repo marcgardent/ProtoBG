@@ -114,8 +114,7 @@ export class WarehouseService {
 
   public saveAll() {
     this.workspace.saved = new Date().toUTCString();
-    const dump = JSON.stringify(this.workspace);
-    this.fs.save(dump);
+    this.fs.save(this.workspace);
     this.hub.snack("Workspaces saved!");
   }
 }

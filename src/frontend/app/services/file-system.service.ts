@@ -31,7 +31,7 @@ export class FileSystemService {
     if (this.folder){ this.context.reloadDump(); }
   }
   
-  public save(payload : string){
+  public save(payload : IWorkspace){
     this.context.saveDump(payload);
   }
 }

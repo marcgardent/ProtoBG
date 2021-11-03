@@ -39,7 +39,7 @@ export class MonacoService {
           return new Worker("node_modules/monaco-editor/esm/vs/editor/editor.worker.js", { type: 'module' });
         }
         else {
-          console.exception("unknown monaco worker", moduleId, label);
+          console.error("unknown monaco worker", moduleId, label);
           throw ("not implemented");
         }
       }
@@ -164,7 +164,8 @@ export class MonacoService {
   }
 
   private getModel(name: string) {
-    const r = monaco.editor.getModels().filter(x => x.uri.path == name);
+    const models = monaco.editor.getModels();
+    const r = models.filter(x => x.uri.path == name);
     if (r.length == 1) {
       return r[0];
     }

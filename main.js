@@ -89,40 +89,19 @@ function openFolder() {
   })
 }
 
-function saveDump(payload) {
+function saveDump(workspace) {
   if (TheFolderPath !== undefined) {
-    const filePath = path.join(TheFolderPath, ".blueprint");
-    fs.writeFile(filePath, payload, 'utf-8').catch((e) => {
-      console.error("Can't save the file", e);
-    });
-  }
-  else {
-    console.error("Can't save the file", "Folder not selected");
-  }
-}
-
-function getAllFiles(dirPath, arrayOfFiles) {
-  files = fs.readdirSync(dirPath)
-
-  arrayOfFiles = arrayOfFiles || []
-
-  files.forEach(function (file) {
-    if (fs.statSync(dirPath + "/" + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles)
-    } else {
-      arrayOfFiles.push(path.join(__dirname, dirPath, "/", file))
+    const rendezvous = []
+    for(let resource of workspace.resources) {
+      const filePath = path.join(TheFolderPath, resource.name);
+      rendezvous.push(fs.writeFile(filePath, resource.content, 'utf-8').catch((e) => {
+        console.error("Can't save the file", e);
+      }).then( ()=> {
+        console.log(filePath, "saved");
+      }));
     }
-  })
-  return arrayOfFiles
-}
-
-function loadDump() {
-  if (TheFolderPath !== undefined) {
-    const filePath = path.join(TheFolderPath, ".blueprint");
-    fs.readFile(filePath, 'utf-8').then((payload) => {
-      mainWindow.webContents.send("dumpLoaded", payload);
-    }).catch((e) => {
-      console.error("Can't save the file", e);
+    Promise.all(rendezvous).catch(reason => {
+      console.error("Can't save the project", reason);
     });
   }
   else {
@@ -139,7 +118,7 @@ function loadFromTheFolder() {
         promises.push(
           fs.readFile(file_path, 'utf8').then(payload=> {
             return {
-              name: path.relative(TheFolderPath, file_path).replace("\\", "/"),
+              name: "/" + path.relative(TheFolderPath, file_path).replace("\\", "/"),
               content: payload,
               type: "glossary"
             }
